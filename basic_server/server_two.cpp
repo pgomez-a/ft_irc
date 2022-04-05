@@ -1,6 +1,7 @@
 #include <iostream>
 #include <sys/socket.h>
 #include <sys/types.h>
+#include <arpa/inet.h>
 #include <netdb.h>
 #include <unistd.h>
 
@@ -16,7 +17,7 @@ static void	manage_addrinfo(char* port, struct addrinfo& hints, struct addrinfo*
 	std::memset(&hints, 0, sizeof(hints));
 	hints.ai_family = AF_INET;
 	hints.ai_socktype = SOCK_STREAM;
-	hints.ai_flags = AI_PASSIVE;
+	hints.ai_flags = AI_DEFAULT;
 	if (getaddrinfo(0, port, &hints, &res) != 0)
 	{
 		std::cerr << "Error while calling getaddrinfo()\n";
@@ -60,14 +61,16 @@ static void	listen_socket(int sock_fd, int capacity)
 	return ;
 }
 
-static void	accept_socket(int sock_fd)
+static void	accept_socket(int sock_fd, struct addrinfo*& res)
 {
 	int			nsock_fd;
+	int			recv_len;
 	char			recv_buff[256];
-	char			serv_addr[256];
 	std::string		send_buff;
 	socklen_t		client_len;
 	struct sockaddr_storage	client_addr;
+	struct sockaddr_in*	client_info;
+	struct sockaddr_in*	serv_info;
 
 	client_len = sizeof(client_addr);
 	nsock_fd = accept(sock_fd, (struct sockaddr*)&client_addr, &client_len);
@@ -77,27 +80,27 @@ static void	accept_socket(int sock_fd)
 		close(sock_fd);
 		exit(1);
 	}
+	serv_info = (struct sockaddr_in*)res->ai_addr;
+	client_info = (struct sockaddr_in*)&client_addr;
+	std::cout << inet_ntoa(client_info->sin_addr) << ":" << client_info->sin_port << " Connection accepted\n";
 	while (1)
 	{
 		send_buff = "Data received from ";
 		std::memset(recv_buff, 0, 256);
-		std::memset(serv_addr, 0, 256);
-		if (recv(nsock_fd, recv_buff, 255, 0) <= 0)
+		
+		recv_len = recv(nsock_fd, recv_buff, 255, 0);
+		if (recv_len <= 0)
 		{
+			if (recv_len == 0)
+				break ;
 			std::cerr << "Error while calling recv()\n";
 			close(nsock_fd);
 			close(sock_fd);
 			exit(1);
 		}
-		std::cout << "-> " << recv_buff;
-		if (gethostname(serv_addr, 255) == -1)
-		{
-			std::cerr << "Error while calling gethostname()\n";
-			close(nsock_fd);
-			close(sock_fd);
-			exit(1);
-		}
-		send_buff += static_cast<std::string>(serv_addr) + "\n";
+		inet_ntoa(client_info->sin_addr);
+		std::cout << inet_ntoa(client_info->sin_addr) << ":" << client_info->sin_port << " " << recv_buff;
+		send_buff = (send_buff + inet_ntoa(serv_info->sin_addr)) + "\n";
 		if (send(nsock_fd, send_buff.c_str(), send_buff.size(), 0) == -1)
 		{
 			std::cerr << "Error while calling send()\n";
@@ -107,6 +110,7 @@ static void	accept_socket(int sock_fd)
 		}
 	}
 	close(nsock_fd);
+	std::cout << inet_ntoa(client_info->sin_addr) << ":" << client_info->sin_port << " Connection ended\n";
 	return ;
 }
 
@@ -126,7 +130,7 @@ int	main(int argc, char* argv[])
 	sock_fd = create_socket(res);
 	bind_socket(sock_fd, res);
 	listen_socket(sock_fd, 10);
-	accept_socket(sock_fd);
+	accept_socket(sock_fd, res);
 	freeaddrinfo(res);
 	close(sock_fd);
 	return (0);
