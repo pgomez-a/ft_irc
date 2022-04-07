@@ -1,16 +1,13 @@
-#include <iostream>
-#include <sys/socket.h>
-#include <sys/types.h>
-#include <arpa/inet.h>
-#include <netdb.h>
-#include <unistd.h>
+#include "server.hpp"
 
+/**
 static void	leaks(void)
 {
 	std::cout << "\n\n";
 	system("leaks server");
 	return ;
 }
+**/
 
 static void	manage_addrinfo(char* port, struct addrinfo& hints, struct addrinfo*& res)
 {

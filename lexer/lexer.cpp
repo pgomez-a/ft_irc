@@ -53,6 +53,7 @@ void		get_lexer(const std::string& input, std::vector<std::pair<std:: string, st
 	return ;
 }
 
+/**
 int	main(int argc, char* argv[])
 {
 	std::vector<std::pair<std::string, std::string> >	token_list;
@@ -74,3 +75,4 @@ int	main(int argc, char* argv[])
 	}
 	return (0);
 }
+**/
