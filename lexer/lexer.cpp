@@ -1,6 +1,4 @@
-#include <iostream>
-#include <vector>
-#include <set>
+#include "lexer.hpp"
 
 /**
  ** get_token - Creates a token (TOKEN_TYPE, TOKEN_WORD)
@@ -55,10 +53,8 @@ void		get_lexer(const std::string& input, std::vector<std::pair<std:: string, st
 	return ;
 }
 
-/**
 int	main(int argc, char* argv[])
 {
-	int							count;
 	std::vector<std::pair<std::string, std::string> >	token_list;
 
 	if (argc != 2)
@@ -78,4 +74,3 @@ int	main(int argc, char* argv[])
 	}
 	return (0);
 }
-**/
