@@ -62,12 +62,12 @@ static void	accept_socket(int sock_fd, struct addrinfo*& res)
 {
 	int			nsock_fd;
 	int			recv_len;
-	char			recv_buff[256];
+	char			recv_buff[212];
 	std::string		send_buff;
 	socklen_t		client_len;
 	struct sockaddr_storage	client_addr;
 	struct sockaddr_in*	client_info;
-	struct sockaddr_in*	serv_info;
+	struct sockaddr_in*	server_info;
 
 	client_len = sizeof(client_addr);
 	nsock_fd = accept(sock_fd, (struct sockaddr*)&client_addr, &client_len);
@@ -77,15 +77,14 @@ static void	accept_socket(int sock_fd, struct addrinfo*& res)
 		close(sock_fd);
 		exit(1);
 	}
-	serv_info = (struct sockaddr_in*)res->ai_addr;
+	server_info = (struct sockaddr_in*)res->ai_addr;
 	client_info = (struct sockaddr_in*)&client_addr;
 	std::cout << inet_ntoa(client_info->sin_addr) << ":" << client_info->sin_port << " Connection accepted\n";
+	std::memset(recv_buff, 0, 212);
+	recv_len = 0;
 	while (1)
 	{
-		send_buff = "Data received from ";
-		std::memset(recv_buff, 0, 256);
-		
-		recv_len = recv(nsock_fd, recv_buff, 255, 0);
+		recv_len += recv(nsock_fd, recv_buff + recv_len, 210 - recv_len, 0);
 		if (recv_len <= 0)
 		{
 			if (recv_len == 0)
@@ -95,15 +94,21 @@ static void	accept_socket(int sock_fd, struct addrinfo*& res)
 			close(sock_fd);
 			exit(1);
 		}
-		inet_ntoa(client_info->sin_addr);
-		std::cout << inet_ntoa(client_info->sin_addr) << ":" << client_info->sin_port << " " << recv_buff;
-		send_buff = (send_buff + inet_ntoa(serv_info->sin_addr)) + "\n";
-		if (send(nsock_fd, send_buff.c_str(), send_buff.size(), 0) == -1)
+		else if (recv_buff[recv_len - 1] == '\n' || recv_len == 210)
 		{
-			std::cerr << "Error while calling send()\n";
-			close(nsock_fd);
-			close(sock_fd);
-			exit(1);
+			recv_buff[210] = '\n';
+			std::cout << inet_ntoa(client_info->sin_addr) << ":" << client_info->sin_port << " " << recv_buff;
+			send_buff = "Data received from ";
+			send_buff = (send_buff + inet_ntoa(server_info->sin_addr)) + "\n";
+			if (send(nsock_fd, send_buff.c_str(), send_buff.size(), 0) == -1)
+			{
+				std::cerr << "Error while calling send()\n";
+				close(nsock_fd);
+				close(sock_fd);
+				exit(1);
+			}
+			std::memset(recv_buff, 0, 212);
+			recv_len = 0;
 		}
 	}
 	close(nsock_fd);
