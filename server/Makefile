@@ -2,8 +2,10 @@
 
 NAME		= server
 
-SRCS		= server.cpp		\
-		  ./../lexer/lexer.cpp
+SRCS		= ./../lexer/lexer.cpp	\
+		  config_socket.cpp	\
+		  manage_socket.cpp	\
+		  server.cpp
 
 OBJS		= $(SRCS:.cpp=.o)
 
