@@ -51,17 +51,19 @@ static int	accept_socket(int sock_fd, int poll_nfds, struct pollfd* poll_fds, st
 static int	read_socket(int sock_fd, int client_pos, struct sockaddr_in* hosts)
 {
 	int			recv_len;
+	int			tmp_recv_len;
 	char			recv_buff[212];
 	std::string		send_buff;
 	std::stringstream	port;
 
 	recv_len = 0;
+	tmp_recv_len = 0;
 	std::memset(recv_buff, 0, 212);
 	recv_buff[210] = '\n';
 	recv_buff[211] = '\n';
 	while (1)
 	{
-		recv_len += recv(sock_fd, recv_buff + recv_len, 210 - recv_len, 0);
+		recv_len = recv(sock_fd, recv_buff + tmp_recv_len, 210 - tmp_recv_len, 0);
 		if (recv_len < 0)
 		{
 			if (errno != EWOULDBLOCK)
@@ -69,15 +71,16 @@ static int	read_socket(int sock_fd, int client_pos, struct sockaddr_in* hosts)
 				std::cerr << "Error recv()\n";
 				return (-1);
 			}
-			break ;
+			continue ;
 		}
+		tmp_recv_len += recv_len;
 		if (recv_len == 0)
 		{
 			std::cout << inet_ntoa(hosts[client_pos].sin_addr) << ":"
 				<< hosts[client_pos].sin_port << " Connection Closed\n";
 			return (-1);
 		}
-		if (recv_buff[recv_len - 1] == '\n' || recv_len == 210)
+		if (recv_buff[tmp_recv_len - 1] == '\n' || tmp_recv_len == 210)
 		{
 			std::cout << inet_ntoa(hosts[client_pos].sin_addr) << ":"
 				<< hosts[client_pos].sin_port << " " << recv_buff;
@@ -164,7 +167,7 @@ int		manage_socket(int sock_fd, struct sockaddr_in* server_info)
 	hosts_info[0] = *server_info;
 	std::memset(poll_fds, 0, sizeof(poll_fds));
 	poll_nfds = 1;
-	poll_timeout = 60 * 1000;
+	poll_timeout = 5 * 60 * 1000;
 	poll_fds[0].fd  = sock_fd;
 	poll_fds[0].events = POLLIN;
 	while(!end_server)
@@ -185,7 +188,7 @@ int		manage_socket(int sock_fd, struct sockaddr_in* server_info)
 		{
 			if (poll_fds[i].revents == 0)
 				continue ;
-			if (poll_fds[i].revents != POLLIN)
+			if (!(poll_fds[i].revents & POLLIN))
 			{
 				std::cout << "Error: revents\n";
 				end_server = 1;
