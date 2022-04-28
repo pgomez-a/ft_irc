@@ -1,4 +1,4 @@
-.PHONY:	all test clean fclean re
+.PHONY:	all test clean fclean re parser
 
 NAME		= 	server.exe
 
@@ -6,7 +6,7 @@ CXX			= 	clang++
 
 CXXFLAGS	=	-Wall -Werror -Wextra -std=c++98
 
-PARSER_SRCS	=	$(addprefix ./parser/, lexer.cpp parser.cpp)
+PARSER_SRCS	=	$(addprefix ./parser/, lexer.cpp)
 
 SERVER_SRCS	=	$(addprefix ./server/, config_socket.cpp manage_socket.cpp)
 
@@ -38,15 +38,18 @@ TEST_OBJS	= $(TEST_SRCS:.cpp=.o)
 all:	$(NAME)
 
 $(NAME):	$(OBJS)
-	$(CXX) $(CXXFLAGS) $(OBJS) -o $(NAME)
+	@ $(CXX) $(CXXFLAGS) $(OBJS) -o $(NAME)
 
 test:	$(TEST_OBJS)
-	$(CXX) $(CXXFLAGS) $(TEST_OBJS) -o $(TEST)
+	@ $(CXX) $(CXXFLAGS) $(TEST_OBJS) -o $(TEST)
 clean:
-	$(RM) $(OBJS) $(TEST_OBJS)
+	@ $(RM) $(OBJS) $(TEST_OBJS)
 
 fclean:		clean
-	$(RM) $(NAME)
-	$(RM) irc_test parser_test
+	@ $(RM) $(NAME)
+	@ $(RM) irc_test parser_test
 
 re:		fclean all
+
+parser: parser_test
+	@ echo "Parser and lexer tests' executable built.."

@@ -1,23 +1,17 @@
 #include "lexer.hpp"
 
 /**
- ** get_token - Creates a token (TOKEN_TYPE, TOKEN_WORD)
+ ** get_token - Creates a token (TOKEN_TYPE, word)
  **/
 
-static void	get_token(const std::string& token_word, std::pair<std::string, std::string>& token_pair)
+static void	get_token(const std::string	&word, token_type	&token)
 {
-	int			index;
-	std::string		token_type[3] = {"PREFIX", "PARAMS", "COMMAND"};
-	std::set<std::string>	irc_commands;
+	static size_t	types[2] = {PREFIX, WORD};
+	int				index;
 
-	irc_commands.insert("NICK");
-	irc_commands.insert("USER");
-	irc_commands.insert("QUIT");
-
-	index = (token_word[0] == ':') + (irc_commands.count(token_word)) + (token_word[0] != ':');
-	index *= (token_word[0] != ':');
-	token_pair.first = token_type[index];
-	token_pair.second = token_word;
+	index = (word != ":");
+	token.type = types[index];
+	token.content = word;
 	return ;
 }
 
@@ -25,30 +19,31 @@ static void	get_token(const std::string& token_word, std::pair<std::string, std:
  ** get_lexer - Tokenizes the received input
  **/
 
-void		get_lexer(const std::string& input, std::vector<std::pair<std:: string, std::string> >& token_list)
+token_list	message_lexer(const std::string &input)
 {
-	int					count;
-	std::string				token_word;
-	std::pair<std::string, std::string>	token_pair;
+	token_list		list;
+	token_type		token;
+	std::string		word;
+	int				i;
 
-	count = 0;
-	while (input[count])
+	i = 0;
+	while (input[i])
 	{
-		if (input[count] != ' ' || (token_word[0] == ':' && token_list.size() > 0))
-			token_word += input[count];
-		else if (token_word.size() > 0)
+		while (input[i] && !(input[i] == ' ' || word == ":"))
+			word += input[i++];
+		if (word.size() > 0)
 		{
-			get_token(token_word, token_pair);
-			token_list.push_back(token_pair);
-			token_word.clear();
+			get_token(word, token);
+			list.push_back(token);
+			word.clear();
+			if (token.type == PREFIX && list.size() > 1)
+			{
+				get_token(std::string(input.begin() + i + 1, input.end()) , token);
+				list.push_back(token);
+				return (list);
+			}
 		}
-		count++;
+		i++;
 	}
-	if (token_word.size() > 0)
-	{
-		get_token(token_word, token_pair);
-		token_list.push_back(token_pair);
-		token_word.clear();
-	}
-	return ;
+	return (list);
 }

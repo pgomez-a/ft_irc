@@ -2,13 +2,24 @@
 # define LEXER_HPP
 
 # include <iostream>
-# include <vector>
+# include <string>
+# include <list>
 # include <set>
 
 /**
  ** lexer.cpp
  **/
 
-void	get_lexer(const std::string& input, std::vector<std::pair<std::string, std::string> >& token_list);
+enum	e_token_types{PREFIX, WORD};
+
+typedef	struct	s_token
+{
+	std::string	content;
+	size_t		type;
+}				token_type;
+
+typedef std::list<token_type>	token_list; 
+
+token_list  message_lexer(const std::string &input);
 
 #endif
