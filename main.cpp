@@ -1,4 +1,4 @@
-#include "server.hpp"
+#include "./server/server.hpp"
 
 /**
 static void	leaks(void)

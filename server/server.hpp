@@ -10,7 +10,7 @@
 # include <unistd.h>
 # include <fcntl.h>
 # include <poll.h>
-# include "./../lexer/lexer.hpp"
+# include "../parser/lexer.hpp"
 
 /**
  ** config_socket.cpp

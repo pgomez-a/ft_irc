@@ -52,27 +52,3 @@ void		get_lexer(const std::string& input, std::vector<std::pair<std:: string, st
 	}
 	return ;
 }
-
-/**
-int	main(int argc, char* argv[])
-{
-	std::vector<std::pair<std::string, std::string> >	token_list;
-
-	if (argc != 2)
-		return (0);
-
-	get_lexer(argv[1], token_list);
-
-	std::vector<std::pair<std::string, std::string> >::iterator	iter_beg;
-	std::vector<std::pair<std::string, std::string> >::iterator	iter_end;
-
-	iter_beg = token_list.begin();
-	iter_end = token_list.end();
-	while (iter_beg != iter_end)
-	{
-		std::cout << iter_beg->first << ": " << iter_beg->second << std::endl;
-		iter_beg++;
-	}
-	return (0);
-}
-**/
