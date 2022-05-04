@@ -23,10 +23,10 @@ ifeq (test, $(firstword $(MAKECMDGOALS)))
 	CXXFLAGS	+= 	-g -fsanitize=address
 	ifeq ($(word 2, $(MAKECMDGOALS)), parser)
 		TEST_SRCS	= $(PARSER_SRCS) ./test/test_parser.cpp
-		TEST		= parser_test
+		TEST		= parser.debug
 	else
 		TEST_SRCS	= $(PARSER_SRCS) $(SERVER_SRCS) ./test/test_irc.cpp	
-		TEST		= irc_test
+		TEST		= irc.debug
 	endif
 endif
 ifeq ($(TEST_SRCS),)

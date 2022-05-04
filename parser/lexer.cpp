@@ -24,10 +24,9 @@ token_list	message_lexer(const std::string &input)
 	token_list		list;
 	token_type		token;
 	std::string		word;
-	int				i;
-
-	i = 0;
-	while (input[i])
+	
+	size_t			i = 0, l = input.length();
+	while (i < l)
 	{
 		while (input[i] && !(input[i] == ' ' || word == ":"))
 			word += input[i++];
@@ -36,14 +35,14 @@ token_list	message_lexer(const std::string &input)
 			get_token(word, token);
 			list.push_back(token);
 			word.clear();
-			if (token.type == PREFIX && list.size() > 1)
+			if (token.type == PREFIX && list.size() > 1 && input[i])
 			{
-				get_token(std::string(input.begin() + i + 1, input.end()) , token);
+				get_token(std::string(input.begin() + i, input.end()) , token);
 				list.push_back(token);
 				return (list);
 			}
 		}
-		i++;
+		i += input[i] == ' ';
 	}
 	return (list);
 }
