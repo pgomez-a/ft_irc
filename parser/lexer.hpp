@@ -4,7 +4,6 @@
 # include <iostream>
 # include <string>
 # include <list>
-# include <set>
 
 /**
  ** lexer.cpp

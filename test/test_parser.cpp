@@ -41,6 +41,7 @@ int main(void)
 {
 	printf("MESSAGE PARSING TESTS\n\n");
 	{
+		// token extraction testing
 		token_list  l;
 		std::string input;
 		
@@ -130,6 +131,21 @@ int main(void)
 		l = message_lexer(input);
 		put_token_list(input, "PREFIX WORD(extra@space.s) WORD(space) PREFIX WORD( spaces  )", l); //Is this the correct expected output?
 	}
+	{
+		token_list  	t;
+		std::string message;
+		command_list	c;
 
+		//token parsing and correct command association
+		printf("parser\n");
+
+		message = "NICK";
+		t = message_lexer(message);
+		c = message_parser(t);
+
+		message = "USER NICK";
+		t = message_lexer(message);
+		c = message_parser(t);
+	}
 	return (0);
 }
