@@ -1,5 +1,5 @@
-#ifndef SERVER_HPP
-# define SERVER_HPP
+#ifndef IRCSERV_HPP
+# define IRCSERV_HPP
 
 # include <iostream>
 # include <sstream>
@@ -22,7 +22,7 @@ int	init_socket(struct addrinfo*& res);
 
 int	bind_socket(int sock_fd, struct addrinfo*& res);
 
-int	listen_socket(int sock_fd, int capacity);
+int	listen_socket(int sock_fd, int capacity, char* port);
 
 /**
  ** manage_socket.cpp

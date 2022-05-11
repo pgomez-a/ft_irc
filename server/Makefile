@@ -1,11 +1,11 @@
 .PHONY:	all clean fclean re
 
-NAME		= server
+NAME		= ircserv 
 
 SRCS		= ./../lexer/lexer.cpp	\
 		  config_socket.cpp	\
 		  manage_socket.cpp	\
-		  server.cpp
+		  ircserv.cpp
 
 OBJS		= $(SRCS:.cpp=.o)
 

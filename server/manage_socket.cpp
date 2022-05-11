@@ -1,4 +1,4 @@
-#include "server.hpp"
+#include "ircserv.hpp"
 
 /**
  ** accept    – accept a connection on a socket
@@ -18,12 +18,13 @@ static int	accept_socket(int sock_fd, int poll_nfds, struct pollfd* poll_fds, st
 	client_len = sizeof(client_addr);
 	while (1)
 	{
+		std::memset(&client_addr, 0, client_len);
 		nsock_fd = accept(sock_fd, (struct sockaddr*)&client_addr, &client_len);
 		if (nsock_fd == -1)
 		{
 			if (errno != EWOULDBLOCK)
 			{
-				std::cerr << "Error: accept()\n";
+				std::cerr << "\033[1m\033[91mError:\033[0m\033[91m accept()\n\033[0m";
 				return (-1);
 			}
 			break ;
@@ -68,7 +69,7 @@ static int	read_socket(int sock_fd, int client_pos, struct sockaddr_in* hosts)
 		{
 			if (errno != EWOULDBLOCK)
 			{
-				std::cerr << "Error recv()\n";
+				std::cerr << "\033[1m\033[91mError:\033[0m\033[91m recv()\n\033[0m";
 				return (-1);
 			}
 			continue ;
@@ -89,7 +90,7 @@ static int	read_socket(int sock_fd, int client_pos, struct sockaddr_in* hosts)
 			send_buff += port.str() + " Received\n";
 			if (send(sock_fd, send_buff.c_str(), send_buff.size(), 0) == -1)
 			{
-				std::cerr << "Error: send()\n";
+				std::cerr << "\033[1m\033[91mError:\033[0m\033[91m send()\n\033[0m";
 				return (-1);
 			}
 			break ;
@@ -175,12 +176,12 @@ int		manage_socket(int sock_fd, struct sockaddr_in* server_info)
 		func_return = poll(poll_fds, poll_nfds, poll_timeout);
 		if (func_return == -1)
 		{
-			std::cerr << "Error: poll()\n";
+			std::cerr << "\033[1m\033[91mError:\033[0m\033[91m poll()\n\033[0m";
 			break ;
 		}
 		if (func_return == 0)
 		{
-			std::cerr << "Timed out: poll()\n";
+			std::cerr << "\033[1m\033[93mTimed out:\033[0m\033[93m poll()\n\033[0m";
 			break ;
 		}
 		poll_tmp_nfds = poll_nfds;
@@ -190,7 +191,7 @@ int		manage_socket(int sock_fd, struct sockaddr_in* server_info)
 				continue ;
 			if (!(poll_fds[i].revents & POLLIN))
 			{
-				std::cout << "Error: revents\n";
+				std::cout << "\033[1m\033[91mError:\033[0m\033[91m revents\n\033[0m";
 				end_server = 1;
 				break ;
 			}
@@ -198,7 +199,10 @@ int		manage_socket(int sock_fd, struct sockaddr_in* server_info)
 			{
 				poll_nfds = accept_socket(sock_fd, poll_nfds, poll_fds, hosts_info);
 				if (poll_nfds == -1)
+				{
 					end_server = 1;
+					break ;
+				}
 			}
 			else
 			{
@@ -218,5 +222,9 @@ int		manage_socket(int sock_fd, struct sockaddr_in* server_info)
 		}
 	}
 	close_poll_fds(poll_nfds, poll_fds);
+	std::cout << "\033[1m";
+	std::cout << "Server disconnected...\n";
+	std::cout << "For any problem contact the authors at https://github.com/pgomez-a/ft_irc\n";
+	std::cout << "\033[0m\n";
 	return (0);
 }

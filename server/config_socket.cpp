@@ -1,4 +1,4 @@
-#include "server.hpp"
+#include "ircserv.hpp"
 
 /**
  ** getaddrinfo - socket address structure to host and service name
@@ -15,9 +15,9 @@ int	init_addrinfo(char* port, struct addrinfo& hints, struct addrinfo*& res)
 	hints.ai_family = AF_INET;
 	hints.ai_socktype = SOCK_STREAM;
 	hints.ai_flags = AI_DEFAULT;
-	if (getaddrinfo(0, port, &hints, &res) != 0)
+	if (getaddrinfo("localhost", port, &hints, &res) != 0)
 	{
-		std::cerr << "Error: getaddrinfo()\n";
+		std::cerr << "\033[1m\033[91mError:\033[0m\033[91m getaddrinfo()\n\033[0m";
 		return (-1);
 	}
 	return (0);
@@ -42,19 +42,19 @@ int	init_socket(struct addrinfo*& res)
 	sock_fd = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
 	if (sock_fd == -1)
 	{
-		std::cerr << "Error: socket()\n";
+		std::cerr << "\033[1m\033[91mError:\033[0m\033[91m socket()\n\033[0m";
 		return (-1);
 	}
 	sock_op = 1;
 	if (setsockopt(sock_fd, SOL_SOCKET, SO_REUSEADDR, &sock_op, sizeof(sock_op)) == -1)
 	{
-		std::cerr << "Error: setsockopt()\n";
+		std::cerr << "\033[1m\033[91mError:\033[0m\033[91m setsockopt()\n\033[0m";
 		close(sock_fd);
 		return (-1);
 	}
 	if (fcntl(sock_fd, F_SETFL, O_NONBLOCK) == -1)
 	{
-		std::cerr << "Error: fcntl()\n";
+		std::cerr << "\033[1m\033[91mError:\033[0m\033[91m fcntl()\n\033[0m";
 		close(sock_fd);
 		return (-1);
 	}
@@ -73,7 +73,7 @@ int	bind_socket(int sock_fd, struct addrinfo*& res)
 {
 	if (bind(sock_fd, res->ai_addr, res->ai_addrlen) == -1)
 	{
-		std::cerr << "Error: bind()\n";
+		std::cerr << "\033[1m\033[91mError:\033[0m\033[91m bind()\n\033[0m";
 		close(sock_fd);
 		return (-1);
 	}
@@ -87,13 +87,23 @@ int	bind_socket(int sock_fd, struct addrinfo*& res)
  **            int backlog);
  **/
 
-int	listen_socket(int sock_fd, int capacity)
+int	listen_socket(int sock_fd, int capacity, char* port)
 {
 	if (listen(sock_fd, capacity) == -1)
 	{
-		std::cerr << "Error: listen()\n";
+		std::cerr << "\033[1m\033[91mError:\033[0m\033[91m listen()\n\033[0m";
 		close(sock_fd);
 		return (-1);
 	}
+	std::cout << "\033[1m\n";
+	std::cout << "   __  __                               ___\n";
+	std::cout << "  /\\ \\/\\ \\                             /\\_ \\\n";
+	std::cout << "  \\ \\ `\\\\ \\     __      ___ ___      __\\//\\ \\      __    ____    ____\n";
+	std::cout << "   \\ \\ ,   \\  /'__ \\  /' __  __ \\  /'__ \\\\ \\ \\   /'__ \\ /',__\\  /',__\\\n";
+	std::cout << "    \\ \\ \\`\\ \\/\\ \\L\\.\\_/\\ \\/\\ \\/\\ \\/\\  __/ \\_\\ \\_/\\  __//\\__,  \\/\\__,  \\\n";
+	std::cout << "     \\ \\_\\ \\_\\ \\__/.\\_\\ \\_\\ \\_\\ \\_\\ \\____\\/\\____\\ \\____\\/\\____/\\/\\____/\n";
+	std::cout << "      \\/_/\\/_/\\/__/\\/_/\\/_/\\/_/\\/_/\\/____/\\/____/\\/____/\\/___/  \\/___/\n";
+	std::cout << "\n                         Hosted at 127.0.0.1:" << port << std::endl;
+	std::cout << "\033[0m\n\n";
 	return (0);
 }

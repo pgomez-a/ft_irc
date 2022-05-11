@@ -1,4 +1,4 @@
-#include "server.hpp"
+#include "ircserv.hpp"
 
 /**
 static void	leaks(void)
@@ -18,7 +18,7 @@ int	main(int argc, char* argv[])
 	//atexit(leaks);
 	if (argc != 2)
 	{
-		std::cerr << "Error: ./server port\n";
+		std::cerr << "\033[1m\033[91mError:\033[0m\033[91m ./ircserv port\n\033[0m";
 		return (1);
 	}
 	if (init_addrinfo(argv[1], hints, res) == -1)
@@ -28,7 +28,7 @@ int	main(int argc, char* argv[])
 		return (1);
 	if (bind_socket(sock_fd, res) == -1)
 		return (1);
-	if (listen_socket(sock_fd, 10) == -1)
+	if (listen_socket(sock_fd, 10, argv[1]) == -1)
 		return (1);
 	manage_socket(sock_fd, (struct sockaddr_in*)res->ai_addr);
 	freeaddrinfo(res);
