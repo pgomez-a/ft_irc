@@ -1,12 +1,10 @@
 #include "ircserv.hpp"
 
 /**
- ** getaddrinfo - socket address structure to host and service name
- **
- ** int getaddrinfo(const char *hostname,
- **                 const char *servname,
- **                 const struct addrinfo *hints,
- **                 struct addrinfo **res);
+ ** Inits addrinfo struct before socket configuration.
+ **  - Communication Protocol: IPv4 (AF_INET)
+ **  - Socket Type: SOCK_SREAM (TCP)
+ **  - IP Addr: localhost (127.0.0.1)
  **/
 
 int	init_addrinfo(char* port, struct addrinfo& hints, struct addrinfo*& res)
@@ -24,14 +22,12 @@ int	init_addrinfo(char* port, struct addrinfo& hints, struct addrinfo*& res)
 }
 
 /**
- ** socket     - create an endpoint for communication
- ** setsockopt - get and set options on sockets
- ** fcntl      – file control
+ ** Sets socket configuration.
+ **  - Communication Protocol: ai_family (IPv4)
+ **  - Socket Type: ai_socktype (TCP)
+ **  - Transport Protocol: ai_protocol (TCP)
  **
- ** int socket(int domain,     int setsockopt(int socket, int level,     int fcntl(int fildes,
- **            int type,                      int option_name,                     int cmd,
- **            int protocol);                 const void *option_value,            ...);
- **                                           socklen_t option_len);
+ ** The socket is set as non-blocking and its addr:port can be reused.
  **/
 
 int	init_socket(struct addrinfo*& res)
@@ -62,11 +58,7 @@ int	init_socket(struct addrinfo*& res)
 }
 
 /**
- ** bind – bind a name to a socket
- **
- ** int bind(int socket,
- **          const struct sockaddr *address,
- **          socklen_t address_len);
+ ** Assigns the socket the set address and port.
  **/
 
 int	bind_socket(int sock_fd, struct addrinfo*& res)
@@ -81,10 +73,7 @@ int	bind_socket(int sock_fd, struct addrinfo*& res)
 }
 
 /**
- ** listen – listen for connections on a socket
- **
- ** int listen(int socket,
- **            int backlog);
+ ** Sets the socket on listener mode.
  **/
 
 int	listen_socket(int sock_fd, int capacity, char* port)
@@ -105,5 +94,23 @@ int	listen_socket(int sock_fd, int capacity, char* port)
 	std::cout << "      \\/_/\\/_/\\/__/\\/_/\\/_/\\/_/\\/_/\\/____/\\/____/\\/____/\\/___/  \\/___/\n";
 	std::cout << "\n                         Hosted at 127.0.0.1:" << port << std::endl;
 	std::cout << "\033[0m\n\n";
+	return (0);
+}
+
+/**
+ ** Inits server values before manage incoming connections.
+ **/
+
+int	init_server(char* port, char* passwd, server_t& server)
+{
+	server.addr = "127.0.0.1";
+	server.port = static_cast<std::string>(port);
+	server.passwd = static_cast<std::string>(passwd);
+	server.timeout = 5 * 1000 * 60;
+	std::memset(server.clients_info, 0, sizeof(server.clients_info));
+	std::memset(server.clients_fds, 0, sizeof(server.clients_fds));
+	server.clients_fds[0].fd = server.sock_fd;
+	server.clients_fds[0].events = POLLIN;
+	server.clients_nfds = 1;
 	return (0);
 }
