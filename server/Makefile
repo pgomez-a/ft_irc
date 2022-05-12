@@ -24,6 +24,6 @@ clean:
 	@ $(RM) $(OBJS)
 
 fclean:		clean
-	@ $(RM) $(NAME)
+	@ $(RM) $(NAME) ./.nameless_history
 
 re:		fclean all

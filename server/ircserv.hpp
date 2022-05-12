@@ -2,6 +2,7 @@
 # define IRCSERV_HPP
 
 # include <iostream>
+# include <fstream>
 # include <sys/socket.h>
 # include <sys/types.h>
 # include <arpa/inet.h>

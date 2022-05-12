@@ -11,6 +11,7 @@ static void	leaks(void)
 
 int	main(int argc, char* argv[])
 {
+	std::ofstream	history;
 	server_t	server;
 
 	//atexit(leaks);
@@ -28,6 +29,14 @@ int	main(int argc, char* argv[])
 		return (1);
 	if (listen_socket(server.sock_fd, 10, argv[1]) == -1)
 		return (1);
+	history.open(".nameless_history", std::fstream::trunc);
+	if (!history.is_open())
+	{
+		std::cerr << "\033[1m\033[91mError:\033[0m\033[91m ./ircserv ifstream.open()\n\033[0m";
+		close(server.sock_fd);
+		return (1);
+	}
+	history.close();
 	init_server(argv[1], argv[2], server);
 	manage_socket(server);
 	freeaddrinfo(server.res);

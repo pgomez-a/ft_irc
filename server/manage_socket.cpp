@@ -11,6 +11,7 @@ static int	accept_socket(server_t& server)
 	int			nsock_fd;
 	socklen_t		client_len;
 	struct sockaddr_storage	client_addr;
+	std::ofstream		history(".nameless_history", std::fstream::app);
 
 	nfds = server.clients_nfds;
 	client_len = sizeof(client_addr);
@@ -23,6 +24,7 @@ static int	accept_socket(server_t& server)
 			if (errno != EWOULDBLOCK)
 			{
 				std::cerr << "\033[1m\033[91mError:\033[0m\033[91m accept()\n\033[0m";
+				history.close();
 				return (-1);
 			}
 			break ;
@@ -33,10 +35,13 @@ static int	accept_socket(server_t& server)
 		server.clients_info[nfds].port = std::to_string(server.clients_info[nfds].info.sin_port);
 		server.clients_fds[nfds].fd = nsock_fd;
 		server.clients_fds[nfds].events = POLLIN;
-		std::cout << "\033[1m" << server.clients_info[nfds].addr << ":"
-			<< server.clients_info[nfds].port << "\033[0m Connection Accepted\n";
+		std::cout << "\033[1m\033[93m" << server.clients_info[nfds].addr << ":"
+			<< server.clients_info[nfds].port << "\033[0m\033[93m Connection Accepted\n\033[0m";
+		history << "\033[1m\033[93m <- " << server.clients_info[nfds].addr << ":"
+			<< server.clients_info[nfds].port << "\033[0m\033[93m Connection Accepted\n\033[0m";
 		nfds += 1;
 	}
+	history.close();
 	return (nfds);
 }
 
@@ -46,10 +51,11 @@ static int	accept_socket(server_t& server)
 
 static int	read_socket(client_t client, server_t server)
 {
-	int			recv_len;
-	int			tmp_recv_len;
-	char			recv_buff[212];
-	std::string		send_buff;
+	int		recv_len;
+	int		tmp_recv_len;
+	char		recv_buff[212];
+	std::string	send_buff;
+	std::ofstream	history(".nameless_history", std::fstream::app);
 
 	recv_len = 0;
 	tmp_recv_len = 0;
@@ -64,30 +70,37 @@ static int	read_socket(client_t client, server_t server)
 			if (errno != EWOULDBLOCK)
 			{
 				std::cerr << "\033[1m\033[91mError:\033[0m\033[91m recv()\n\033[0m";
-				std::cerr << errno << std::endl;
-				std::cout << client.sock_fd << std::endl;
+				history.close();
 				return (-2);
 			}
 			continue ;
 		}
 		if (static_cast<int>(recv_buff[tmp_recv_len]) == -1)
 		{
-			std::cout << "\033[1m" << client.addr << ":" << client.port << "\033[0m Connection Closed\n";
+			std::cout << "\033[1m\033[94m" << client.addr << ":" << client.port
+				<< "\033[0m\033[94m Connection Closed\n\033[0m";
+			history << "\033[1m\033[94m <- " << client.addr << ":" << client.port
+				<< "\033[0m\033[94m Connection Closed\n\033[0m";
+			history.close();
 			return (-1);
 		}
 		tmp_recv_len += recv_len;
 		if (recv_buff[tmp_recv_len - 1] == '\n' || tmp_recv_len == 210)
 		{
 			std::cout << "\033[1m" << client.addr << ":" << client.port << "\033[0m " << recv_buff;
+			history << "\033[1m <- " << client.addr << ":" << client.port << "\033[0m " << recv_buff;
 			send_buff = "\033[1m" + server.addr + ":" + server.port + "\033[0m Received\n";
+			history << "\033[1m -> " + client.addr + ":" + client.port + "\033[0m Received\n";
 			if (send(client.sock_fd, send_buff.c_str(), send_buff.size(), 0) == -1)
 			{
 				std::cerr << "\033[1m\033[91mError:\033[0m\033[91m send()\n\033[0m";
+				history.close();
 				return (-2);
 			}
 			break ;
 		}
 	}
+	history.close();
 	return (0);
 }
 
@@ -148,10 +161,10 @@ static void	close_poll_fds(server_t& server)
 
 int		manage_socket(server_t& server)
 {
-	int			reduced;
-	int			end_server;
-	int			func_return;
-	int			poll_tmp_nfds;
+	int	reduced;
+	int	end_server;
+	int	func_return;
+	int	poll_tmp_nfds;
 
 	reduced = 0;
 	end_server = 0;
