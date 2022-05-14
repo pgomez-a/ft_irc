@@ -1,5 +1,13 @@
 # ft_irc
 
+ToDo List:
+- Implementar parser
+- Implementar comandos
+- Gestionar canales
+- Gestionar operadores
+- (Comunicación segura)
+- (Implementar bot)
+
 ### nameless IRC server
 
 ### nameless IRC use
