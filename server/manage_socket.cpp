@@ -75,7 +75,7 @@ static int	read_socket(client_t client, server_t server)
 			}
 			continue ;
 		}
-		if (static_cast<int>(recv_buff[tmp_recv_len]) == -1)
+		if (recv_len == 0)
 		{
 			std::cout << "\033[1m\033[94m" << client.addr << ":" << client.port
 				<< "\033[0m\033[94m Connection Closed\n\033[0m";

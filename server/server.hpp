@@ -23,8 +23,8 @@ struct server_t
 		std::string		passwd;
 		struct addrinfo		hints;
 		struct addrinfo*	res;
-		struct pollfd		clients_fds[200];
-		client_t		clients_info[200];
+		struct pollfd		clients_fds[1024];
+		client_t		clients_info[1024];
 };
 
 #endif
