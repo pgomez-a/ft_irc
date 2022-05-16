@@ -77,6 +77,10 @@ Numeric Replies: **ERR_NEEDMOREPARAMS** &emsp; **ERR_NOTONCHANNEL** &emps; **ERR
 
 ***
 
-- **PRIVMSG:**
+- **PRIVMSG:** used **to send private messages between users**. \<receiver\> is the nickname of the receiver of the message. \<receiver\> can also be a list of names or channels separated with commas.<br><br>
+Command: **PRIVMSG \<receiver\>{,\<receiver\>} \<text to be sent\>**<br>
+Numeric Replies: **ERR_NORECIPIENT** &emsp; **ERR_CANNOTSENDTOCHAN** &emsp; **ERR_WILDTOPLEVEL** &emsp; **ERR_NOSUCHNICK** &emsp; **RPL_AWAY** &emsp; **ERR_NOTEXTTOSEND** &emsp; **ERR_NOTOPLEVEL** &emsp; **ERR_TOOMANYTARGETS**
+
+***
 
 - **NOTICE:**
