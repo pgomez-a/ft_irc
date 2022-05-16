@@ -32,7 +32,6 @@ All of the commands below have been implemented for client-server communications
 Command: **PASS \<password\>**<br>
 Numeric Replies: **ERR_NEEDMOREPARAMS** &emsp; **ERR_ALREADYREGISTRED**
 
-
 - **NICK:** used to **give user a nickname or change the previous one**. If a NICK message arrives at a server which already knows about an identical nickname for another client, a nickname collision occurs. As a result of a nickname collision, all instances of the nickname are removed from the server's database, and a KILL command is issued to remove the nickname from all other server's database. If the NICK message causing the collision was a nickname change, then the original (old) nick must be removed as well.<br>
 If the server recieves an identical NICK from a client which is directly connected, it may issue an ERR_NICKCOLLISION to the local client, drop the NICK command, and not generate any kills.<br><br>
 Command: **NICK \<nickname\>**<br>
@@ -40,7 +39,11 @@ Numeric Replies: **ERR_NONICKNAMEGIVEN** &emsp; **ERR_NICKNAMEINUSE** &emsp; **E
 
 
 
-- USER:
+- **USER:** used at the beginning of connection to specify the username, hostname, servername and realname of a new server. **Only after both USER and NICK have been received from a client does a user become registered.** It must be noted that realname parameter must be the last parameter, because it may contain space characters and must be prefixed with a colon (':') to make sure this is recognised as such.<br><br>
+Command: **USER \<username\> \<hostname\> \<servername\> \<realname\>**<br>
+Numeric Replies: **ERR_NEEDMOREPARAMS** &emsp; **ERR_ALREADYREGISTRED**
+
+
 - OPER:
 - QUIT:
 - JOIN:
