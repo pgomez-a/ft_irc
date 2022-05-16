@@ -30,7 +30,7 @@ All of the commands below have been implemented for client-server communications
 
 ***
 
-- **PASS:** used **to set a 'connection password'**. The password must be set before any attempt to register the connection is made. The password supplied must match the server password. It is possible to send multiple PASS commands before registering but only the last one sent is used for verification and it may not be changed once registered.<br><br>
+- [**PASS:**](https://datatracker.ietf.org/doc/html/rfc1459#section-4.1.1) used **to set a 'connection password'**. The password must be set before any attempt to register the connection is made. The password supplied must match the server password. It is possible to send multiple PASS commands before registering but only the last one sent is used for verification and it may not be changed once registered.<br><br>
 Command: **PASS \<password\>**<br>
 Numeric Replies: **ERR_NEEDMOREPARAMS** &emsp; **ERR_ALREADYREGISTRED**
 
