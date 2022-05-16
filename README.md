@@ -65,22 +65,13 @@ Numeric Replies: **None**
 **1 -** the user must be invited if the channel is invite-only;<br>
 **2 -** the user's nick/username/hostname must not match any active bans;<br>
 **3 -** the correct key (password) must be given if it is set.<br>
-Once a user has joined a channel, they receive notice about all commands their server receives which affect the channel.  This includes MODE, KICK, PART, QUIT and of course PRIVMSG/NOTICE. If a JOIN is successful, the user is then sent the channel's topic (using RPL_TOPIC) and the list of users who are on the channel (using RPL_NAMREPLY), which must include the user joining.<br><br>
+Once a user has joined a channel, they receive notice about all commands their server receives which affect the channel.  This includes PART, QUIT and of course PRIVMSG/NOTICE. If a JOIN is successful, the user is then sent the channel's topic (using RPL_TOPIC) and the list of users who are on the channel (using RPL_NAMREPLY), which must include the user joining.<br><br>
 Command: **JOIN \<channel\>{,\<channel\>} [\<key\>{,\<key\>}]**<br>
 Numeric Replies: **ERR_NEEDMOREPARAMS** &emsp; **ERR_INVITEONLYCHAN** &emsp; **ERR_CHANNELISFULL** &emsp; **ERR_NOSUCHCHANNEL** &emsp; **RPL_TOPIC** &emsp; **ERR_BANNEDFROMCHAN** &emsp; **ERR_BADCHANNELKEY** &emsp; **ERR_BADCHANMASK** &emsp; **ERR_TOOMANYCHANNELS**
 
 ***
 
-- **MODE:** dual-purpose command in IRC. **It allows both usernames and channels to have their mode changed.** The rationale for this choice is that one day nicknames will be obsolete and the equivalent property will be the channel. When parsing MODE messages, it is recommended that the entire message be parsed first and then the changes which resulted then passed on.<br><br>
-Command: **MODE**
-
-***
-
-- **KICK:**
-
-***
-
-- **PART:** causes the client sending the message to be removed from the list of active users for all given channels listed in the parameter string.<br><br>
+- **PART:** causes the client sending the message to be **removed from the list of active users** for all given channels listed in the parameter string.<br><br>
 Command: **PART \<channel\>{,\<channel\>}**<br>
 Numeric Replies: **ERR_NEEDMOREPARAMS** &emsp; **ERR_NOTONCHANNEL** &emps; **ERR_NOSUCHCHANNEL**
 
