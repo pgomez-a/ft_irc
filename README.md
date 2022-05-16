@@ -71,11 +71,20 @@ Numeric Replies: **ERR_NEEDMOREPARAMS** &emsp; **ERR_INVITEONLYCHAN** &emsp; **E
 
 ***
 
-- **MODE:**
+- **MODE:** dual-purpose command in IRC. **It allows both usernames and channels to have their mode changed.** The rationale for this choice is that one day nicknames will be obsolete and the equivalent property will be the channel. When parsing MODE messages, it is recommended that the entire message be parsed first and then the changes which resulted then passed on.<br><br>
+Command: **MODE**
+
+***
 
 - **KICK:**
 
-- **PART:**
+***
+
+- **PART:** causes the client sending the message to be removed from the list of active users for all given channels listed in the parameter string.<br><br>
+Command: **PART \<channel\>{,\<channel\>}**<br>
+Numeric Replies: **ERR_NEEDMOREPARAMS** &emsp; **ERR_NOTONCHANNEL** &emps; **ERR_NOSUCHCHANNEL**
+
+***
 
 - **PRIVMSG:**
 
