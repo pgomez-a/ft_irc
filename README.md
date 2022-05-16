@@ -83,4 +83,5 @@ Numeric Replies: **ERR_NORECIPIENT** &emsp; **ERR_CANNOTSENDTOCHAN** &emsp; **ER
 
 ***
 
-- **NOTICE:**
+- **NOTICE:** The NOTICE message is used similarly to PRIVMSG. The difference between NOTICE and PRIVMSG is that **automatic replies must never be sent** in response to a NOTICE message.<br><br>
+Command: **NOTICE \<nickname\> \<text\>**
