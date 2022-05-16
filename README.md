@@ -36,32 +36,32 @@ Numeric Replies: **ERR_NEEDMOREPARAMS** &emsp; **ERR_ALREADYREGISTRED**
 
 ***
 
-- **NICK:** used **to give user a nickname or change the previous one**. If a NICK message arrives at a server which already knows about an identical nickname for another client, a nickname collision occurs. As a result of a nickname collision, all instances of the nickname are removed from the server's database, and a KILL command is issued to remove the nickname from all other server's database. If the NICK message causing the collision was a nickname change, then the original (old) nick must be removed as well.<br>
+- [**NICK:**](https://datatracker.ietf.org/doc/html/rfc1459#section-4.1.2) used **to give user a nickname or change the previous one**. If a NICK message arrives at a server which already knows about an identical nickname for another client, a nickname collision occurs. As a result of a nickname collision, all instances of the nickname are removed from the server's database, and a KILL command is issued to remove the nickname from all other server's database. If the NICK message causing the collision was a nickname change, then the original (old) nick must be removed as well.<br>
 If the server recieves an identical NICK from a client which is directly connected, it may issue an ERR_NICKCOLLISION to the local client, drop the NICK command, and not generate any kills.<br><br>
 Command: **NICK \<nickname\>**<br>
 Numeric Replies: **ERR_NONICKNAMEGIVEN** &emsp; **ERR_NICKNAMEINUSE** &emsp; **ERR_ERRONEUSNICKNAME** &emsp; **ERR_NICKCOLLISION**
 
 ***
 
-- **USER:** used at the beginning of connection to specify the username, hostname, servername and realname of a new server. **Only after both USER and NICK have been received from a client does a user become registered.** It must be noted that realname parameter must be the last parameter, because it may contain space characters and must be prefixed with a colon (':') to make sure this is recognised as such.<br><br>
+- [**USER:**](https://datatracker.ietf.org/doc/html/rfc1459#section-4.1.3) used at the beginning of connection to specify the username, hostname, servername and realname of a new server. **Only after both USER and NICK have been received from a client does a user become registered.** It must be noted that realname parameter must be the last parameter, because it may contain space characters and must be prefixed with a colon (':') to make sure this is recognised as such.<br><br>
 Command: **USER \<username\> \<hostname\> \<servername\> \<realname\>**<br>
 Numeric Replies: **ERR_NEEDMOREPARAMS** &emsp; **ERR_ALREADYREGISTRED**
 
 ***
 
-- **OPER:** used by a normal user **to obtain operator privileges**. The combination of \<user\> and \<password\> are required to gain Operator privileges.<br><br>
+- [**OPER:**](https://datatracker.ietf.org/doc/html/rfc1459#section-4.1.5) used by a normal user **to obtain operator privileges**. The combination of \<user\> and \<password\> are required to gain Operator privileges.<br><br>
 Command: **OPER \<user\> \<password\>**<br>
 Numeric Replies: **ERR_NEEDMOREPARAMS** &emsp; **ERR_NOOPERHOST** &emsp; **RPL_YOUREOPER** &emsp; **ERR_PASSWDMISMATCH**
 
 ***
 
-- **QUIT:** a client session if ended with a quit message. **The server must close the connection to a client which sends a QUIT message.** If a "Quit Message" is given, this will be sent instead of the default message, the nickname. If, for some other reason, a client connection is closed without  the client  issuing  a  QUIT  command  (e.g.  client  dies and EOF occurs on socket), the server is required to fill in the quit  message  with some sort  of  message  reflecting the nature of the event which caused it to happen.<br><br>
+- [**QUIT:**](https://datatracker.ietf.org/doc/html/rfc1459#section-4.1.6) a client session if ended with a quit message. **The server must close the connection to a client which sends a QUIT message.** If a "Quit Message" is given, this will be sent instead of the default message, the nickname. If, for some other reason, a client connection is closed without  the client  issuing  a  QUIT  command  (e.g.  client  dies and EOF occurs on socket), the server is required to fill in the quit  message  with some sort  of  message  reflecting the nature of the event which caused it to happen.<br><br>
 Command: **QUIT [\<Quit message\>]**<br>
 Numeric Replies: **None**
 
 ***
 
-- **JOIN:** used by client **to start listening a specific channel**. The conditions which affect this are as follows:<br>
+- [**JOIN:**](https://datatracker.ietf.org/doc/html/rfc1459#section-4.2.1) used by client **to start listening a specific channel**. The conditions which affect this are as follows:<br>
 **1 -** the user must be invited if the channel is invite-only;<br>
 **2 -** the user's nick/username/hostname must not match any active bans;<br>
 **3 -** the correct key (password) must be given if it is set.<br>
@@ -71,17 +71,17 @@ Numeric Replies: **ERR_NEEDMOREPARAMS** &emsp; **ERR_INVITEONLYCHAN** &emsp; **E
 
 ***
 
-- **PART:** causes the client sending the message to be **removed from the list of active users** for all given channels listed in the parameter string.<br><br>
+- [**PART:**](https://datatracker.ietf.org/doc/html/rfc1459#section-4.2.2) causes the client sending the message to be **removed from the list of active users** for all given channels listed in the parameter string.<br><br>
 Command: **PART \<channel\>{,\<channel\>}**<br>
 Numeric Replies: **ERR_NEEDMOREPARAMS** &emsp; **ERR_NOTONCHANNEL** &emps; **ERR_NOSUCHCHANNEL**
 
 ***
 
-- **PRIVMSG:** used **to send private messages between users**. \<receiver\> is the nickname of the receiver of the message. \<receiver\> can also be a list of names or channels separated with commas.<br><br>
+- [**PRIVMSG:**](https://datatracker.ietf.org/doc/html/rfc1459#section-4.4.1) used **to send private messages between users**. \<receiver\> is the nickname of the receiver of the message. \<receiver\> can also be a list of names or channels separated with commas.<br><br>
 Command: **PRIVMSG \<receiver\>{,\<receiver\>} \<text to be sent\>**<br>
 Numeric Replies: **ERR_NORECIPIENT** &emsp; **ERR_CANNOTSENDTOCHAN** &emsp; **ERR_WILDTOPLEVEL** &emsp; **ERR_NOSUCHNICK** &emsp; **RPL_AWAY** &emsp; **ERR_NOTEXTTOSEND** &emsp; **ERR_NOTOPLEVEL** &emsp; **ERR_TOOMANYTARGETS**
 
 ***
 
-- **NOTICE:** The NOTICE message is used similarly to PRIVMSG. The difference between NOTICE and PRIVMSG is that **automatic replies must never be sent** in response to a NOTICE message.<br><br>
+- [**NOTICE:**](https://datatracker.ietf.org/doc/html/rfc1459#section-4.4.2) The NOTICE message is used similarly to PRIVMSG. The difference between NOTICE and PRIVMSG is that **automatic replies must never be sent** in response to a NOTICE message.<br><br>
 Command: **NOTICE \<nickname\> \<text\>**
