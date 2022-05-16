@@ -26,7 +26,7 @@ The specifications of the **nameless server** are as follows:
 When the server is run, it is hosted on localhost by default. The localhost domain is associated with the IP address **127.0.0.1**. But how can we connect to our server? The thing is that our host (our computer) is receiving data packets all the time. These packets have been built using different protocols: **HTTP**, **ARP**, **FTP**, etc. Before handling these packets, the host must have a way to differentiate between them. To achieve this, we use ports. The reason our host may treat HTTP packets differently than it treats FTP packets is because HTTP packets arrive on port 80 and FTP packets arrive on port 21. **So, to allow our host to handle IRC packets, we have to connect our server to a port on the host.** When a client connects to this port, all messages it sends will be treated as IRC packets. This is the reason why we have to assign a port to our server.
 
 ### nameless IRC commands
-All of the commands below have been implemented for client-server communications:
+All of the commands below have been implemented for client-server communications. Check each command reply in the [**RFC 1459**](https://datatracker.ietf.org/doc/html/rfc1459#section-6).
 
 ***
 
@@ -85,3 +85,5 @@ Numeric Replies: **ERR_NORECIPIENT** &emsp; **ERR_CANNOTSENDTOCHAN** &emsp; **ER
 
 - [**NOTICE:**](https://datatracker.ietf.org/doc/html/rfc1459#section-4.4.2) The NOTICE message is used similarly to PRIVMSG. The difference between NOTICE and PRIVMSG is that **automatic replies must never be sent** in response to a NOTICE message.<br><br>
 Command: **NOTICE \<nickname\> \<text\>**
+
+***
