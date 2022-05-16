@@ -54,4 +54,20 @@ Command: **QUIT [\<Quit message\>]**<br>
 Numeric Replies: **None**
 
 
-- JOIN:
+- **JOIN:** used by client **to start listening a specific channel**. The conditions which affect this are as follows:<br>
+**1 -** the user must be invited if the channel is invite-only;<br>
+**2 -** the user's nick/username/hostname must not match any active bans;<br>
+**3 -** the correct key (password) must be given if it is set.<br>
+Once a user has joined a channel, they receive notice about all commands their server receives which affect the channel.  This includes MODE, KICK, PART, QUIT and of course PRIVMSG/NOTICE. If a JOIN is successful, the user is then sent the channel's topic (using RPL_TOPIC) and the list of users who are on the channel (using RPL_NAMREPLY), which must include the user joining.<br><br>
+Command: **JOIN \<channel\>{,\<channel\>} [\<key\>{,\<key\>}]**<br>
+Numeric Replies: **ERR_NEEDMOREPARAMS** &emsp; **ERR_INVITEONLYCHAN** &emsp; **ERR_CHANNELISFULL** &emsp; **ERR_NOSUCHCHANNEL** &emsp; **RPL_TOPIC** &emsp; **ERR_BANNEDFROMCHAN** &emsp; **ERR_BADCHANNELKEY** &emsp; **ERR_BADCHANMASK** &emsp; **ERR_TOOMANYCHANNELS**
+
+- **MODE:**
+
+- **KICK:**
+
+- **PART:**
+
+- **PRIVMSG:**
+
+- **NOTICE:**
