@@ -10,7 +10,7 @@ INCLUDE_HEADERS = $(addprefix -I, $(FOLDERS))
 
 CXXFLAGS	=	-Wall -Werror -Wextra -std=c++98 $(INCLUDE_HEADERS)
 
-PARSER_SRCS	=	$(addprefix ./parser/, lexer.cpp parser.cpp)
+PARSER_SRCS	=	$(addprefix ./parser/, lexer.cpp parser.cpp word_composition.cpp)
 
 SERVER_SRCS	=	$(addprefix ./server/, config_socket.cpp manage_socket.cpp)
 

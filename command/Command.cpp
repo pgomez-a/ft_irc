@@ -6,5 +6,5 @@ Command::~Command(void) {};
 
 void	Command::who_am_i(void)
 {
-	std::cout << "I am a humble " << _command_name << std::endl;
+	std::cout << _command_name << std::endl;
 }
