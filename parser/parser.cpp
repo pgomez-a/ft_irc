@@ -9,15 +9,15 @@ static	rule	rule_matrix[5][5] = {
 										rule1_prefixed_message_expansion,
 										NULL,
 										NULL,
-										NULL,
-										NULL//rule6_rest_expansion
+										rule7_discard_symbol,
+										rule6_rest_prefix
 									},
 									{
 										rule2_message_expansion,
 										rule4_command_expansion,
 										rule3_origin_expansion,
-										NULL,
-										NULL
+										rule5_parameters_expansion,
+										rule8_rest_expansion
 									}
 									};
 
@@ -65,12 +65,34 @@ bool valid_user(std::string s)
 	return check_str(s, user);
 }
 
-bool valid_host(std::string s)
+bool	valid_hostaddr(std::string s) //ip4 addresses only
 {
-	return check_str(s, host);
+	std::string::iterator	i = s.begin();
+	size_t					p = 0;
+	size_t					d = 0;
+
+	while (i != s.end())
+	{
+		if (digit(*i) && d <= 3)
+			++d;
+		else if (*i == '.' && (p < 4 && d >= 1))
+		{
+			++p;
+			d = 0;
+		}
+		else
+			return false;
+		++i;
+	}
+	return true;
 }
 
-bool	servername(std::string n)
+bool valid_host(std::string s)
+{
+	return (valid_hostaddr(s) || valid_servername(s));
+}
+
+bool	valid_servername(std::string n)
 {
 	std::string	s;
 	size_t		i;
@@ -96,7 +118,7 @@ bool	servername(std::string n)
 	return true;
 }
 
-bool	user_origin(std::string	n)
+bool	valid_user_origin(std::string n)
 {
 	size_t		p;
 	std::string	m; //nickname
@@ -105,30 +127,33 @@ bool	user_origin(std::string	n)
 
 	p = n.find("@");
 	if (p != std::string::npos)
-	{
 		h = n.substr(p, n.length() - p);
-	}
 	p = n.find("!");
 	if (p != std::string::npos)
-	{
 		u = n.substr(p, n.length() - (p + h.length()));
-	}
 	m = n.substr(0, n.length() - u.length() - h.length());
 	if ((!h.empty() && !valid_host(m)) || ((!u.empty() && !valid_user(u))))
 		return (false);
 	return true;
 }
 
-static std::string	origin(token_type &t)
+bool	valid_rest(std::string r)
 {
-	std::string	o;
+	bool p = true;
 
-	if (servername(t.content)|| user_origin(t.content))
-		o = t.content;
-	return o;
+	if (r.length())
+	{
+		p = check_str(r, rest);
+	}
+	return p;
 }
 
-static Command	*valid_command(token_type &t)
+bool valid_parameter(std::string p)
+{
+	return check_str(p, parameter);
+}
+
+Command	*valid_command(token_type &t)
 {
 	Command	*c = NULL;
 	std::string s = "UNKNOWN_COMMAND";
@@ -139,9 +164,39 @@ static Command	*valid_command(token_type &t)
 	return c;
 }
 
+/////////////////////////////////////////
+
+static std::string rest(token_type &t)
+{	
+	std::string	r;
+
+	if (valid_rest(t.content))
+		r = t.content;
+	return r;
+}
+
+static std::string parameter(token_type &t)
+{
+	std::string	p;
+
+	if (valid_parameter(t.content))
+		p = t.content;
+	return p;
+}
+
+static std::string	origin(token_type &t)
+{
+	std::string	o;
+
+	if (valid_servername(t.content)|| valid_user_origin(t.content))
+		o = t.content;
+	return o;
+}
+
+/////////////////////////////////////////
+
 void	rule1_prefixed_message_expansion(symbol_stack &s, parser_product &p, token_type &t)
 {
-	//std::cout << "PREFIX ORIGIN I\n";
 	s.empty();
 	s.push(I);
 	s.push(ORIGIN);
@@ -153,10 +208,9 @@ void	rule1_prefixed_message_expansion(symbol_stack &s, parser_product &p, token_
 
 void	rule2_message_expansion(symbol_stack &s, parser_product &p, token_type &t)
 {
-	//std::cout << "C PARAMETERS [PREFIX REST]\n";
 	s.pop();
 	s.push(REST);
-	s.push(PARAMETERS);
+	s.push(PARAMETER);
 	s.push(C);
 
 	(void)p;
@@ -165,22 +219,59 @@ void	rule2_message_expansion(symbol_stack &s, parser_product &p, token_type &t)
 
 void	rule3_origin_expansion(symbol_stack &s, parser_product &p, token_type &t)
 {
-	//std::cout << "origin x\n";
 	t.type = ORIGIN;
 	p.origin = origin(t);
 	(void)s;
+}
+
+void	rule4_command_expansion(symbol_stack &s, parser_product &p, token_type &t)
+{
+	t.type = C;
+	p.command = valid_command(t);
+	(void)s;
+}
+
+void	rule5_parameters_expansion(symbol_stack &s, parser_product &p, token_type &t)
+{
+	if (p.argc < 14)
+	{
+		p.argt[p.argc] = parameter(t);
+		if (!p.argt[p.argc].empty())
+		{
+			t.type = PARAMETER;
+			s.push(PARAMETER);
+			p.argc++;
+		}
+		else
+			p.error = BAD_PARAMETER;
+	}
+	else
+		p.error = TOO_MANY_PARAMETERS;
+}
+
+void	rule6_rest_prefix(symbol_stack &s, parser_product &p, token_type &t)
+{
+	t.type = REST;
+	s.push(REST);
+
+	(void)p;
+}
+
+void	rule7_discard_symbol(symbol_stack &s, parser_product &p, token_type &t)
+{
+	s.pop();
 	(void)p;
 	(void)t;
 }
 
-
-
-void	rule4_command_expansion(symbol_stack &s, parser_product &p, token_type &t)
+void	rule8_rest_expansion(symbol_stack &s, parser_product &p, token_type &t)
 {
-	
-	p.command = valid_command(t);
-	s.pop();
+	t.type = REST;
+	p.rest = rest(t);
+	(void)s;
 }
+/////////////////////////////////////////
+
 
 static parser_product	parsing_loop(token_list &l, symbol_stack &s)
 {

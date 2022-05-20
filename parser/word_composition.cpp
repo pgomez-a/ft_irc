@@ -7,7 +7,7 @@ bool	digit(char c){return isdigit(c);}
 
 bool	user(char c)
 {
-	std::string	excluded_set(5, 0);
+	static std::string	excluded_set(5, 0);
 
 	excluded_set[1] = 13;//cr
 	excluded_set[2] = 10;//nl
@@ -18,26 +18,42 @@ bool	user(char c)
 
 bool	rest(char c)
 {
-	std::string	excluded_set(3, 0);
+	static const char excluded_set[3] = {0, 13, 10};
 
-	excluded_set[1] = 13;//cr
-	excluded_set[2] = 10;//nl
-	return !is_in_set(c, excluded_set);
+	return !is_in_set(c, excluded_set, 3);
+}
+
+bool	parameter(char c)
+{
+	static const char excluded_set[5] = {0, 13, 10,' ', ':'};
+
+	return !is_in_set(c, excluded_set, 5);
 }
 
 bool	special(char c)
 {
-	std::string	special_set("[]\\`-^{|}");
+	static const char	special_set[9] = {'[',']','\\','`','-','^','{','|','}'};
 
-	return is_in_set(c, special_set);
+	return is_in_set(c, special_set, 9);
 }
 
 bool	c(char c, char d){return (c == d);}
 
+bool	is_in_set(char c, const char *set, size_t len)
+{
+	for (size_t i = 0; i < len; ++i)
+	{
+		if (c == set[i])
+			return true;
+	}
+	return false;
+}
 
 bool	is_in_set(char c, std::string set)
 {
-	for (size_t i = 0; i < set.length(); ++i)
+	size_t len = set.length();
+
+	for (size_t i = 0; i < len; ++i)
 	{
 		if (c == set[i])
 			return true;

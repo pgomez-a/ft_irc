@@ -65,9 +65,11 @@ static void	test_parser_product(std::string input, std::string expected, parser_
 	p.command->who_am_i();
 	std::cout << "\t\tOrigin:	" <<  p.origin << std::endl;
 	std::cout << "\t\tArguments:	";
-	for (size_t i = 0; p.arguments[i].size() && i < 14; ++i)
+	for (size_t i = 0;  i < p.argc; ++i)
 	{
-		std::cout << p.arguments[i] << ", ";
+		std::cout << p.argt[i];
+		if ((i+1) < p.argc)
+			std::cout << ", ";
 	}
 	std::cout << std::endl;
 	std::cout << "\t\tMessages:	" << p.rest << std::endl;
@@ -179,6 +181,7 @@ int main(void)
 		//token parsing and correct command association
 		printf("\nparser\n");
 
+		printf("\n\torigin and command:\n\n");
 		input = "NICK";
 		expected = expected_parser_output_format("NICK", "", "", "");
 		tokens = message_lexer(input);
@@ -203,12 +206,58 @@ int main(void)
 		tokens = message_lexer(input);
 		p = message_parser(tokens);
 		test_parser_product(input, expected,p);
-		
-		/*input = "NICK arg1 arg2 arg3";
-		expected = expected_parser_output_format("NICK", "", "", "");
+
+		input = ":n@123.456.789.101 NICK";
+		expected = expected_parser_output_format("NICK", "n@123.456.789.101", "", "");
 		tokens = message_lexer(input);
 		p = message_parser(tokens);
-		test_parser_product(input, expected,p);*/
+		test_parser_product(input, expected,p);
+		
+		printf("\n\tparameters:\n\n");
+		
+		input = "NICK one";
+		expected = expected_parser_output_format("NICK", "", "one", "");
+		tokens = message_lexer(input);
+		p = message_parser(tokens);
+		test_parser_product(input, expected,p);
+
+		input = "NICK one two";
+		expected = expected_parser_output_format("NICK", "", "one, two", "");
+		tokens = message_lexer(input);
+		p = message_parser(tokens);
+		test_parser_product(input, expected,p);
+
+		input = "NICK one two three";
+		expected = expected_parser_output_format("NICK", "", "one, two, three", "");
+		tokens = message_lexer(input);
+		p = message_parser(tokens);
+		test_parser_product(input, expected,p);
+
+		input = ":123.this.is-a.host NICK one two three four";
+		expected = expected_parser_output_format("NICK", "123.this.is-a.host", "one, two, three, four", "");
+		tokens = message_lexer(input);
+		p = message_parser(tokens);
+		test_parser_product(input, expected,p);
+
+		printf("\n\trest:\n\n");
+
+		input = "NICK :npinto-g";
+		expected = expected_parser_output_format("NICK", "", "", "npinto-g");
+		tokens = message_lexer(input);
+		p = message_parser(tokens);
+		test_parser_product(input, expected,p);
+
+		input = "USER one two three :la la la la lalallalal ala";
+		expected = expected_parser_output_format("USER", "", "one, two, three", "la la la la lalallalal ala");
+		tokens = message_lexer(input);
+		p = message_parser(tokens);
+		test_parser_product(input, expected,p);
+
+		input = ":123.this.is-a.host NICK one two three four :this is the rest";
+		expected = expected_parser_output_format("NICK", "123.this.is-a.host", "one, two, three, four", "this is the rest");
+		tokens = message_lexer(input);
+		p = message_parser(tokens);
+		test_parser_product(input, expected,p);
 	}
 	return (0);
 }
