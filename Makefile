@@ -14,7 +14,7 @@ PARSER_SRCS	=	$(addprefix ./parser/, lexer.cpp parser.cpp word_composition.cpp)
 
 SERVER_SRCS	=	$(addprefix ./server/, config_socket.cpp manage_socket.cpp)
 
-CMD_SRCS	=	$(addprefix ./command/, Command.cpp Nick.cpp User.cpp)
+CMD_SRCS	=	$(addprefix ./command/, Command.cpp Error.cpp Join.cpp Nick.cpp Notice.cpp Oper.cpp Pass.cpp Privmsg.cpp Quit.cpp User.cpp)
 
 SRCS		= 	$(PARSER_SRCS) $(SERVER_SRCS) $(CMD_SRCS) main.cpp
 

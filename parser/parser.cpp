@@ -30,7 +30,7 @@ static void	init_command_map(void)
 
 	command_map.insert(std::make_pair("NICK", &command_array[NICK]));
 	command_map.insert(std::make_pair("USER", &command_array[USER]));
-	command_map.insert(std::make_pair("UNKNOWN_COMMAND", &command_array[UNKNOWN_COMMAND]));
+	command_map.insert(std::make_pair("UNKNOWN_COMMAND", &command_array[ERROR]));
 }
 
 /* SYMBOL EXPANSION AND VALIDITY*/
