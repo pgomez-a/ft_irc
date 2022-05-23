@@ -1,9 +1,12 @@
 #include "parser.hpp"
 #include <ctype.h>
+#include <cstdarg>
 
 bool	letter(char c){return isalpha(c);}
 
 bool	digit(char c){return isdigit(c);}
+
+bool	hyphen(char c){return (c == '-');}
 
 bool	user(char c)
 {
@@ -69,4 +72,19 @@ bool	check_str(std::string s, char_filter f)
 			return false;
 	}
 	return true;
+}
+
+bool	check_str(std::string s, std::list<char_filter> l)
+{
+	bool	p = true;
+	
+	for (size_t i = 0; s[i] && p; ++i)
+	{
+		p = false;
+		for (std::list<char_filter>::iterator f = l.begin(); f != l.end() && !p; ++f)
+		{
+			p = (*f)(s[i]);
+		}
+	}
+	return p;
 }

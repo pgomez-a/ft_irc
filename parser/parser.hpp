@@ -6,6 +6,8 @@
 # include <stack>
 # include <map>
 
+# define SERVERNAME_LEN 64
+
 enum	e_PARSER_SYMBOLS
 {
 	I, //inital parser symbol
@@ -17,10 +19,13 @@ enum	e_PARSER_SYMBOLS
 	//
 };
 
+//Error replies  are numbered [400, 599] in RFC 2812
 enum	e_PARSER_ERRORS
 {
-	BAD_PARAMETER = 111,
-	TOO_MANY_PARAMETERS = 222
+	ERR_UNKNOWNCOMMAND = 421,
+	BAD_PARAMETER = 999,
+	TOO_MANY_PARAMETERS = 888,
+	BAD_ORIGIN = 777
 };
 
 typedef	struct	s_parser_product 
@@ -64,6 +69,7 @@ typedef	bool (*char_filter)(char);
 
 bool	letter(char c);
 bool	digit(char c);
+bool	hyphen(char c);
 bool	special(char c);
 bool	user(char c);
 bool	host(char c);
@@ -76,6 +82,7 @@ bool	is_in_set(char c, std::string set);
 bool	is_in_set(char c, const char *set, size_t len);
 
 bool	check_str(std::string s, char_filter f);
+bool	check_str(std::string s, std::list<char_filter> l);
 
 
 #endif

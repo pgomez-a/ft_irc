@@ -11,6 +11,7 @@
 # include "Join.hpp"
 # include "Privmsg.hpp"
 # include "Notice.hpp"
+# include "Part.hpp"
 
 /*
 PASS: used to set a 'connection password'. The password must be set before any attempt to register 

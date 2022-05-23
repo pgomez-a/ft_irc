@@ -11,8 +11,8 @@ class Command
 		Command(void);
 		~Command(void);
 	
-		void	who_am_i(void);
-
+		void		who_am_i(void);
+		std::string	get_name(void);
 
 	protected :
 

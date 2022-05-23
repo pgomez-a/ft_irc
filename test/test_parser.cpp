@@ -43,7 +43,7 @@ static void	test_token_list(std::string input, std::string expected, token_list 
 	output_validation(input, actual, expected, "BAD_TOKEN");
 }
 
-static std::string		expected_parser_output_format(std::string who_am_i, std::string origin, std::string	arguments, std::string message)
+static std::string		expected_parser_output_format(std::string who_am_i, std::string origin, std::string	arguments, std::string message, int error = 0)
 {
 	std::string	expected;
 
@@ -51,6 +51,12 @@ static std::string		expected_parser_output_format(std::string who_am_i, std::str
 	expected += "\t\tOrigin:	" + origin + "\n";
 	expected += "\t\tArguments:	" + arguments + "\n";
 	expected += "\t\tMessages:	" + message + "\n";
+	if (error)
+	{
+		std::stringstream s;
+		s << error;
+		expected += "\t\tError:\t" + s.str() + "\n";
+	}
 
 	return expected;
 }
@@ -62,7 +68,10 @@ static void	test_parser_product(std::string input, std::string expected, parser_
 
 	std::cout.rdbuf(captured_output.rdbuf());
 	std::cout << "\n\t\tCommands:	";
-	p.command->who_am_i();
+	if (p.command)
+		p.command->who_am_i();
+	else
+	std::cout << "\n";
 	std::cout << "\t\tOrigin:	" <<  p.origin << std::endl;
 	std::cout << "\t\tArguments:	";
 	for (size_t i = 0;  i < p.argc; ++i)
@@ -73,6 +82,10 @@ static void	test_parser_product(std::string input, std::string expected, parser_
 	}
 	std::cout << std::endl;
 	std::cout << "\t\tMessages:	" << p.rest << std::endl;
+	if (p.error)
+	{
+		std::cout << "\t\tError:\t" << p.error << "\n";
+	}
 	output_validation(input, captured_output.str(), expected, "BAD_CMD_LST");
 	std::cout.rdbuf(original_cout);
 	std::cout << std::endl;
@@ -207,6 +220,12 @@ int main(void)
 		p = message_parser(tokens);
 		test_parser_product(input, expected,p);
 
+		input = ":ronin!jomon@samur.ai USER";
+		expected = expected_parser_output_format("USER", "ronin!jomon@samur.ai", "", "");
+		tokens = message_lexer(input);
+		p = message_parser(tokens);
+		test_parser_product(input, expected,p);
+
 		input = ":n@123.456.789.101 NICK";
 		expected = expected_parser_output_format("NICK", "n@123.456.789.101", "", "");
 		tokens = message_lexer(input);
@@ -255,6 +274,67 @@ int main(void)
 
 		input = ":123.this.is-a.host NICK one two three four :this is the rest";
 		expected = expected_parser_output_format("NICK", "123.this.is-a.host", "one, two, three, four", "this is the rest");
+		tokens = message_lexer(input);
+		p = message_parser(tokens);
+		test_parser_product(input, expected,p);
+
+		printf("\n\t Parser error management:\n\n");
+		input = "BADCMD :npinto-g";
+		expected = expected_parser_output_format("ERROR", "", "", "", ERR_UNKNOWNCOMMAND);
+		tokens = message_lexer(input);
+		p = message_parser(tokens);
+		test_parser_product(input, expected,p);
+	
+		input = "BADCMD :npinto-g";
+		expected = expected_parser_output_format("ERROR", "", "", "", ERR_UNKNOWNCOMMAND);
+		tokens = message_lexer(input);
+		p = message_parser(tokens);
+		test_parser_product(input, expected,p);
+
+		input = ":-badservername USER :npinto-g";
+		expected = expected_parser_output_format("", "", "", "", BAD_ORIGIN);
+		tokens = message_lexer(input);
+		p = message_parser(tokens);
+		test_parser_product(input, expected,p);
+
+		input = ":badnicknameistoolong@123.456.789.101.100 NICK";
+		expected = expected_parser_output_format("", "", "", "", BAD_ORIGIN);
+		tokens = message_lexer(input);
+		p = message_parser(tokens);
+		test_parser_product(input, expected,p);
+
+		input = ":badipv4@123.456.789.1001 NICK";//bad ip but good servername!
+		expected = expected_parser_output_format("NICK", "badipv4@123.456.789.1001", "", "");
+		tokens = message_lexer(input);
+		p = message_parser(tokens);
+		test_parser_product(input, expected,p);
+
+		input = ":badipv4@1023.456.789.101 NICK";//bad ip but good servername!
+		expected = expected_parser_output_format("NICK", "badipv4@1023.456.789.101", "", "");
+		tokens = message_lexer(input);
+		p = message_parser(tokens);
+		test_parser_product(input, expected,p);
+
+		input = ":badipv4@123.4560.789.101 NICK";//bad ip but good servername!
+		expected = expected_parser_output_format("NICK", "badipv4@123.4560.789.101", "", "");
+		tokens = message_lexer(input);
+		p = message_parser(tokens);
+		test_parser_product(input, expected,p);
+
+		input = ":toolong@123.4560.789.101111111111111111111111111111111111111111111111111111111 NICK";//bad ip and oversized servername
+		expected = expected_parser_output_format("", "", "", "", BAD_ORIGIN);
+		tokens = message_lexer(input);
+		p = message_parser(tokens);
+		test_parser_product(input, expected,p);
+
+		input = ":@missingnickname NICK";
+		expected = expected_parser_output_format("", "", "", "", BAD_ORIGIN);
+		tokens = message_lexer(input);
+		p = message_parser(tokens);
+		test_parser_product(input, expected,p);
+
+		input = ":nick!@missing.user.after.exclamation USER";
+		expected = expected_parser_output_format("", "", "", "", BAD_ORIGIN);
 		tokens = message_lexer(input);
 		p = message_parser(tokens);
 		test_parser_product(input, expected,p);
