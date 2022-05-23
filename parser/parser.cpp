@@ -298,6 +298,13 @@ void	rule8_rest_expansion(symbol_stack &s, parser_product &p, token_type &t)
 }
 /////////////////////////////////////////
 
+static void	set_err_product(parser_product &p)
+{
+	p.command = &command_array[ERROR];
+	p.argc = 0;
+	p.origin.clear();
+	p.rest.clear();
+}
 
 static parser_product	parsing_loop(token_list &l, symbol_stack &s)
 {
@@ -307,6 +314,7 @@ static parser_product	parsing_loop(token_list &l, symbol_stack &s)
 	size_t					c = 0; // current symbol 
 	rule					r = 0;
 
+	p.error = NO_TOKENS * l.empty();
 	while (t != u && !p.error)
 	{	
 		c = s.top();
@@ -320,12 +328,7 @@ static parser_product	parsing_loop(token_list &l, symbol_stack &s)
 		}
 	}
 	if (p.error)
-	{
-		p.command = &command_array[ERROR];
-		p.argc = 0;
-		p.origin.clear();
-		p.rest.clear();
-	}
+		set_err_product(p);
 	return p;
 }
 

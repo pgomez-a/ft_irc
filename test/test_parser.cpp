@@ -364,6 +364,12 @@ int main(void)
 		p = message_parser(tokens);
 		test_parser_product(input, expected,p);
 
+		input = "";
+		expected = expected_parser_output_format("ERROR", "", "", "", NO_TOKENS);
+		tokens = message_lexer(input);
+		p = message_parser(tokens);
+		test_parser_product(input, expected,p);
+
 	}
 	return (0);
 }
