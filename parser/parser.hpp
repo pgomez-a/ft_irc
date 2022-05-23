@@ -10,12 +10,12 @@
 
 enum	e_PARSER_SYMBOLS
 {
-	I, //inital parser symbol
+	I, //inital parser symbol, parser loops always starts with one
 	C,
 	ORIGIN,
 	PARAMETER,
 	REST
-	//ORI
+	//
 	//
 };
 
@@ -25,7 +25,8 @@ enum	e_PARSER_ERRORS
 	ERR_UNKNOWNCOMMAND = 421,
 	BAD_PARAMETER = 999,
 	TOO_MANY_PARAMETERS = 888,
-	BAD_ORIGIN = 777
+	BAD_ORIGIN = 777,
+	BAD_TRAILING = 10203
 };
 
 typedef	struct	s_parser_product 
@@ -54,6 +55,7 @@ void			rule8_rest_expansion(symbol_stack &s, parser_product &p, token_type &t);
 
 
 parser_product	message_parser(token_list &tokens);
+
 //Word validty
 
 bool	valid_shortname(std::string s);

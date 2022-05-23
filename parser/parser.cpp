@@ -4,6 +4,11 @@
 /* DATA STRUCTURES */
 static std::map<std::string, Command *>	command_map;
 
+static	Command command_array[] = 
+{
+Nick(), User(), Error(), Pass(), Oper(), Quit(), Join(), Part(), Privmsg(), Notice()
+};
+
 static	rule	rule_matrix[5][5] = {	
 									{
 										rule1_prefixed_message_expansion,
@@ -26,9 +31,7 @@ static	rule	rule_matrix[5][5] = {
 
 static void	init_command_map(void)
 {
-	static	Command command_array[] = {
-		Nick(), User(), Error(), Pass(), Oper(), Quit(), Join(), Part(), Privmsg(), Notice()
-		};
+
 
 	command_map.insert(std::make_pair("NICK", &command_array[NICK]));
 	command_map.insert(std::make_pair("USER", &command_array[USER]));
@@ -99,7 +102,7 @@ bool	valid_hostaddr(std::string s) //ip4 addresses only
 
 bool valid_host(std::string s)
 {
-	return (valid_hostaddr(s) || valid_servername(s));
+	return (s.length() && (valid_hostaddr(s) || valid_servername(s)));
 }
 
 bool	valid_servername(std::string n)
@@ -134,24 +137,27 @@ bool	valid_servername(std::string n)
 
 bool	valid_user_origin(std::string n)
 {
-	size_t		p;
+	size_t						x;
 	std::pair<bool,std::string>	m; //nickname
 	std::pair<bool,std::string>	u; //user
 	std::pair<bool,std::string>	h; //host
 
-	p = n.find("@");
-	if (p != std::string::npos)
+	x = n.find("@");
+	if (x != std::string::npos)
 	{	
 		h.first = true;
-		h.second = n.substr(p + 1, n.length() - p);
+		h.second = n.substr(x + 1, n.length() - x);
 	}
-	p = n.find("!");
-	if (p != std::string::npos)
+	x = n.find("!");
+	if (x != std::string::npos)
 	{
 		u.first = true;
-		u.second = n.substr(p + 1, n.length() - (p + h.second.length() + 2));
+		u.second = n.substr(x + 1, n.length() - (x + h.second.length() + 2));
 	}
-	m.second = n.substr(0, n.length() - u.second.length() - h.second.length() - 2);
+	//nickname's length :
+	//(total length - (user's l + 1*(user exists)) - (host's length + 1*(host exists)))
+	x = n.length() - (u.second.length() + u.first) - (h.second.length() + h.first);
+	m.second = n.substr(0, x);
 	if ((h.first && !valid_host(h.second)) || ((u.first && !valid_user(u.second))) || (!valid_nickname(m.second)))
 		return (false);
 	return true;
@@ -187,15 +193,6 @@ Command	*valid_command(token_type &t)
 }
 
 /////////////////////////////////////////
-
-static std::string rest(token_type &t)
-{	
-	std::string	r;
-
-	if (valid_rest(t.content))
-		r = t.content;
-	return r;
-}
 
 static std::string parameter(token_type &t)
 {
@@ -293,7 +290,10 @@ void	rule7_discard_symbol(symbol_stack &s, parser_product &p, token_type &t)
 void	rule8_rest_expansion(symbol_stack &s, parser_product &p, token_type &t)
 {
 	t.type = REST;
-	p.rest = rest(t);
+	if (valid_rest(t.content))
+		p.rest = t.content;
+	else
+		p.error = BAD_TRAILING;
 	(void)s;
 }
 /////////////////////////////////////////
@@ -318,6 +318,13 @@ static parser_product	parsing_loop(token_list &l, symbol_stack &s)
 			s.pop();
 			++t;
 		}
+	}
+	if (p.error)
+	{
+		p.command = &command_array[ERROR];
+		p.argc = 0;
+		p.origin.clear();
+		p.rest.clear();
 	}
 	return p;
 }
