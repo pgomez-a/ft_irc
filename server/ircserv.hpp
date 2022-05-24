@@ -10,8 +10,8 @@
 # include <unistd.h>
 # include <fcntl.h>
 # include <poll.h>
-# include "lexer.hpp"
 # include "server.hpp"
+# include "parser.hpp"
 
 /**
  ** config_socket.cpp
@@ -33,4 +33,6 @@ int	init_server(char* port, char* passwd, server_t& server);
 
 int	manage_socket(server_t& server);
 
+
+void	execute_command(parser_product &p);
 #endif

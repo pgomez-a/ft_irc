@@ -1,5 +1,6 @@
 #include "ircserv.hpp"
 
+
 /**
  ** Accepts all incoming client connections that are in the backlog.
  **  - inet_ntoa: converts ip_address to char*
@@ -91,6 +92,16 @@ static int	read_socket(client_t client, server_t server)
 			history << "\033[1m <- " << client.addr << ":" << client.port << "\033[0m " << recv_buff;
 			send_buff = "\033[1m" + server.addr + ":" + server.port + "\033[0m Received\n";
 			history << "\033[1m -> " + client.addr + ":" + client.port + "\033[0m Received\n";
+
+
+			//PARSER
+			std::string s(recv_buff, 0, tmp_recv_len -1);
+			token_list l = message_lexer(s);
+			parser_product p = message_parser(l);
+			//EXECUTOR//
+			execute_command(p);
+
+			
 			if (send(client.sock_fd, send_buff.c_str(), send_buff.size(), 0) == -1)
 			{
 				std::cerr << "\033[1m\033[91mError:\033[0m\033[91m send()\n\033[0m";

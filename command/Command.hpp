@@ -11,8 +11,9 @@ class Command
 		Command(void);
 		~Command(void);
 	
-		void		who_am_i(void);
-		std::string	get_name(void);
+		void			who_am_i(void);
+		std::string		get_name(void);
+		virtual void	parentheses(std::string origin, size_t argc, std::string *argt, std::string rest);
 
 	protected :
 

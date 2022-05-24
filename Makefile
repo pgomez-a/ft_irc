@@ -12,11 +12,11 @@ CXXFLAGS	=	-Wall -Werror -Wextra -std=c++98 $(INCLUDE_HEADERS)
 
 PARSER_SRCS	=	$(addprefix ./parser/, lexer.cpp parser.cpp word_composition.cpp)
 
-SERVER_SRCS	=	$(addprefix ./server/, config_socket.cpp manage_socket.cpp)
+SERVER_SRCS	=	$(addprefix ./server/, config_socket.cpp manage_socket.cpp ircserv.cpp execute_commands.cpp)
 
 CMD_SRCS	=	$(addprefix ./command/, Command.cpp Error.cpp Part.cpp Join.cpp Nick.cpp Notice.cpp Oper.cpp Pass.cpp Privmsg.cpp Quit.cpp User.cpp)
 
-SRCS		= 	$(PARSER_SRCS) $(SERVER_SRCS) $(CMD_SRCS) main.cpp
+SRCS		= 	$(PARSER_SRCS) $(SERVER_SRCS) $(CMD_SRCS)
 
 OBJS		= 	$(SRCS:.cpp=.o)
 
@@ -53,7 +53,7 @@ clean:
 
 fclean:		clean
 	@ $(RM) $(NAME)
-	@ $(RM) irc_test parser_test
+	@ $(RM) test.debug parser.debug
 
 re:		fclean all
 
