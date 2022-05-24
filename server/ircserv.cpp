@@ -27,7 +27,7 @@ int	main(int argc, char* argv[])
 		return (1);
 	if (bind_socket(server.sock_fd, server.res) == -1)
 		return (1);
-	if (listen_socket(server.sock_fd, 10, argv[1]) == -1)
+	if (listen_socket(server.sock_fd, 10))
 		return (1);
 	history.open(".nameless_history", std::fstream::trunc);
 	if (!history.is_open())
