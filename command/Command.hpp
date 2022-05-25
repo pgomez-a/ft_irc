@@ -13,7 +13,7 @@ class Command
 		Command();
 		~Command(void);
 	
-		virtual void	operator()(server_t &server, client_t &client);
+		virtual void	execute(server_t &server, client_t &client);
 		virtual void	_reply(server_t &server, client_t &client, std::string reply);
 
 		void		who_am_i(void);

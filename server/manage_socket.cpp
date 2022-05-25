@@ -94,7 +94,7 @@ static int	read_socket(client_t client, server_t server)
 			history << "\033[1m -> " + client.addr + ":" + client.port + "\033[0m Received\n";
 
 
-			//process_message(recv_buff, tmp_recv_len -1, server, client);
+			process_message(recv_buff, tmp_recv_len -1, server, client);
 
 			
 			if (send(client.sock_fd, send_buff.c_str(), send_buff.size(), 0) == -1)

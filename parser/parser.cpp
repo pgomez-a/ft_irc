@@ -4,12 +4,15 @@
 /* DATA STRUCTURES */
 static std::map<std::string, Command *>	command_map;
 
-static	Command command_array[] = 
+static	Command command_array[10] = 
 {
 Nick(), User(), Error(), Pass(), Oper(), Quit(), Join(), Part(), Privmsg(), Notice()
 };
 
-static	rule	rule_matrix[5][5] = {	
+static Nick nick_inst; static User user_inst; static Error error_inst; static Pass pass_inst; static Oper oper_inst; 
+static Quit quit_inst; static Join join_inst; static Part part_inst; static Privmsg privmsg_inst; static Notice notice_inst;
+
+static	rule	rule_matrix[5][5] = {
 									{
 										rule1_prefixed_message_expansion,
 										NULL,
@@ -32,10 +35,17 @@ static	rule	rule_matrix[5][5] = {
 static void	init_command_map(void)
 {
 
+	command_map.insert(std::make_pair("NICK", &nick_inst));
+	command_map.insert(std::make_pair("USER", &user_inst));
+	command_map.insert(std::make_pair("ERROR", &error_inst));
+	command_map.insert(std::make_pair("PASS", &pass_inst));
+	command_map.insert(std::make_pair("OPER", &oper_inst));
+	command_map.insert(std::make_pair("QUIT", &quit_inst));
+	command_map.insert(std::make_pair("JOIN", &join_inst));
+	command_map.insert(std::make_pair("PART", &part_inst));
+	command_map.insert(std::make_pair("PRIVMSG", &privmsg_inst));
+	command_map.insert(std::make_pair("NOTICE", &notice_inst));
 
-	command_map.insert(std::make_pair("NICK", &command_array[NICK]));
-	command_map.insert(std::make_pair("USER", &command_array[USER]));
-	command_map.insert(std::make_pair("ERROR", &command_array[ERROR]));
 }
 
 /* SYMBOL EXPANSION AND VALIDITY*/
@@ -307,7 +317,7 @@ Command	*parser_product::produce_command(void)
 
 static void	set_err_product(parser_product &p)
 {
-	p.command = &command_array[ERROR];
+	p.command = &error_inst;
 	p.argc = 0;
 	p.origin.clear();
 	p.rest.clear();
@@ -333,13 +343,18 @@ static parser_product	parsing_loop(token_list &l, symbol_stack &s)
 			s.pop();
 			++t;
 		}
+		if (p.command)
+		{
+			std::cout << "parsing loop : p.command :" << typeid(p.command).name() << std::endl;
+			std::cout << "parsing loop : *p.command :" << typeid(*(p.command)).name() << std::endl;
+		}
 	}
 	if (p.error)
 		set_err_product(p);
 	return p;
 }
 
-Command	*message_parser(token_list &tokens)
+parser_product	message_parser(token_list &tokens)
 {
 	symbol_stack			symbol;
 	parser_product			p;
@@ -348,6 +363,8 @@ Command	*message_parser(token_list &tokens)
 		init_command_map();
 	symbol.push(I);
 	p = parsing_loop(tokens, symbol);
+	std::cout << "message_parser : p.command :" << typeid(p.command).name() << std::endl;
+	std::cout << "message_parser : *p.command :" << typeid(*(p.command)).name() << std::endl;
 	
-	return p.produce_command();
+	return p;
 }

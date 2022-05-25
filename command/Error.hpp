@@ -8,7 +8,7 @@ class Error : public Command
 
 		Error(void);
 
-		virtual void	operator()(server_t &server, client_t &client);
+		void	execute(server_t &server, client_t &client);
 
 	private :
 

@@ -1,12 +1,13 @@
 #include "Error.hpp"
 
-Error::Error(void) {
+Error::Error(void) 
+{
 	_command_name = "ERROR";
 	_id = ERROR;
 };
 
-void	Error::operator()(server_t &server, client_t &client)
+void	Error::execute(server_t &server, client_t &client)
 {
-	std::cout << "error ()\n";
+	std::cout << "THIS IS AN ERROR ()\n";
 	(void)server, (void)client;
 }

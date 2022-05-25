@@ -1,6 +1,8 @@
 #ifndef COMMANDS_HPP
 # define COMMANDS_HPP
 
+# include <typeinfo>
+
 # include "Command.hpp"
 # include "Nick.hpp"
 # include "User.hpp"

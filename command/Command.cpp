@@ -19,9 +19,9 @@ size_t	Command::id(void)
 	return _id;
 }
 
-void Command::operator()(server_t &server, client_t &client)
+void Command::execute(server_t &server, client_t &client)
 {
-	std::cout << "generic () :";
+	std::cout << "generic () :" << _id;
 	who_am_i();
 	_reply(server, client, "A reply goes here\n");
 }

@@ -57,7 +57,7 @@ void			rule7_discard_symbol(symbol_stack &s, parser_product &p, token_type &t);
 void			rule8_rest_expansion(symbol_stack &s, parser_product &p, token_type &t);
 
 
-Command	*message_parser(token_list &tokens);
+parser_product	message_parser(token_list &tokens);
 
 //Word validty
 
