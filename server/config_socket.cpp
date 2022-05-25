@@ -12,8 +12,8 @@ int	init_addrinfo(char* port, struct addrinfo& hints, struct addrinfo*& res)
 	std::memset(&hints, 0, sizeof(hints));
 	hints.ai_family = AF_INET;
 	hints.ai_socktype = SOCK_STREAM;
-	hints.ai_flags = AI_DEFAULT;
-	if (getaddrinfo("localhost", port, &hints, &res) != 0)
+	hints.ai_flags = AI_PASSIVE;
+	if (getaddrinfo(NULL, port, &hints, &res) != 0)
 	{
 		std::cerr << "\033[1m\033[91mError:\033[0m\033[91m getaddrinfo()\n\033[0m";
 		return (-1);
@@ -76,7 +76,7 @@ int	bind_socket(int sock_fd, struct addrinfo*& res)
  ** Sets the socket on listener mode.
  **/
 
-int	listen_socket(int sock_fd, int capacity, char* port)
+int	listen_socket(int sock_fd, int capacity)
 {
 	if (listen(sock_fd, capacity) == -1)
 	{
@@ -92,7 +92,6 @@ int	listen_socket(int sock_fd, int capacity, char* port)
 	std::cout << "    \\ \\ \\`\\ \\/\\ \\L\\.\\_/\\ \\/\\ \\/\\ \\/\\  __/ \\_\\ \\_/\\  __//\\__,  \\/\\__,  \\\n";
 	std::cout << "     \\ \\_\\ \\_\\ \\__/.\\_\\ \\_\\ \\_\\ \\_\\ \\____\\/\\____\\ \\____\\/\\____/\\/\\____/\n";
 	std::cout << "      \\/_/\\/_/\\/__/\\/_/\\/_/\\/_/\\/_/\\/____/\\/____/\\/____/\\/___/  \\/___/\n";
-	std::cout << "\n                         Hosted at 127.0.0.1:" << port << std::endl;
 	std::cout << "\033[0m\n\n";
 	return (0);
 }
@@ -103,7 +102,7 @@ int	listen_socket(int sock_fd, int capacity, char* port)
 
 int	init_server(char* port, char* passwd, server_t& server)
 {
-	server.addr = "127.0.0.1";
+	server.addr = "nameless";
 	server.port = static_cast<std::string>(port);
 	server.passwd = static_cast<std::string>(passwd);
 	server.timeout = 5 * 1000 * 60;
