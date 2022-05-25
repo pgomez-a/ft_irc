@@ -298,6 +298,13 @@ void	rule8_rest_expansion(symbol_stack &s, parser_product &p, token_type &t)
 }
 /////////////////////////////////////////
 
+Command	*parser_product::produce_command(void)
+{
+	command->set_members(argt, argc, origin, rest, error);
+
+	return command;
+}
+
 static void	set_err_product(parser_product &p)
 {
 	p.command = &command_array[ERROR];
@@ -332,13 +339,15 @@ static parser_product	parsing_loop(token_list &l, symbol_stack &s)
 	return p;
 }
 
-parser_product	message_parser(token_list &tokens)
+Command	*message_parser(token_list &tokens)
 {
 	symbol_stack			symbol;
+	parser_product			p;
 
 	if (command_map.empty())
 		init_command_map();
 	symbol.push(I);
-
-	return parsing_loop(tokens, symbol);
+	p = parsing_loop(tokens, symbol);
+	
+	return p.produce_command();
 }

@@ -1,4 +1,6 @@
-#include "Command.hpp"
+#ifndef	ERROR_HPP
+# define ERROR_HPP
+#include "commands.hpp"
 
 class Error : public Command
 {
@@ -6,10 +8,9 @@ class Error : public Command
 
 		Error(void);
 
-		using Command::parentheses;
-
-		void	parentheses(std::string origin, size_t argc, std::string *argt, std::string rest);
+		virtual void	operator()(server_t &server, client_t &client);
 
 	private :
 
 };
+#endif

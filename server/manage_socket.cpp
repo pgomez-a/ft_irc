@@ -94,12 +94,7 @@ static int	read_socket(client_t client, server_t server)
 			history << "\033[1m -> " + client.addr + ":" + client.port + "\033[0m Received\n";
 
 
-			//PARSER
-			std::string s(recv_buff, 0, tmp_recv_len -1);
-			token_list l = message_lexer(s);
-			parser_product p = message_parser(l);
-			//EXECUTOR//
-			execute_command(p);
+			//process_message(recv_buff, tmp_recv_len -1, server, client);
 
 			
 			if (send(client.sock_fd, send_buff.c_str(), send_buff.size(), 0) == -1)

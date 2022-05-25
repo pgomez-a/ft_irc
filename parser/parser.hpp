@@ -38,6 +38,8 @@ typedef	struct	s_parser_product
 	std::string	origin;
 	std::string	rest;
 	size_t		error;
+
+	Command		*produce_command(void);
 }				parser_product;
 
 typedef std::stack<size_t>		symbol_stack; //containing parser and lexer symbols.
@@ -55,7 +57,7 @@ void			rule7_discard_symbol(symbol_stack &s, parser_product &p, token_type &t);
 void			rule8_rest_expansion(symbol_stack &s, parser_product &p, token_type &t);
 
 
-parser_product	message_parser(token_list &tokens);
+Command	*message_parser(token_list &tokens);
 
 //Word validty
 

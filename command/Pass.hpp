@@ -1,4 +1,6 @@
-#include "Command.hpp"
+#ifndef PASS_HPP
+# define PASS_HPP
+#include "commands.hpp"
 
 class Pass : public Command
 {
@@ -6,3 +8,4 @@ class Pass : public Command
 
 		Pass(void);
 };
+#endif

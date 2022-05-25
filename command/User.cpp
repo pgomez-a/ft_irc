@@ -2,4 +2,5 @@
 
 User::User(void) {
 	_command_name = "USER";
+	_id = USER;
 };

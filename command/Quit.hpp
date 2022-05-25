@@ -1,4 +1,6 @@
-#include "Command.hpp"
+#ifndef QUIT_HPP
+# define QUIT_HPP
+#include "commands.hpp"
 
 class Quit : public Command
 {
@@ -6,3 +8,4 @@ class Quit : public Command
 
 		Quit(void);
 };
+#endif

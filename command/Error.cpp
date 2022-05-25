@@ -2,10 +2,11 @@
 
 Error::Error(void) {
 	_command_name = "ERROR";
+	_id = ERROR;
 };
 
-void	Error::parentheses(std::string origin, size_t argc, std::string *argt, std::string rest)
+void	Error::operator()(server_t &server, client_t &client)
 {
-	std::cout << "I am an overloaded error member\n";
-	(void)origin, (void)argc, (void)argt, (void)rest;
+	std::cout << "error ()\n";
+	(void)server, (void)client;
 }

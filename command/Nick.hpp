@@ -1,4 +1,6 @@
-#include "Command.hpp"
+#ifndef NICK_HPP
+# define NICK_HPP
+#include "commands.hpp"
 
 class Nick : public Command
 {
@@ -6,3 +8,4 @@ class Nick : public Command
 
 		Nick(void);
 };
+#endif

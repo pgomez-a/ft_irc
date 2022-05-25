@@ -34,5 +34,10 @@ int	init_server(char* port, char* passwd, server_t& server);
 int	manage_socket(server_t& server);
 
 
-void	execute_command(parser_product &p);
+/**
+ ** process_message.cpp
+ **/
+
+void process_message(char *buf, size_t buf_len, server_t &server, client_t &client);
+
 #endif

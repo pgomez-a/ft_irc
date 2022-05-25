@@ -1,6 +1,6 @@
 #include "Command.hpp"
 
-Command::Command(void) : _command_name("DEFAULT") {};
+Command::Command(void) : _command_name("DEFAULT"), _id(0){};
 
 Command::~Command(void) {};
 
@@ -14,16 +14,29 @@ std::string	Command::get_name(void)
 	return _command_name;
 }
 
-void Command::parentheses(std::string origin, size_t argc, std::string *argt, std::string rest)
+size_t	Command::id(void)
 {
-	std::cout << "\t\tOrigin:	" <<  origin << std::endl;
-	std::cout << "\t\tArguments:	";
-	for (size_t i = 0;  i < argc; ++i)
-	{
-		std::cout << argt[i];
-		if ((i+1) < argc)
-			std::cout << ", ";
-	}
-	std::cout << std::endl;
-	std::cout << "\t\tMessages:	" << rest << std::endl;
+	return _id;
+}
+
+void Command::operator()(server_t &server, client_t &client)
+{
+	std::cout << "generic () :";
+	who_am_i();
+	_reply(server, client, "A reply goes here\n");
+}
+
+void	Command::_reply(server_t &server, client_t &client, std::string reply)
+{
+	std::cout << reply;
+	(void)server, (void)client;
+}
+
+void	Command::set_members(std::string *argt, size_t argc, std::string origin, std::string rest, size_t error)
+{
+	_argt = argt;
+	_argc = argc;
+	_origin = origin;
+	_rest = rest;
+	_error = error;
 }
