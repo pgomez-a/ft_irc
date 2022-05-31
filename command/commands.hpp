@@ -3,6 +3,7 @@
 
 # include <typeinfo>
 
+# include "reply_system.hpp"
 # include "Command.hpp"
 # include "Nick.hpp"
 # include "User.hpp"
@@ -22,23 +23,63 @@ commands before registering but only the last one sent is used for verification 
 Command: PASS <password>
 Numeric Replies: ERR_NEEDMOREPARAMS   ERR_ALREADYREGISTRED
 
-NICK: used to give user a nickname or change the previous one. If a NICK message arrives at a server 
-which already knows about an identical nickname for another client, a nickname collision occurs. 
-As a result of a nickname collision, all instances of the nickname are removed from the server's database, 
-and a KILL command is issued to remove the nickname from all other server's database. If the NICK message causing the collision 
-was a nickname change, then the original (old) nick must be removed as well.
-If the server recieves an identical NICK from a client which is directly connected, it may issue an 
-ERR_NICKCOLLISION to the local client, drop the NICK command, and not generate any kills.
-Command: NICK <nickname>
-Numeric Replies: ERR_NONICKNAMEGIVEN   ERR_NICKNAMEINUSE   ERR_ERRONEUSNICKNAME   ERR_NICKCOLLISION
+3.1.2 Nick message
 
 
-USER: used at the beginning of connection to specify the username,
-hostname, servername and realname of a new server. Only after both USER and NICK have been received from a 
-client does a user become registered. It must be noted that realname parameter must be the last parameter, because it may 
-contain space characters and must be prefixed with a colon (':') to make sure this is recognised as such.
-Command: USER <username> <hostname> <servername> <realname>
-Numeric Replies: ERR_NEEDMOREPARAMS   ERR_ALREADYREGISTRED
+      Command: NICK
+   Parameters: <nickname>
+
+   NICK command is used to give user a nickname or change the existing
+   one.
+
+Numeric Replies:
+
+           ERR_NONICKNAMEGIVEN             ERR_ERRONEUSNICKNAME
+           ERR_NICKNAMEINUSE               ERR_NICKCOLLISION
+           ERR_UNAVAILRESOURCE             ERR_RESTRICTED
+
+   Examples:
+
+   NICK Wiz                ; Introducing new nick "Wiz" if session is
+                           still unregistered, or user changing his
+                           nickname to "Wiz"
+
+   :WiZ!jto@tolsun.oulu.fi NICK Kilroy
+                           ; Server telling that WiZ changed his
+                           nickname to Kilroy.
+
+3.1.3 User message
+
+      Command: USER
+   Parameters: <user> <mode> <unused> <realname>
+
+   The USER command is used at the beginning of connection to specify
+   the username, hostname and realname of a new user.
+
+   The <mode> parameter should be a numeric, and can be used to
+   automatically set user modes when registering with the server.  This
+   parameter is a bitmask, with only 2 bits having any signification: if
+   the bit 2 is set, the user mode 'w' will be set and if the bit 3 is
+   set, the user mode 'i' will be set.  (See Section 3.1.5 "User
+   Modes").
+
+   The <realname> may contain space characters.
+
+   Numeric Replies:
+
+           ERR_NEEDMOREPARAMS              ERR_ALREADYREGISTRED
+
+   Example:
+
+   USER guest 0 * :Ronnie Reagan   ; User registering themselves with a
+                                   username of "guest" and real name
+                                   "Ronnie Reagan".
+
+   USER guest 8 * :Ronnie Reagan   ; User registering themselves with a
+                                   username of "guest" and real name
+                                   "Ronnie Reagan", and asking to be set
+                                   invisible.
+
 
 
 OPER: used by a normal user to obtain operator privileges. 

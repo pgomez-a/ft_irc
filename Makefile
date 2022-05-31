@@ -12,9 +12,9 @@ CXXFLAGS	=	-Wall -Werror -Wextra -std=c++98 $(INCLUDE_HEADERS)
 
 PARSER_SRCS	=	$(addprefix ./parser/, lexer.cpp parser.cpp word_composition.cpp)
 
-SERVER_SRCS	=	$(addprefix ./server/, config_socket.cpp manage_socket.cpp ircserv.cpp process_message.cpp)
+SERVER_SRCS	=	$(addprefix ./server/, config_socket.cpp manage_socket.cpp ircserv.cpp process_message.cpp output.cpp)
 
-CMD_SRCS	=	$(addprefix ./command/, Command.cpp Error.cpp Part.cpp Join.cpp Nick.cpp Notice.cpp Oper.cpp Pass.cpp Privmsg.cpp Quit.cpp User.cpp)
+CMD_SRCS	=	$(addprefix ./command/, reply_system.cpp Command.cpp Error.cpp Part.cpp Join.cpp Nick.cpp Notice.cpp Oper.cpp Pass.cpp Privmsg.cpp Quit.cpp User.cpp)
 
 SRCS		= 	$(PARSER_SRCS) $(SERVER_SRCS) $(CMD_SRCS)
 
@@ -31,7 +31,7 @@ ifeq (test, $(firstword $(MAKECMDGOALS)))
 		TEST_SRCS	= $(PARSER_SRCS) $(CMD_SRCS) ./test/test_parser.cpp
 		TEST		= parser.debug
 	else
-		TEST_SRCS	= $(PARSER_SRCS) $(SERVER_SRCS) ./test/test_irc.cpp	
+		TEST_SRCS	= $(PARSER_SRCS) $(SERVER_SRCS) $(CMD_SRCS) #./test/test_irc.cpp	
 		TEST		= irc.debug
 	endif
 endif

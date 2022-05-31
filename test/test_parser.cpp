@@ -5,7 +5,6 @@
 #include "parser.hpp"
 
 # define RED_BG "\x1b[41m"
-# define RESET_COLOR "\x1b[0m"
 
 static std::string	eval_token(token_type &x)
 {
@@ -69,7 +68,9 @@ static void	test_parser_product(std::string input, std::string expected, parser_
 	std::cout.rdbuf(captured_output.rdbuf());
 	std::cout << "\n\t\tCommands:	";
 	if (p.command)
+	{
 		p.command->who_am_i();
+	}
 	else
 	std::cout << "\n";
 	std::cout << "\t\tOrigin:	" <<  p.origin << std::endl;

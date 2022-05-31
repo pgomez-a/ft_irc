@@ -8,7 +8,9 @@ class Error : public Command
 
 		Error(void);
 
-		void	execute(server_t &server, client_t &client);
+		int			execute(server_t &server, client_t &client);
+		void		set_aux(std::string s);
+		std::string	get_aux(void);
 
 	private :
 

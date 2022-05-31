@@ -259,8 +259,11 @@ void	rule4_command_expansion(symbol_stack &s, parser_product &p, token_type &t)
 {
 	t.type = C;
 	p.command = valid_command(t);
-	if (p.command->get_name() == "ERROR")
+	if (p.command->id() == ERROR)
+	{
 		p.error = ERR_UNKNOWNCOMMAND;
+		p.command->set_aux(t.content);
+	}
 	(void)s;
 }
 
@@ -343,11 +346,6 @@ static parser_product	parsing_loop(token_list &l, symbol_stack &s)
 			s.pop();
 			++t;
 		}
-		if (p.command)
-		{
-			std::cout << "parsing loop : p.command :" << typeid(p.command).name() << std::endl;
-			std::cout << "parsing loop : *p.command :" << typeid(*(p.command)).name() << std::endl;
-		}
 	}
 	if (p.error)
 		set_err_product(p);
@@ -363,8 +361,5 @@ parser_product	message_parser(token_list &tokens)
 		init_command_map();
 	symbol.push(I);
 	p = parsing_loop(tokens, symbol);
-	std::cout << "message_parser : p.command :" << typeid(p.command).name() << std::endl;
-	std::cout << "message_parser : *p.command :" << typeid(*(p.command)).name() << std::endl;
-	
 	return p;
 }
