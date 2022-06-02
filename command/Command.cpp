@@ -1,4 +1,5 @@
 #include "Command.hpp"
+#include "reply_system.hpp"
 
 Command::Command(void) : _command_name("DEFAULT"), _id(0), _argc(0) {};
 
@@ -31,22 +32,18 @@ size_t	Command::id(void)
 	return _id;
 }
 
-void		Command::set_aux(std::string s)
-{
-	_aux = s;
-}
-
 int Command::execute(server_t &server, client_t &client)
 {
-	std::string	reply;
+	int	reply_code;
 
-	reply = _effect(server, client);
-	return reply_to_client(client, reply);
+	reply_code = _effect(server, client);
+	return reply_to_client(reply_code, client, this);
 }
 
-std::string	Command::_effect(server_t &server, client_t &client)
+int	Command::_effect(server_t &server, client_t &client)
 {
-	return reply_format(server.name, "999", client.addr, "This is " + _command_name + "'s dummy reply...");
+	(void)server, (void)client;
+	return 0;
 }
 
 void	Command::set_members(std::string *argt, size_t argc, std::string origin, std::string rest, size_t error)

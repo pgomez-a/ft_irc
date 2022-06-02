@@ -282,25 +282,25 @@ int main(void)
 		printf("\n\t Parser error management:\n\n");
 
 		input = "BADCMD :npinto-g";
-		expected = expected_parser_output_format("ERROR", "", "", "", ERR_UNKNOWNCOMMAND);
+		expected = expected_parser_output_format("BADCMD", "", "", "", ERR_UNKNOWNCOMMAND);
 		tokens = message_lexer(input);
 		p = message_parser(tokens);
 		test_parser_product(input, expected,p);
 	
 		input = "BADCMD :npinto-g";
-		expected = expected_parser_output_format("ERROR", "", "", "", ERR_UNKNOWNCOMMAND);
+		expected = expected_parser_output_format("BADCMD", "", "", "", ERR_UNKNOWNCOMMAND);
 		tokens = message_lexer(input);
 		p = message_parser(tokens);
 		test_parser_product(input, expected,p);
 
 		input = ":-badservername USER :npinto-g";
-		expected = expected_parser_output_format("ERROR", "", "", "", BAD_ORIGIN);
+		expected = expected_parser_output_format("BADCMD", "", "", "", BAD_ORIGIN);
 		tokens = message_lexer(input);
 		p = message_parser(tokens);
 		test_parser_product(input, expected,p);
 
 		input = ":badnicknameistoolong@123.456.789.101.100 NICK";
-		expected = expected_parser_output_format("ERROR", "", "", "", BAD_ORIGIN);
+		expected = expected_parser_output_format("BADCMD", "", "", "", BAD_ORIGIN);
 		tokens = message_lexer(input);
 		p = message_parser(tokens);
 		test_parser_product(input, expected,p);
@@ -324,49 +324,49 @@ int main(void)
 		test_parser_product(input, expected,p);
 
 		input = ":toolong@123.4560.789.101111111111111111111111111111111111111111111111111111111 NICK";//bad ip and oversized servername
-		expected = expected_parser_output_format("ERROR", "", "", "", BAD_ORIGIN);
+		expected = expected_parser_output_format("BADCMD", "", "", "", BAD_ORIGIN);
 		tokens = message_lexer(input);
 		p = message_parser(tokens);
 		test_parser_product(input, expected,p);
 
 		input = ":@missingnickname NICK";
-		expected = expected_parser_output_format("ERROR", "", "", "", BAD_ORIGIN);
+		expected = expected_parser_output_format("BADCMD", "", "", "", BAD_ORIGIN);
 		tokens = message_lexer(input);
 		p = message_parser(tokens);
 		test_parser_product(input, expected,p);
 
 		input = ":nick!@missing.user.after.exclamation USER";
-		expected = expected_parser_output_format("ERROR", "", "", "", BAD_ORIGIN);
+		expected = expected_parser_output_format("BADCMD", "", "", "", BAD_ORIGIN);
 		tokens = message_lexer(input);
 		p = message_parser(tokens);
 		test_parser_product(input, expected,p);
 
 		input = ":missing!host@";
-		expected = expected_parser_output_format("ERROR", "", "", "", BAD_ORIGIN);
+		expected = expected_parser_output_format("BADCMD", "", "", "", BAD_ORIGIN);
 		tokens = message_lexer(input);
 		p = message_parser(tokens);
 		test_parser_product(input, expected,p);
 
 		input = "NICK one two too many args arg arr args a a a a a a a a a a";
-		expected = expected_parser_output_format("ERROR", "", "", "", TOO_MANY_PARAMETERS);
+		expected = expected_parser_output_format("BADCMD", "", "", "", TOO_MANY_PARAMETERS);
 		tokens = message_lexer(input);
 		p = message_parser(tokens);
 		test_parser_product(input, expected,p);
 
 		input = "NICK this parameter \n\r is wrong";
-		expected = expected_parser_output_format("ERROR", "", "", "", BAD_PARAMETER);
+		expected = expected_parser_output_format("BADCMD", "", "", "", BAD_PARAMETER);
 		tokens = message_lexer(input);
 		p = message_parser(tokens);
 		test_parser_product(input, expected,p);
 
 		input = "NICK bad rest coming up : \n\r ye";
-		expected = expected_parser_output_format("ERROR", "", "", "", BAD_TRAILING);
+		expected = expected_parser_output_format("BADCMD", "", "", "", BAD_TRAILING);
 		tokens = message_lexer(input);
 		p = message_parser(tokens);
 		test_parser_product(input, expected,p);
 
 		input = "";
-		expected = expected_parser_output_format("ERROR", "", "", "", NO_TOKENS);
+		expected = expected_parser_output_format("BADCMD", "", "", "", NO_TOKENS);
 		tokens = message_lexer(input);
 		p = message_parser(tokens);
 		test_parser_product(input, expected,p);

@@ -262,7 +262,7 @@ void	rule4_command_expansion(symbol_stack &s, parser_product &p, token_type &t)
 	if (p.command->id() == ERROR)
 	{
 		p.error = ERR_UNKNOWNCOMMAND;
-		p.command->set_aux(t.content);
+		p.command->set_name(t.content);
 	}
 	(void)s;
 }

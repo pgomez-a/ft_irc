@@ -10,7 +10,7 @@ class Nick : public Command
 
 	private :
 
-		std::string		_effect(server_t &server, client_t &client);
+		int	_effect(server_t &server, client_t &client);
 
 };
 #endif

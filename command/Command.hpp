@@ -5,7 +5,6 @@
 # include <list>
 # include <iostream>
 # include "server.hpp"
-# include "reply_system.hpp"
 
 
 class Command
@@ -22,11 +21,10 @@ class Command
 		size_t		id(void);
 		void		set_members(std::string *argt, size_t argc, std::string origin, std::string rest, size_t error);
 		void		set_name(std::string n);
-		void		set_aux(std::string n);
 		
 	protected :
 
-		virtual	std::string		_effect(server_t &server, client_t &client);
+		virtual	int				_effect(server_t &server, client_t &client);
 		void					_clear_argt(void);
 
 		std::string		_command_name;
@@ -36,7 +34,6 @@ class Command
 		std::string		_origin;
 		std::string		_rest;
 		size_t			_error;
-		std::string 	_aux;
 };
 
 #endif

@@ -5,8 +5,8 @@ Nick::Nick(void) {
 	_id = NICK;
 };
 
-std::string	Nick::_effect(server_t &server, client_t &client)
+int	Nick::_effect(server_t &server, client_t &client)
 {
-	
-	return reply_format(server.name, "999", client.addr, "NICK's EXCLUSIVE EFFECT");
+	(void)server, (void)client;
+	return 0;
 }
