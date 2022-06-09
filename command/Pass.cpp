@@ -7,6 +7,14 @@ Pass::Pass(void) {
 
 int	Pass::_effect(server_t &server, client_t &client)
 {
-	if (argc < 1)
-		return ERR_NEEDMOREPARAMS
+	if (!_argc)
+		return ERR_NEEDMOREPARAMS;
+	if (client.registred_connection)
+		return ERR_ALREADYREGISTERED;
+	if (_argt[0] == server.passwd)
+	{
+		client.registred_connection = true;
+		return RPL_WELCOME;
+	}
+	return 0;
 }

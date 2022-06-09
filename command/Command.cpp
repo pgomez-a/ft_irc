@@ -17,17 +17,17 @@ void	Command::_clear_argt(void)
 	}
 }
 
-void	Command::who_am_i(void)
+void	Command::who_am_i(void) const
 {
 	std::cout << _command_name << std::endl;
 }
 
-std::string	Command::get_name(void)
+std::string	Command::get_name(void) const
 {
 	return _command_name;
 }
 
-size_t	Command::id(void)
+size_t	Command::id(void) const
 {
 	return _id;
 }
@@ -37,7 +37,7 @@ int Command::execute(server_t &server, client_t &client)
 	int	reply_code;
 
 	reply_code = _effect(server, client);
-	return reply_to_client(reply_code, client, this);
+	return reply_to_client(reply_code, client, server, this);
 }
 
 int	Command::_effect(server_t &server, client_t &client)
@@ -64,4 +64,9 @@ void	Command::set_members(std::string *argt, size_t argc, std::string origin, st
 void	Command::set_name(std::string n)
 {
 	_command_name = n;
+}
+
+std::string	Command::operator[](size_t i) const
+{
+	return _argt[i];
 }

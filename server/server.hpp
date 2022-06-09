@@ -13,10 +13,22 @@
 struct client_t
 {
 	public:
+
+	/* 	Connection info */
+
 		int					sock_fd;
 		std::string			addr;
 		std::string			port;
 		struct sockaddr_in	info;
+
+	/* irc info */
+	
+		bool	registred_connection;
+
+	/*member functions*/
+		client_t(void);
+		bool operator==(client_t &rhs) const;
+		bool operator==(const client_t &rhs) const;
 };
 
 struct server_t
@@ -34,5 +46,13 @@ struct server_t
 		struct pollfd		clients_fds[1024];
 		client_t			clients_info[1024];
 };
+
+
+/*
+** Interaction
+*/
+
+bool client_is_in_server(const server_t &server, const client_t &client);
+bool client_is_registred(const server_t &server, const client_t &client);
 
 #endif

@@ -12,8 +12,7 @@ int	Error::execute(server_t &server, client_t &client)
 	int			r = 0;
 
 	//do something;
-	r = reply_to_client(_error, client, this); 
+	r = reply_to_client(_error, client, server, this); 
 	_command_name = "ERROR";
-	(void)server;
 	return r;
 }
