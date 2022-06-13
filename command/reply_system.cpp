@@ -19,7 +19,7 @@ static std::string R_CREATED(client_t &c, server_t &s, Command *n)
 {compiler_treat(c,s,n); return reply_format("003", c.addr, "", (std::string)"This server was created  " + "<date>");}
 
 static std::string R_MYINFO(client_t &c, server_t &s, Command *n)
-{compiler_treat(c,s,n); return reply_format("004", c.addr, s.name + " " + "0.01" + "<available user modes>" + "\n" + "<available channel modes>");}
+{compiler_treat(c,s,n); return reply_format("004", c.addr, "" , s.name + " " + "0.01" + "<available user modes>" + "\n" + "<available channel modes>");}
 
 static std::string R_NOTOPIC(client_t &c, server_t &s, Command *n)
 {compiler_treat(c,s,n); return reply_format("331", c.addr, "<channel>", "No topic is set");}
@@ -28,82 +28,82 @@ static std::string R_TOPIC(client_t &c, server_t &s, Command *n)
 {compiler_treat(c,s,n); return reply_format("332", c.addr, "<channel>", "<topic>");}
 
 static std::string R_AWAY(client_t &c, server_t &s, Command *n)
-{compiler_treat(c,s,n); return reply_format("301", c.addr, (std::string)"<nick>" + " :" + "<away message>");}
+{compiler_treat(c,s,n); return reply_format("301", c.addr, "", (std::string)"<nick>" + " :" + "<away message>");}
 
 static std::string R_YOUREOPER(client_t &c, server_t &s, Command *n)
-{compiler_treat(c,s,n); return reply_format("381", c.addr, "You are now an IRC operator");}
+{compiler_treat(c,s,n); return reply_format("381", c.addr, "", "You are now an IRC operator");}
 
 static std::string R_ERR_UNKNOWNCOMMAND(client_t &c, server_t &s, Command *n)
-{compiler_treat(c,s,n); return reply_format("421", c.addr, n->get_name() + " :Unknown command");}
+{compiler_treat(c,s,n); return reply_format("421", c.addr, "", n->get_name() + " :Unknown command");}
 
 static std::string R_ERR_NEEDMOREPARAMS(client_t &c, server_t &s, Command *n)
-{compiler_treat(c,s,n); return reply_format("461", c.addr,  n->get_name() + " :Not enough parameters");}
+{compiler_treat(c,s,n); return reply_format("461", c.addr,  "", n->get_name() + " :Not enough parameters");}
 
 static std::string R_ERR_ALREADYREGISTERED(client_t &c, server_t &s, Command *n)
-{compiler_treat(c,s,n); return reply_format("462", c.addr, ":Unauthorized command (already registered)");}
+{compiler_treat(c,s,n); return reply_format("462", c.addr, "", ":Unauthorized command (already registered)");}
 
 static std::string R_ERR_NONICKNAMEGIVEN(client_t &c, server_t &s, Command *n)
-{compiler_treat(c,s,n); return reply_format("431", c.addr, " :No nickname given");}
+{compiler_treat(c,s,n); return reply_format("431", c.addr, "", " :No nickname given");}
 
 static std::string R_ERR_NICKNAMEINUSE(client_t &c, server_t &s, Command *n)
-{compiler_treat(c,s,n); return reply_format("433", c.addr,  (*n)[0] + " :Nickname is already in use");}
+{compiler_treat(c,s,n); return reply_format("433", c.addr, "",   (*n)[0] + " :Nickname is already in use");}
 
 static std::string R_ERR_ERRONEUSNICKNAME(client_t &c, server_t &s, Command *n)
-{compiler_treat(c,s,n); return reply_format("432", c.addr, "Erroneous nickname");}
+{compiler_treat(c,s,n); return reply_format("432", c.addr, "", "Erroneous nickname");}
 
 static std::string R_ERR_NICKCOLLISION(client_t &c, server_t &s, Command *n)
-{compiler_treat(c,s,n); return reply_format("436", c.addr, (*n)[0] + " :Nickname collision KILL from " + "user" + "@" + "host");} //replace with proper info
+{compiler_treat(c,s,n); return reply_format("436", c.addr, "", (*n)[0] + " :Nickname collision KILL from " + "user" + "@" + "host");} //replace with proper info
 
 static std::string R_ERR_NOOPERHOST(client_t &c, server_t &s, Command *n)
-{compiler_treat(c,s,n); return reply_format("491", c.addr, "No O-lines for your host");}
+{compiler_treat(c,s,n); return reply_format("491", c.addr, "", "No O-lines for your host");}
 
 static std::string R_ERR_PASSWDMISMATCH(client_t &c, server_t &s, Command *n)
-{compiler_treat(c,s,n); return reply_format("464", c.addr, "Password incorrect");}
+{compiler_treat(c,s,n); return reply_format("464", c.addr, "", "Password incorrect");}
 
 static std::string R_ERR_INVITEONLYCHAN(client_t &c, server_t &s, Command *n)
-{compiler_treat(c,s,n); return reply_format("473", c.addr, (std::string)"<channel>" + " :Cannot join channel (+i)");}
+{compiler_treat(c,s,n); return reply_format("473", c.addr, "", (std::string)"<channel>" + " :Cannot join channel (+i)");}
 
 static std::string R_ERR_CHANNELISFULL(client_t &c, server_t &s, Command *n)
-{compiler_treat(c,s,n); return reply_format("471", c.addr, (std::string)"<channel>" + " :Cannot join channel (+l)");}
+{compiler_treat(c,s,n); return reply_format("471", c.addr, "", (std::string)"<channel>" + " :Cannot join channel (+l)");}
 
 static std::string R_ERR_NOSUCHCHANNEL(client_t &c, server_t &s, Command *n)
-{compiler_treat(c,s,n); return reply_format("403", c.addr, (std::string)"<channel>" + " :No such channel");}
+{compiler_treat(c,s,n); return reply_format("403", c.addr,"", (std::string)"<channel>" + " :No such channel");}
 
 static std::string R_ERR_BANNEDFROMCHAN(client_t &c, server_t &s, Command *n)
-{compiler_treat(c,s,n); return reply_format("474", c.addr, (std::string)"<channel>" + " :Cannot join channel (+b)");}
+{compiler_treat(c,s,n); return reply_format("474", c.addr,"",(std::string)"<channel>" + " :Cannot join channel (+b)");}
 
 static std::string R_ERR_BADCHANNELKEY(client_t &c, server_t &s, Command *n)
-{compiler_treat(c,s,n); return reply_format("475", c.addr, (std::string)"<channel>" + " :Cannot join channel (+k)");}
+{compiler_treat(c,s,n); return reply_format("475", c.addr,"", (std::string)"<channel>" + " :Cannot join channel (+k)");}
 
 static std::string R_ERR_BADCHANMASK(client_t &c, server_t &s, Command *n)
-{compiler_treat(c,s,n); return reply_format("476", c.addr, (std::string)"<channel>" + " :Bad Channel Mask");}
+{compiler_treat(c,s,n); return reply_format("476", c.addr,"", (std::string)"<channel>" + " :Bad Channel Mask");}
 
 static std::string R_ERR_TOOMANYCHANNELS(client_t &c, server_t &s, Command *n)
-{compiler_treat(c,s,n); return reply_format("405", c.addr, (std::string)"<channel>" + " :You have joined too many channels");}
+{compiler_treat(c,s,n); return reply_format("405", c.addr,"", (std::string)"<channel>" + " :You have joined too many channels");}
 
 static std::string R_ERR_NOTONCHANNEL(client_t &c, server_t &s, Command *n)
-{compiler_treat(c,s,n); return reply_format("442", c.addr, (std::string)"<channel>" + " :You're not on that channel");}
+{compiler_treat(c,s,n); return reply_format("442", c.addr,"", (std::string)"<channel>" + " :You're not on that channel");}
 
 static std::string R_ERR_NORECIPIENT(client_t &c, server_t &s, Command *n)
-{compiler_treat(c,s,n); return reply_format("411", c.addr, "No recipient given (" + n->get_name() + ")");}
+{compiler_treat(c,s,n); return reply_format("411", c.addr,"", "No recipient given (" + n->get_name() + ")");}
 
 static std::string R_ERR_CANNOTSENDTOCHAN(client_t &c, server_t &s, Command *n)
-{compiler_treat(c,s,n); return reply_format("404", c.addr, (std::string)"<channel>" + " :Cannot send to channel");}
+{compiler_treat(c,s,n); return reply_format("404", c.addr,"", (std::string)"<channel>" + " :Cannot send to channel");}
 
 static std::string R_ERR_WILDTOPLEVEL(client_t &c, server_t &s, Command *n)
-{compiler_treat(c,s,n); return reply_format("414", c.addr, (std::string)"<mask>" + " : Wilcard in top level");}
+{compiler_treat(c,s,n); return reply_format("414", c.addr,"", (std::string)"<mask>" + " : Wilcard in top level");}
 
 static std::string R_ERR_NOSUCHNICK(client_t &c, server_t &s, Command *n)
-{compiler_treat(c,s,n); return reply_format("401", c.addr, (std::string)"<nick>" + " :No such nick/channel");}
+{compiler_treat(c,s,n); return reply_format("401", c.addr,"", (std::string)"<nick>" + " :No such nick/channel");}
 
 static std::string R_ERR_NOTEXTTOSEND(client_t &c, server_t &s, Command *n)
-{compiler_treat(c,s,n); return reply_format("412", c.addr, "", "No text to send");}
+{compiler_treat(c,s,n); return reply_format("412", c.addr,"", "No text to send");}
 
 static std::string R_ERR_NOTOPLEVEL(client_t &c, server_t &s, Command *n)
-{compiler_treat(c,s,n); return reply_format("413", c.addr, (std::string)"<mask>" + " : No toplevel domain specified");}
+{compiler_treat(c,s,n); return reply_format("413", c.addr, "", (std::string)"<mask>" + " : No toplevel domain specified");}
 
 static std::string R_ERR_TOOMANYTARGETS(client_t &c, server_t &s, Command *n)
-{compiler_treat(c,s,n); return reply_format("407", c.addr, (std::string)" :407 recipients. <abort message>");}
+{compiler_treat(c,s,n); return reply_format("407", c.addr, "", (std::string)" :407 recipients. <abort message>");}
 
 void	init_reply_matrix(reply *reply_matrix)
 {
