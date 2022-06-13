@@ -7,7 +7,7 @@ static void compiler_treat(client_t &c, server_t &s, Command *n)
 {(void)c, (void)s, (void)n;}
 
 static std::string R_DUMMY(client_t &c, server_t &s, Command *n)
-{compiler_treat(c,s,n); return "This is a dummy reply from " + n->get_name() + "\n";}
+{compiler_treat(c,s,n); return "";}
 
 static std::string R_WELCOME(client_t &c, server_t &s, Command *n)
 {compiler_treat(c,s,n); return reply_format("001", c.addr, "", (std::string)"Welcome to the Internet Relay Network\n" + "<nick>" + "!" + "<user>" + "@" + "<host>");}
@@ -97,7 +97,7 @@ static std::string R_ERR_NOSUCHNICK(client_t &c, server_t &s, Command *n)
 {compiler_treat(c,s,n); return reply_format("401", c.addr, (std::string)"<nick>" + " :No such nick/channel");}
 
 static std::string R_ERR_NOTEXTTOSEND(client_t &c, server_t &s, Command *n)
-{compiler_treat(c,s,n); return reply_format("412", c.addr, "No text to send");}
+{compiler_treat(c,s,n); return reply_format("412", c.addr, "", "No text to send");}
 
 static std::string R_ERR_NOTOPLEVEL(client_t &c, server_t &s, Command *n)
 {compiler_treat(c,s,n); return reply_format("413", c.addr, (std::string)"<mask>" + " : No toplevel domain specified");}
