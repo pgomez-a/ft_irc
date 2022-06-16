@@ -63,7 +63,7 @@ static int	read_socket(client_t client, server_t server)
 	recv_len = 0;
 	tmp_recv_len = 0;
 	std::memset(recv_buff, 0, 212);
-	recv_buff[210] = '\n';
+	recv_buff[210] = '\r';
 	recv_buff[211] = '\n';
 	while (1)
 	{
@@ -81,10 +81,11 @@ static int	read_socket(client_t client, server_t server)
 			return (-1);
 		}
 		tmp_recv_len += recv_len;
-		if (recv_buff[tmp_recv_len - 1] == '\n' || tmp_recv_len == 210)
+		if ((recv_buff[tmp_recv_len - 2] == '\r' && recv_buff[tmp_recv_len - 1] == '\n' )|| tmp_recv_len == 210)
 		{
+
 			report_event(event_format(client.addr, client.port, recv_buff), history);
-			if (executor(recv_buff, tmp_recv_len, server, client) == -1)
+			if (executor(recv_buff, tmp_recv_len - 1, server, client) == -1)
 				 return on_error(history, "send()", -2);
 			break ;
 		}

@@ -15,6 +15,7 @@
 # include "Privmsg.hpp"
 # include "Notice.hpp"
 # include "Part.hpp"
+# include "Ping.hpp"
 
 /*
 PASS: used to set a 'connection password'. The password must be set before any attempt to register 
@@ -87,6 +88,6 @@ replies must never be sent in response to a NOTICE message.
 Command: NOTICE <nickname> <text>
 */
 
-enum	e_COMMANDS{NICK, USER, ERROR, PASS, OPER, QUIT, JOIN, PART, PRIVMSG, NOTICE};
+enum	e_COMMANDS{NICK, USER, ERROR, PASS, OPER, QUIT, JOIN, PART, PRIVMSG, NOTICE, PING, PONG};
 
 #endif

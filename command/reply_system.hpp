@@ -39,13 +39,16 @@ enum	e_REPLIES{
 					ERR_NOSUCHNICK = 401, 
 					ERR_NOTEXTTOSEND = 412, 
 					ERR_NOTOPLEVEL = 413,
-					ERR_TOOMANYTARGETS = 407
+					ERR_TOOMANYTARGETS = 407,
+					ERR_NOORIGIN = 409,
+					ERR_NOSUCHSERVER = 402
 				};
 
 typedef			std::string (*reply)(client_t&, server_t&, Command *);
 std::string		get_reply(int reply_code, client_t &client, Command *command);
 std::string		reply_format(std::string command_code, std::string target, std::string arg, std::string message);
 int 			reply_to_client(int reply_code, client_t &client, server_t &server, Command *command);
+int				send_to_client(std::string &s, client_t &client);
 void			init_reply_matrix(reply*);
 
 #endif

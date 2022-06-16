@@ -5,13 +5,15 @@
 /* DATA STRUCTURES */
 static std::map<std::string, Command *>	command_map;
 
-static	Command command_array[10] = 
+static	Command command_array[11] = 
 {
-Nick(), User(), Error(), Pass(), Oper(), Quit(), Join(), Part(), Privmsg(), Notice()
+Nick(), User(), Error(), Pass(), Oper(), Quit(), Join(), Part(), Privmsg(), Notice(), Ping()
 };
 
-static Nick nick_inst; static User user_inst; static Error error_inst; static Pass pass_inst; static Oper oper_inst; 
-static Quit quit_inst; static Join join_inst; static Part part_inst; static Privmsg privmsg_inst; static Notice notice_inst;
+static Nick nick_inst; static User user_inst; static Error error_inst; 
+static Pass pass_inst; static Oper oper_inst; static Quit quit_inst; 
+static Join join_inst; static Part part_inst; static Privmsg privmsg_inst;
+static Notice notice_inst; static Ping ping_inst;
 
 static	rule	rule_matrix[5][5] = {
 									{
@@ -46,6 +48,7 @@ static void	init_command_map(void)
 	command_map.insert(std::make_pair("PART", &part_inst));
 	command_map.insert(std::make_pair("PRIVMSG", &privmsg_inst));
 	command_map.insert(std::make_pair("NOTICE", &notice_inst));
+	command_map.insert(std::make_pair("PING", &ping_inst));
 
 }
 
