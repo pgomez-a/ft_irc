@@ -9,12 +9,13 @@ int	Pass::_effect(server_t &server, client_t &client)
 {
 	if (!_argc)
 		return ERR_NEEDMOREPARAMS;
-	if (client.registred_connection)
-		return ERR_ALREADYREGISTERED;
+	if (client.registered())
+		return ERR_ALREADYREGISTRED;
 	if (_argt[0] == server.passwd)
 	{
-		client.registred_connection = true;
-		return RPL_WELCOME;
+		client.register_flag(SERV_PASSW);
+		if (client.registered())
+			return RPL_WELCOME;
 	}
 	return 0;
 }

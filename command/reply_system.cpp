@@ -39,7 +39,7 @@ static std::string R_ERR_UNKNOWNCOMMAND(client_t &c, server_t &s, Command *n)
 static std::string R_ERR_NEEDMOREPARAMS(client_t &c, server_t &s, Command *n)
 {compiler_treat(c,s,n); return reply_format("461", c.addr,  n->get_name(), "Not enough parameters");}
 
-static std::string R_ERR_ALREADYREGISTERED(client_t &c, server_t &s, Command *n)
+static std::string R_ERR_ALREADYREGISTRED(client_t &c, server_t &s, Command *n)
 {compiler_treat(c,s,n); return reply_format("462", c.addr, "", "Unauthorized command (already registered)");}
 
 static std::string R_ERR_NONICKNAMEGIVEN(client_t &c, server_t &s, Command *n)
@@ -111,6 +111,9 @@ static std::string R_ERR_NOSUCHSERVER(client_t &c, server_t &s, Command *n)
 static std::string R_ERR_NOORIGIN(client_t &c, server_t &s, Command *n)
 {compiler_treat(c,s,n); return reply_format("409", c.addr, "", "No origin specified");}
 
+static std::string R_ERR_NOTREGISTRED(client_t &c, server_t &s, Command *n)
+{compiler_treat(c,s,n); return reply_format("451", c.addr, "", "You have not registered");}
+
 void	init_reply_matrix(reply *reply_matrix)
 {
 	reply_matrix[0] = R_DUMMY;
@@ -128,7 +131,7 @@ void	init_reply_matrix(reply *reply_matrix)
 	reply_matrix[ERR_ERRONEUSNICKNAME] = R_ERR_ERRONEUSNICKNAME;
 	reply_matrix[ERR_NICKCOLLISION] = R_ERR_NICKCOLLISION;
 	reply_matrix[ERR_NEEDMOREPARAMS] = R_ERR_NEEDMOREPARAMS;
-	reply_matrix[ERR_ALREADYREGISTERED] = R_ERR_ALREADYREGISTERED;
+	reply_matrix[ERR_ALREADYREGISTRED] = R_ERR_ALREADYREGISTRED;
 	reply_matrix[ERR_NOOPERHOST] = R_ERR_NOOPERHOST;
 	reply_matrix[ERR_NOORIGIN] = R_ERR_NOORIGIN;
 	reply_matrix[ERR_PASSWDMISMATCH] = R_ERR_PASSWDMISMATCH;
@@ -148,6 +151,7 @@ void	init_reply_matrix(reply *reply_matrix)
 	reply_matrix[ERR_NOTEXTTOSEND] = R_ERR_NOTEXTTOSEND;
 	reply_matrix[ERR_NOTOPLEVEL] = R_ERR_NOTOPLEVEL;
 	reply_matrix[ERR_TOOMANYTARGETS] = R_ERR_TOOMANYTARGETS;
+	reply_matrix[ERR_NOTREGISTERED] = R_ERR_NOTREGISTRED;
 	}
 
 std::string	get_reply(int reply_code, client_t &client, server_t &server, Command *command)

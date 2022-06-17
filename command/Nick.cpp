@@ -6,7 +6,17 @@ Nick::Nick(void) {
 };
 
 int	Nick::_effect(server_t &server, client_t &client)
-{
-	(void)server, (void)client;
-	return 0;
+{	
+	//might have a timeout and potentially a nick change acknowledgement;
+	if (!_argc)
+		return ERR_NONICKNAMEGIVEN;
+	if  (valid_nickname(_argt[0]))
+	{
+		if (server.find(_argt[0]))
+			return ERR_NICKNAMEINUSE;
+		client.register_flag(CLI_USER);
+		client.set_nick(_argt[0]);
+		return (client.registered()) ? RPL_WELCOME : 0;
+	}
+	return ERR_ERRONEUSNICKNAME;
 }
