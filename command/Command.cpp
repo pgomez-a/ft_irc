@@ -32,11 +32,19 @@ size_t	Command::id(void) const
 	return _id;
 }
 
+static bool	registration_request(int command_id)
+{
+	return (command_id >= 0 && command_id <= 2);
+}
+
 int Command::execute(server_t &server, client_t &client)
 {
 	int	reply_code;
 
-	reply_code = _effect(server, client);
+	if (client.registered() || registration_request(_id))
+		reply_code = _effect(server, client);
+	else
+		reply_code = ERR_NOTREGISTERED;
 	return reply_to_client(reply_code, client, server, this);
 }
 

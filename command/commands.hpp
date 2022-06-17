@@ -88,6 +88,6 @@ replies must never be sent in response to a NOTICE message.
 Command: NOTICE <nickname> <text>
 */
 
-enum	e_COMMANDS{NICK, USER, ERROR, PASS, OPER, QUIT, JOIN, PART, PRIVMSG, NOTICE, PING, PONG};
+enum	e_COMMANDS{NICK, USER, PASS, ERROR, OPER, QUIT, JOIN, PART, PRIVMSG, NOTICE, PING, PONG};
 
 #endif

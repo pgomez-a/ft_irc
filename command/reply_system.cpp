@@ -10,7 +10,7 @@ static std::string R_DUMMY(client_t &c, server_t &s, Command *n)
 {compiler_treat(c,s,n); return "";}
 
 static std::string R_WELCOME(client_t &c, server_t &s, Command *n)
-{compiler_treat(c,s,n); return reply_format("001", c.addr, "", (std::string)"Welcome to the Internet Relay Network " + "<nick>" + "!" + "<user>" + "@" + "<host>");}
+{compiler_treat(c,s,n); return reply_format("001", c.addr, "", (std::string)"Welcome to the Internet Relay Network " + c.get_nick() + "!" + c.get_user() + "@" + c.addr);}
 
 static std::string R_YOURHOST(client_t &c, server_t &s, Command *n)
 {compiler_treat(c,s,n); return reply_format("002", c.addr, "", "Your host is " + s.name + " ");}
@@ -112,7 +112,7 @@ static std::string R_ERR_NOORIGIN(client_t &c, server_t &s, Command *n)
 {compiler_treat(c,s,n); return reply_format("409", c.addr, "", "No origin specified");}
 
 static std::string R_ERR_NOTREGISTRED(client_t &c, server_t &s, Command *n)
-{compiler_treat(c,s,n); return reply_format("451", c.addr, "", "You have not registered");}
+{compiler_treat(c,s,n); return reply_format("451", c.addr, "", "You have not registered.");}
 
 void	init_reply_matrix(reply *reply_matrix)
 {

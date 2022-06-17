@@ -52,7 +52,7 @@ static int	accept_socket(server_t& server)
  ** Handles a client request and responds with the appropriate reply
  **/
 
-static int	read_socket(client_t client, server_t server)
+static int	read_socket(client_t &client, server_t server)
 {
 	int				recv_len;
 	int				tmp_recv_len;

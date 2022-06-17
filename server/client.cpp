@@ -25,7 +25,10 @@ _registration_flags(0), _mode(0), _nick(), _user() {}
 
 void	client_t::register_flag(unsigned int flag)
 {
-	_registration_flags ^= flag;
+	std::cout << "REGISTERING : " << flag << std::endl;
+	std::cout << "pre flags : " << _registration_flags << std::endl;
+	_registration_flags |= flag;
+	std::cout << "pos flags : " << _registration_flags << std::endl;
 }
 
 bool client_t::registered(void) const

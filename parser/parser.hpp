@@ -41,6 +41,7 @@ typedef	struct	s_parser_product
 
 	Command		*produce_command(void);
 }				parser_product;
+void	set_err_product(parser_product &p);
 
 typedef std::stack<size_t>		symbol_stack; //containing parser and lexer symbols.
 typedef std::list<size_t>		symbol_list;

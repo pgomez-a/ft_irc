@@ -35,10 +35,11 @@ int	manage_socket(server_t& server);
 
 
 /**
- ** process_message.cpp
+ ** executor.cpp
  **/
 
 int 	executor(char *buf, size_t buf_len, server_t &server, client_t &client);
+
 Command *process_message(char *buf, size_t buf_len);
 
 #endif

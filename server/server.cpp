@@ -2,12 +2,11 @@
 
 client_t	*server_t::find(std::string nick)
 {
-	//fix sent reference...
-	client_t *c = new client_t;
-	for (size_t i = 0; i < MAX_CLIENTS; ++i)
+	for (int i = 0; i < clients_nfds; ++i)
 	{
+		std::cout << "Nick is : " << clients_info[i].get_nick() << std::endl;
 		if (clients_info[i].get_nick() == nick)
-			return c;
+			return &clients_info[i];
 	}
 	return NULL;
 

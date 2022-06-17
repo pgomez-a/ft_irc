@@ -181,7 +181,7 @@ Command	*parser_product::produce_command(void)
 	return command;
 }
 
-static void	set_err_product(parser_product &p)
+void	set_err_product(parser_product &p)
 {
 	p.command = &error_inst;
 	p.argc = 0;

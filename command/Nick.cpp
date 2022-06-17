@@ -14,7 +14,7 @@ int	Nick::_effect(server_t &server, client_t &client)
 	{
 		if (server.find(_argt[0]))
 			return ERR_NICKNAMEINUSE;
-		client.register_flag(CLI_USER);
+		client.register_flag(CLI_NICK);
 		client.set_nick(_argt[0]);
 		return (client.registered()) ? RPL_WELCOME : 0;
 	}

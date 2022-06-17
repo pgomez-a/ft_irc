@@ -8,10 +8,11 @@ Ping::Ping(void)
 
 int	Ping::_effect(server_t &server, client_t &client)
 {
-	std::string s = "PONG " + server.name + " " + client.addr + "\r\n";
+	std::string s;
 	if (!_argc)
 		return ERR_NOORIGIN;
-	// else if no such server, return R_ERR_NOSUCHSERVER
+	// else if no such server, return R_ERR_NOSUCHSERVER; but we don't have server intercomm
+	s = "PONG " + server.name + " " +  _argt[0] + "\r\n";
 	send_to_client(s, client);
 	return 0;
 }
