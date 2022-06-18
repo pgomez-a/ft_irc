@@ -13,7 +13,7 @@ static std::string R_WELCOME(client_t &c, server_t &s, Command *n)
 {compiler_treat(c,s,n); return reply_format("001", c.addr, "", (std::string)"Welcome to the Internet Relay Network " + c.get_nick() + "!" + c.get_user() + "@" + c.addr);}
 
 static std::string R_YOURHOST(client_t &c, server_t &s, Command *n)
-{compiler_treat(c,s,n); return reply_format("002", c.addr, "", "Your host is " + s.name + " ");}
+{compiler_treat(c,s,n); return reply_format("002", c.addr, "", "Your host is " + s.name + ", running version 0.000001");}
 
 static std::string R_CREATED(client_t &c, server_t &s, Command *n)
 {compiler_treat(c,s,n); return reply_format("003", c.addr, "", (std::string)"This server was created  " + "<date>");}
@@ -28,7 +28,7 @@ static std::string R_TOPIC(client_t &c, server_t &s, Command *n)
 {compiler_treat(c,s,n); return reply_format("332", c.addr, "<channel>", "<topic>");}
 
 static std::string R_AWAY(client_t &c, server_t &s, Command *n)
-{compiler_treat(c,s,n); return reply_format("301", c.addr, "<nick>", "<away message>");}
+{compiler_treat(c,s,n); return reply_format("301", c.addr, c.get_nick(), "<away message>");}
 
 static std::string R_YOUREOPER(client_t &c, server_t &s, Command *n)
 {compiler_treat(c,s,n); return reply_format("381", c.addr, "", "You are now an IRC operator");}
@@ -94,7 +94,7 @@ static std::string R_ERR_WILDTOPLEVEL(client_t &c, server_t &s, Command *n)
 {compiler_treat(c,s,n); return reply_format("414", c.addr, (std::string)"<mask>", "Wilcard in top level");}
 
 static std::string R_ERR_NOSUCHNICK(client_t &c, server_t &s, Command *n)
-{compiler_treat(c,s,n); return reply_format("401", c.addr, (std::string)"<nick>", "No such nick/channel");}
+{compiler_treat(c,s,n); return reply_format("401", c.addr, (*n)[0], "No such nick/channel");}
 
 static std::string R_ERR_NOTEXTTOSEND(client_t &c, server_t &s, Command *n)
 {compiler_treat(c,s,n); return reply_format("412", c.addr,"", "No text to send");}
@@ -191,4 +191,16 @@ int send_to_client(std::string &s, client_t &client)
 	if (s.size())
 		r = send(client.sock_fd, s.c_str(), s.size(), 0);
 	return r;
+}
+
+int	welcome_new_registration(client_t &c, server_t &s, Command *n)
+{
+	std::string welcome = R_WELCOME(c, s, n);
+	std::string your_host = R_YOURHOST(c, s, n);
+	std::string created = R_CREATED(c, s, n);
+
+	send_to_client(welcome, c);
+	send_to_client(your_host, c);
+	send_to_client(created, c);
+	return 0;
 }

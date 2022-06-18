@@ -15,7 +15,7 @@ int	Pass::_effect(server_t &server, client_t &client)
 	{
 		client.register_flag(SERV_PASSW);
 		if (client.registered())
-			return RPL_WELCOME;
+			return welcome_new_registration(client, server, this);
 	}
 	return 0;
 }

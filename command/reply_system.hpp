@@ -50,6 +50,7 @@ std::string		get_reply(int reply_code, client_t &client, Command *command);
 std::string		reply_format(std::string command_code, std::string target, std::string arg, std::string message);
 int 			reply_to_client(int reply_code, client_t &client, server_t &server, Command *command);
 int				send_to_client(std::string &s, client_t &client);
+int				welcome_new_registration(client_t &c, server_t &s, Command *n);
 void			init_reply_matrix(reply*);
 
 #endif
