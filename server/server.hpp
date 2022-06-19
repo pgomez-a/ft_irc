@@ -48,6 +48,8 @@ struct client_t
 		void		set_user(std::string s);
 		std::string	get_user(void);
 
+		void		reset(void);
+
 	private:
 
 		int			_registration_flags;

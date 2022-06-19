@@ -55,6 +55,14 @@ void	client_t::set_user(std::string s) { _user = s;}
 std::string	client_t::get_user(void) { return _user;}
 
 
+void	client_t::reset(void)
+{
+	_registration_flags = 0;
+	_mode = 0;
+	_nick.clear();
+	_user.clear();
+}
+
 
 bool client_t::operator==(client_t &rhs) const
 {

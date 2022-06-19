@@ -200,6 +200,7 @@ int		manage_socket(server_t& server)
 						end_server = 1;
 					close(server.clients_fds[i].fd);
 					server.clients_fds[i].fd = -1;
+					server.clients_info[i].reset();
 					reduced = 1;
 				}
 			}
