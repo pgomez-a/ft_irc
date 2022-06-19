@@ -56,6 +56,7 @@ static int	read_socket(client_t &client, server_t server)
 {
 	int				recv_len;
 	int				tmp_recv_len;
+	int				split_executor;
 	char			recv_buff[212];
 	std::string		send_buff;
 	std::ofstream	history(".nameless_history", std::fstream::app);
@@ -83,10 +84,20 @@ static int	read_socket(client_t &client, server_t server)
 		tmp_recv_len += recv_len;
 		if ((recv_buff[tmp_recv_len - 2] == '\r' && recv_buff[tmp_recv_len - 1] == '\n' )|| tmp_recv_len == 210)
 		{
-
-			report_event(event_format(client.addr, client.port, recv_buff), history);
-			if (executor(recv_buff, tmp_recv_len - 1, server, client) == -1)
-				 return on_error(history, "send()", -2);
+			recv_len = 0;
+			split_executor = 0;
+			while (recv_buff[recv_len])
+			{
+				if (recv_len > 0 && recv_buff[recv_len] == '\n' && recv_buff[recv_len - 1] == '\r')
+				{
+					recv_buff[recv_len - 1] = '\0';
+					report_event(event_format(client.addr, client.port, recv_buff + split_executor), history);
+					if (executor(recv_buff + split_executor, tmp_recv_len - 1, server, client) == -1)
+				 		return on_error(history, "send()", -2);
+					split_executor = recv_len + 1;
+				}
+				recv_len += 1;
+			}
 			break ;
 		}
 	}
