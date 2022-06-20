@@ -17,7 +17,7 @@ int	main(int argc, char* argv[])
 	//atexit(leaks);
 	if (argc != 3)
 	{
-		std::cerr << "\033[1m\033[91mError:\033[0m\033[91m ./ircserv <port> <passwd>\n\033[0m";
+		put_error("./ircserv <port> <passwd>");
 		return (1);
 	}
 	if (init_addrinfo(argv[1], server.hints, server.res) == -1)
@@ -32,7 +32,7 @@ int	main(int argc, char* argv[])
 	history.open(".nameless_history", std::fstream::trunc);
 	if (!history.is_open())
 	{
-		std::cerr << "\033[1m\033[91mError:\033[0m\033[91m ./ircserv ifstream.open()\n\033[0m";
+		put_error("./ircserv ifstream.open()");
 		close(server.sock_fd);
 		return (1);
 	}

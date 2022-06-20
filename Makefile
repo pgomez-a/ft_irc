@@ -1,6 +1,6 @@
 .PHONY:	all test clean fclean re parser
 
-NAME		= 	server.exe
+NAME		= 	nameless_server
 
 CXX			= 	clang++
 
@@ -12,9 +12,9 @@ CXXFLAGS	=	-Wall -Werror -Wextra -std=c++98 $(INCLUDE_HEADERS)
 
 PARSER_SRCS	=	$(addprefix ./parser/, lexer.cpp parser.cpp word_composition.cpp)
 
-SERVER_SRCS	=	$(addprefix ./server/, config_socket.cpp manage_socket.cpp ircserv.cpp execute_commands.cpp)
+SERVER_SRCS	=	$(addprefix ./server/, config_socket.cpp manage_socket.cpp ircserv.cpp executor.cpp output.cpp client.cpp server.cpp)
 
-CMD_SRCS	=	$(addprefix ./command/, Command.cpp Error.cpp Part.cpp Join.cpp Nick.cpp Notice.cpp Oper.cpp Pass.cpp Privmsg.cpp Quit.cpp User.cpp)
+CMD_SRCS	=	$(addprefix ./command/, Command.cpp reply_system.cpp  Error.cpp Part.cpp Join.cpp Nick.cpp Notice.cpp Oper.cpp Pass.cpp Privmsg.cpp Quit.cpp User.cpp Ping.cpp)
 
 SRCS		= 	$(PARSER_SRCS) $(SERVER_SRCS) $(CMD_SRCS)
 
@@ -31,7 +31,7 @@ ifeq (test, $(firstword $(MAKECMDGOALS)))
 		TEST_SRCS	= $(PARSER_SRCS) $(CMD_SRCS) ./test/test_parser.cpp
 		TEST		= parser.debug
 	else
-		TEST_SRCS	= $(PARSER_SRCS) $(SERVER_SRCS) ./test/test_irc.cpp	
+		TEST_SRCS	= $(PARSER_SRCS) $(SERVER_SRCS) $(CMD_SRCS) #./test/test_irc.cpp	
 		TEST		= irc.debug
 	endif
 endif

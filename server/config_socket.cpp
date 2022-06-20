@@ -102,6 +102,7 @@ int	listen_socket(int sock_fd, int capacity)
 
 int	init_server(char* port, char* passwd, server_t& server)
 {
+	server.name = "nameless";
 	server.addr = "nameless";
 	server.port = static_cast<std::string>(port);
 	server.passwd = static_cast<std::string>(passwd);

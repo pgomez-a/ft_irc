@@ -1,4 +1,5 @@
 #include "parser.hpp"
+#include "word_composition.hpp"
 #include <ctype.h>
 #include <cstdarg>
 
@@ -88,3 +89,146 @@ bool	check_str(std::string s, std::list<char_filter> l)
 	}
 	return p;
 }
+
+/* SYMBOL EXPANSION AND VALIDITY*/
+
+bool	valid_shortname(std::string s)
+{
+	std::list<char_filter> l;
+	bool p;
+	
+	p = (letter(s[0]) || digit(s[0]));
+	if (p)
+	{
+		l.push_back(letter);
+		l.push_back(digit);
+		l.push_back(hyphen);
+		p = check_str(s, l);
+	}
+	return p;
+}
+
+bool	valid_nickname(std::string s)
+{
+	std::list<char_filter> l;
+	bool p;
+
+	p = (letter(s[0]) || special(s[0]));
+	if (p == true)
+	{
+		l.push_back(letter);
+		l.push_back(digit);
+		l.push_back(hyphen);
+		l.push_back(special);
+		p = check_str(s, l);
+	}
+	return (p && s.length() <= 9);
+}
+
+bool valid_user(std::string s)
+{
+	return (s.length() && check_str(s, user));
+}
+
+bool	valid_hostaddr(std::string s) //ip4 addresses only
+{
+	std::string::iterator	i = s.begin();
+	size_t					p = 0;
+	size_t					d = 0;
+
+	while (i != s.end())
+	{
+		if (digit(*i) &&  (p < 4 && d <= 3))
+			++d;
+		else if (*i == '.' && (p < 4 && d >= 1 &&  d <= 3))
+		{
+			++p;
+			d = 0;
+		}
+		else
+			return false;
+		++i;
+	}
+	return (p < 4 && d < 4);
+}
+
+bool valid_host(std::string s)
+{
+	return (s.length() && (valid_hostaddr(s) || valid_servername(s)));
+}
+
+bool	valid_servername(std::string n)
+{
+	std::string	s;
+	size_t		i;
+	size_t		j;
+	size_t		l;
+
+	i = 0;
+	j = 0;
+	l = n.length();
+	while (i < l)
+	{
+		j = i;
+		i = n.find(".", i);
+		s = n;
+		if (i < s.length())
+		{
+			s = n.substr(j, i - j);
+			++i;
+		}
+		else
+		{
+			s = n.substr(j, l - j);
+		}
+		if (!valid_shortname(s))
+			return false;
+	}
+	return (n.length() < SERVERNAME_LEN);
+}
+
+bool	valid_user_origin(std::string n)
+{
+	size_t						x;
+	std::pair<bool,std::string>	m; //nickname
+	std::pair<bool,std::string>	u; //user
+	std::pair<bool,std::string>	h; //host
+
+	x = n.find("@");
+	if (x != std::string::npos)
+	{	
+		h.first = true;
+		h.second = n.substr(x + 1, n.length() - x);
+	}
+	x = n.find("!");
+	if (x != std::string::npos)
+	{
+		u.first = true;
+		u.second = n.substr(x + 1, n.length() - (x + h.second.length() + 2));
+	}
+	//nickname's length :
+	//(total length - (user's l + 1*(user exists)) - (host's length + 1*(host exists)))
+	x = n.length() - (u.second.length() + u.first) - (h.second.length() + h.first);
+	m.second = n.substr(0, x);
+	if ((h.first && !valid_host(h.second)) || ((u.first && !valid_user(u.second))) || (!valid_nickname(m.second)))
+		return (false);
+	return true;
+}
+
+bool	valid_rest(std::string r)
+{
+	bool p = true;
+
+	if (r.length())
+	{
+		p = check_str(r, rest);
+	}
+	return p;
+}
+
+bool valid_parameter(std::string p)
+{
+	return check_str(p, parameter);
+}
+
+

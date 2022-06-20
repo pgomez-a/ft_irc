@@ -1,4 +1,6 @@
-#include "Command.hpp"
+#ifndef PART_HPP
+# define PART_HPP
+#include "commands.hpp"
 
 class Part : public Command
 {
@@ -6,3 +8,4 @@ class Part : public Command
 
 		Part(void);
 };
+#endif

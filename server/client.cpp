@@ -1,0 +1,75 @@
+#include "server.hpp"
+
+bool client_is_in_server(const server_t &server, const client_t &client)
+{
+	//needs to be refactored, clients_info should be a map instead of an array, and client_t should have
+	//comparison overload among other things
+	for (size_t i = 0; i < MAX_CLIENTS; ++i)
+	{
+		if (server.clients_info[i] == client)
+			return true;
+	}
+	return false;
+}
+
+bool client_is_registered(const server_t &server, const client_t &client)
+{
+	return (client.registered() && client_is_in_server(server, client));
+}
+
+
+/* Default constructor */
+client_t::client_t(void):
+sock_fd(), addr(), port(), info(), 
+_registration_flags(0), _mode(0), _nick(), _user() {}
+
+void	client_t::register_flag(unsigned int flag)
+{
+	std::cout << "REGISTERING : " << flag << std::endl;
+	std::cout << "pre flags : " << _registration_flags << std::endl;
+	_registration_flags |= flag;
+	std::cout << "pos flags : " << _registration_flags << std::endl;
+}
+
+bool client_t::registered(void) const
+{
+	return (_registration_flags == IS_REGISTERED);
+}
+
+void	client_t::set_mode(int m) { _mode = m;}
+
+int		client_t::get_mode(void) { return _mode;}
+
+std::string	client_t::get_mode(bool p) 
+{ 
+	p^=p;
+	return std::string(STR(_mode));
+}
+
+void	client_t::set_nick(std::string s) { _nick = s;}
+
+std::string	client_t::get_nick(void) { return _nick;}
+
+void	client_t::set_user(std::string s) { _user = s;}
+
+std::string	client_t::get_user(void) { return _user;}
+
+
+void	client_t::reset(void)
+{
+	_registration_flags = 0;
+	_mode = 0;
+	_nick.clear();
+	_user.clear();
+}
+
+
+bool client_t::operator==(client_t &rhs) const
+{
+	return (this->port == rhs.port && this->addr == rhs.addr);
+}
+
+bool client_t::operator==(const client_t &rhs) const
+{
+	return (this->port == rhs.port && this->addr == rhs.addr);
+}

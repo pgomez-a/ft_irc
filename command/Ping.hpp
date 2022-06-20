@@ -1,16 +1,15 @@
-#ifndef NICK_HPP
-# define NICK_HPP
+#ifndef PING_HPP
+# define PING_HPP
 #include "commands.hpp"
 
-class Nick : public Command
+class Ping : public Command
 {
 	public : 
 
-		Nick(void);
-
+		Ping(void);
+	
 	private :
 
 		int	_effect(server_t &server, client_t &client);
-
 };
 #endif

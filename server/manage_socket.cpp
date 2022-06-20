@@ -1,6 +1,13 @@
 #include "ircserv.hpp"
 
 
+static	int	on_error(std::ofstream &history, std::string error, int r)
+{
+	put_error(error);
+	history.close();
+	return r;
+}
+
 /**
  ** Accepts all incoming client connections that are in the backlog.
  **  - inet_ntoa: converts ip_address to char*
@@ -8,11 +15,12 @@
 
 static int	accept_socket(server_t& server)
 {
-	int			nfds;
-	int			nsock_fd;
-	socklen_t		client_len;
+	int						nfds;
+	int						nsock_fd;
+	socklen_t				client_len;
 	struct sockaddr_storage	client_addr;
-	std::ofstream		history(".nameless_history", std::fstream::app);
+	std::ofstream			history(".nameless_history", std::fstream::app);
+	std::string				event;
 
 	nfds = server.clients_nfds;
 	client_len = sizeof(client_addr);
@@ -23,11 +31,7 @@ static int	accept_socket(server_t& server)
 		if (nsock_fd == -1)
 		{
 			if (errno != EWOULDBLOCK)
-			{
-				std::cerr << "\033[1m\033[91mError:\033[0m\033[91m accept()\n\033[0m";
-				history.close();
-				return (-1);
-			}
+				return on_error(history, "accept()", -1);
 			break ;
 		}
 		server.clients_info[nfds].info = *((struct sockaddr_in*)&client_addr);
@@ -36,10 +40,8 @@ static int	accept_socket(server_t& server)
 		server.clients_info[nfds].port = std::to_string(server.clients_info[nfds].info.sin_port);
 		server.clients_fds[nfds].fd = nsock_fd;
 		server.clients_fds[nfds].events = POLLIN;
-		std::cout << "\033[1m\033[93m" << server.clients_info[nfds].addr << ":"
-			<< server.clients_info[nfds].port << "\033[0m\033[93m Connection Accepted\n\033[0m";
-		history << "\033[1m\033[93m <- " << server.clients_info[nfds].addr << ":"
-			<< server.clients_info[nfds].port << "\033[0m\033[93m Connection Accepted\n\033[0m";
+		event = event_format(server.clients_info[nfds].addr, server.clients_info[nfds].port,"Connection Accepted");
+		report_event(event, history, YELLOW);
 		nfds += 1;
 	}
 	history.close();
@@ -50,18 +52,19 @@ static int	accept_socket(server_t& server)
  ** Handles a client request and responds with the appropriate reply
  **/
 
-static int	read_socket(client_t client, server_t server)
+static int	read_socket(client_t &client, server_t server)
 {
-	int		recv_len;
-	int		tmp_recv_len;
-	char		recv_buff[212];
-	std::string	send_buff;
+	int				recv_len;
+	int				tmp_recv_len;
+	int				split_executor;
+	char			recv_buff[212];
+	std::string		send_buff;
 	std::ofstream	history(".nameless_history", std::fstream::app);
 
 	recv_len = 0;
 	tmp_recv_len = 0;
 	std::memset(recv_buff, 0, 212);
-	recv_buff[210] = '\n';
+	recv_buff[210] = '\r';
 	recv_buff[211] = '\n';
 	while (1)
 	{
@@ -69,44 +72,31 @@ static int	read_socket(client_t client, server_t server)
 		if (recv_len < 0)
 		{
 			if (errno != EWOULDBLOCK)
-			{
-				std::cerr << "\033[1m\033[91mError:\033[0m\033[91m recv()\n\033[0m";
-				history.close();
-				return (-2);
-			}
+				return on_error(history, "recv()", -2);
 			continue ;
 		}
 		if (recv_len == 0)
 		{
-			std::cout << "\033[1m\033[94m" << client.addr << ":" << client.port
-				<< "\033[0m\033[94m Connection Closed\n\033[0m";
-			history << "\033[1m\033[94m <- " << client.addr << ":" << client.port
-				<< "\033[0m\033[94m Connection Closed\n\033[0m";
+			report_event(event_format(client.addr, client.port, "Connection Closed"), history, BLUE);
 			history.close();
 			return (-1);
 		}
 		tmp_recv_len += recv_len;
-		if (recv_buff[tmp_recv_len - 1] == '\n' || tmp_recv_len == 210)
+		if ((recv_buff[tmp_recv_len - 2] == '\r' && recv_buff[tmp_recv_len - 1] == '\n' )|| tmp_recv_len == 210)
 		{
-			std::cout << "\033[1m" << client.addr << ":" << client.port << "\033[0m " << recv_buff;
-			history << "\033[1m <- " << client.addr << ":" << client.port << "\033[0m " << recv_buff;
-			send_buff = "\033[1m" + server.addr + ":" + server.port + "\033[0m Received\n";
-			history << "\033[1m -> " + client.addr + ":" + client.port + "\033[0m Received\n";
-
-
-			//PARSER
-			std::string s(recv_buff, 0, tmp_recv_len -1);
-			token_list l = message_lexer(s);
-			parser_product p = message_parser(l);
-			//EXECUTOR//
-			execute_command(p);
-
-			
-			if (send(client.sock_fd, send_buff.c_str(), send_buff.size(), 0) == -1)
+			recv_len = 0;
+			split_executor = 0;
+			while (recv_buff[recv_len])
 			{
-				std::cerr << "\033[1m\033[91mError:\033[0m\033[91m send()\n\033[0m";
-				history.close();
-				return (-2);
+				if (recv_len > 0 && recv_buff[recv_len] == '\n' && recv_buff[recv_len - 1] == '\r')
+				{
+					recv_buff[recv_len - 1] = '\0';
+					report_event(event_format(client.addr, client.port, recv_buff + split_executor), history);
+					if (executor(recv_buff + split_executor, tmp_recv_len - 1, server, client) == -1)
+				 		return on_error(history, "send()", -2);
+					split_executor = recv_len + 1;
+				}
+				recv_len += 1;
 			}
 			break ;
 		}
@@ -184,12 +174,12 @@ int		manage_socket(server_t& server)
 		func_return = poll(server.clients_fds, server.clients_nfds, server.timeout);
 		if (func_return == -1)
 		{
-			std::cerr << "\033[1m\033[91mError:\033[0m\033[91m poll()\n\033[0m";
+			put_error("poll()");
 			break ;
 		}
-		if (func_return == 0)
+		if (func_return == 0) // extra condition??
 		{
-			std::cerr << "\033[1m\033[93mTimed out:\033[0m\033[93m poll()\n\033[0m";
+			put_error("poll()");
 			break ;
 		}
 		poll_tmp_nfds = server.clients_nfds;
@@ -199,7 +189,7 @@ int		manage_socket(server_t& server)
 				continue ;
 			if (!(server.clients_fds[i].revents & POLLIN))
 			{
-				std::cout << "\033[1m\033[91mError:\033[0m\033[91m revents\n\033[0m";
+				put_error("revents");
 				end_server = 1;
 				break ;
 			}
@@ -221,6 +211,7 @@ int		manage_socket(server_t& server)
 						end_server = 1;
 					close(server.clients_fds[i].fd);
 					server.clients_fds[i].fd = -1;
+					server.clients_info[i].reset();
 					reduced = 1;
 				}
 			}
@@ -232,9 +223,6 @@ int		manage_socket(server_t& server)
 		}
 	}
 	close_poll_fds(server);
-	std::cout << "\033[1m";
-	std::cout << "Server disconnected...\n";
-	std::cout << "For any problem contact the authors at https://github.com/pgomez-a/ft_irc\n";
-	std::cout << "\033[0m\n";
+	put_event("Server disconnected...\nContact the authors at https://github.com/pgomez-a/ft_irc\n");
 	return (0);
 }
