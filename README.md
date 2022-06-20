@@ -55,7 +55,7 @@ Numeric Replies: **ERR_NEEDMOREPARAMS** &emsp; **ERR_NOOPERHOST** &emsp; **RPL_Y
 
 ***
 
-- [**QUIT:**](https://datatracker.ietf.org/doc/html/rfc1459#section-4.1.6) a client session if ended with a quit message. **The server must close the connection to a client which sends a QUIT message.** If a "Quit Message" is given, this will be sent instead of the default message, the nickname. If, for some other reason, a client connection is closed without  the client  issuing  a  QUIT  command  (e.g.  client  dies and EOF occurs on socket), the server is required to fill in the quit  message  with some sort  of  message  reflecting the nature of the event which caused it to happen.<br><br>
+- [**QUIT:**](https://datatracker.ietf.org/doc/html/rfc1459#section-4.1.6) a client session is ended with a quit message. **The server must close the connection to a client which sends a QUIT message.** If a "Quit Message" is given, this will be sent instead of the default message, the nickname. If, for some other reason, a client connection is closed without  the client  issuing  a  QUIT  command  (e.g.  client  dies and EOF occurs on socket), the server is required to fill in the quit  message  with some sort  of  message  reflecting the nature of the event which caused it to happen.<br><br>
 Command: **QUIT [\<Quit message\>]**<br>
 Numeric Replies: **None**
 
