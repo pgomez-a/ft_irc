@@ -21,14 +21,16 @@ bool client_is_registered(const server_t &server, const client_t &client)
 /* Default constructor */
 client_t::client_t(void):
 sock_fd(), addr(), port(), info(), 
-_registration_flags(0), _mode(0), _nick(), _user() {}
+_registration_flags(0), _mode(), _nick(), _user() {}
 
 void	client_t::register_flag(unsigned int flag)
 {
-	std::cout << "REGISTERING : " << flag << std::endl;
-	std::cout << "pre flags : " << _registration_flags << std::endl;
 	_registration_flags |= flag;
-	std::cout << "pos flags : " << _registration_flags << std::endl;
+}
+
+bool client_t::flag_is_set(unsigned int flag) const
+{
+	return (_registration_flags & flag);
 }
 
 bool client_t::registered(void) const
@@ -36,29 +38,32 @@ bool client_t::registered(void) const
 	return (_registration_flags == IS_REGISTERED);
 }
 
-void	client_t::set_mode(int m) { _mode = m;}
-
-int		client_t::get_mode(void) { return _mode;}
-
-std::string	client_t::get_mode(bool p) 
+void	client_t::set_mode(std::string m) 
 { 
-	p^=p;
-	return std::string(STR(_mode));
+	_mode = m;	
+}
+
+std::string	client_t::get_mode(void) const 
+{ 
+	return _mode;
 }
 
 void	client_t::set_nick(std::string s) { _nick = s;}
 
-std::string	client_t::get_nick(void) { return _nick;}
+std::string	client_t::get_nick(void) const { return _nick;}
 
 void	client_t::set_user(std::string s) { _user = s;}
 
-std::string	client_t::get_user(void) { return _user;}
+std::string	client_t::get_user(void) const { return _user;}
 
+void	client_t::set_realname(std::string s) { _realname = s;}
+
+std::string	client_t::get_realname(void) const { return _realname;}
 
 void	client_t::reset(void)
 {
 	_registration_flags = 0;
-	_mode = 0;
+	_mode.clear();
 	_nick.clear();
 	_user.clear();
 }
@@ -72,4 +77,18 @@ bool client_t::operator==(client_t &rhs) const
 bool client_t::operator==(const client_t &rhs) const
 {
 	return (this->port == rhs.port && this->addr == rhs.addr);
+}
+
+/*
+** Mode functions
+*/
+
+std::string user_mode_bitmask(int m)
+{
+	std::string	mode;
+
+	mode += ('w' * (bool)(m & 4));
+	mode += ('i' * (bool)(m & 8));
+
+	return mode;
 }

@@ -7,20 +7,22 @@ User::User(void) {
 
 int	User::_effect(server_t &server, client_t &client)
 {
-	//Parameters: <user> <mode> <unused> <realname>
-	//<mode> is numeric, sets user modes on registration
-	//It is a bitmask with 2 bits of 'signification':
-	//if bit 2 is set, user mode 'w' is set, and if bit 3 is set, user mode 'i' is too.
-	//(RFC 2812 section 3.1.5 for more info on modes)
-	//
-	//Example of USER command:
-	//USER npinto-g 0 * :George W Bush
-	//Makes the user register with username 'npinto-g',  without modes set and with real name
-	//'George W Bush'
-	(void)server, (void)client;
-	client.register_flag(CLI_USER);
-	client.set_user("dummy_user");
-	if (client.registered())
-		return welcome_new_registration(client, server, this);
-	return 0;
+
+	if (_argc >= 4 || (_argc == 3 && !_rest.empty()))
+	{
+		if (client.flag_is_set(CLI_USER))
+			return ERR_ALREADYREGISTRED;
+		if (valid_user(_argt[0]))
+		{
+			client.set_user(_argt[0]);
+			client.set_mode(user_mode_bitmask(atoi(_argt[1].c_str())));
+			client.set_realname((_rest.empty()) ? _argt[4]: _rest);
+			client.register_flag(CLI_USER);
+			send_to_client(reply_format(":nameless MODE " + client.get_nick() + " :" + client.get_mode()), client);
+			if (client.registered())
+				return welcome_new_registration(client, server, this);
+		}
+		return 0;
+	}
+	return ERR_NEEDMOREPARAMS;
 }

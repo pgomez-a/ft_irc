@@ -41,10 +41,8 @@ int Command::execute(server_t &server, client_t &client)
 {
 	int	reply_code;
 
-	//std::cout << "ID : " << _id << std::endl;
 	if (client.registered() || registration_request(_id))
 	{
-		//std::cout << "either registered or request for registrtation\n";
 		reply_code = _effect(server, client);
 	}
 	else

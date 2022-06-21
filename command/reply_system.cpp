@@ -166,6 +166,8 @@ std::string	get_reply(int reply_code, client_t &client, server_t &server, Comman
 	return reply_message;
 }
 
+//format for numeric reply
+
 std::string		reply_format(std::string code, std::string target, std::string arg, std::string message)
 {
 	std::string	s;
@@ -173,6 +175,13 @@ std::string		reply_format(std::string code, std::string target, std::string arg,
 	s += ":nameless " + code + " " + target +  " " + arg + " :" + message + "\r\n";
 
 	return s;
+}
+
+//format for simple reply
+
+std::string		reply_format(std::string reply, std::string reply_code)
+{
+	return reply_code + " " + reply + "\r\n";
 }
 
 int reply_to_client(int reply_code, client_t &client, server_t &server,Command *command)
@@ -183,7 +192,7 @@ int reply_to_client(int reply_code, client_t &client, server_t &server,Command *
 	return send_to_client(reply_message, client);
 }
 
-int send_to_client(std::string &s, client_t &client)
+int send_to_client(std::string s, client_t &client)
 {
 	ssize_t		r;
 

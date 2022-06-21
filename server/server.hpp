@@ -29,7 +29,6 @@ struct client_t
 		std::string			port;
 		struct sockaddr_in	info;
 		
-
 	/*member functions*/
 
 		client_t(void);
@@ -38,26 +37,30 @@ struct client_t
 		bool	operator==(const client_t &rhs) const;
 		
 		void	register_flag(unsigned int flag);
+		bool	flag_is_set(unsigned int flag) const;
 		bool	registered(void) const;
 
-		void		set_mode(int m);
-		int			get_mode(void);
-		std::string	get_mode(bool p);
+		void		set_mode(std::string);
+		std::string	get_mode(void) const;
 		void		set_nick(std::string s);
-		std::string	get_nick(void);
+		std::string	get_nick(void) const;
 		void		set_user(std::string s);
-		std::string	get_user(void);
+		std::string	get_user(void) const;
+		void		set_realname(std::string s);
+		std::string	get_realname(void) const;
 
 		void		reset(void);
 
 	private:
 
 		int			_registration_flags;
-		int			_mode;
+		std::string	_mode;
 		std::string	_nick;
 		std::string	_user;
+		std::string _realname;
 
 };
+
 //needs to be refactored, clients_info should be a map or similar instead of an array, and client_t should have
 //comparison overload among other things
 struct server_t
@@ -85,5 +88,11 @@ struct server_t
 
 bool client_is_in_server(const server_t &server, const client_t &client);
 bool client_is_registered(const server_t &server, const client_t &client);
+
+/*
+** Mode functions
+*/
+
+std::string user_mode_bitmask(int m);
 
 #endif
