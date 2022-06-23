@@ -57,6 +57,7 @@ static int	read_socket(client_t &client, server_t server)
 	int				recv_len;
 	int				tmp_recv_len;
 	int				split_executor;
+	int				execute_code;
 	char			recv_buff[212];
 	std::string		send_buff;
 	std::string		quit_message;
@@ -96,8 +97,11 @@ static int	read_socket(client_t &client, server_t server)
 				{
 					recv_buff[recv_len - 1] = '\0';
 					report_event(event_format(client.addr, client.port, recv_buff + split_executor), history);
-					if (executor(recv_buff + split_executor, tmp_recv_len - 1, server, client) == -1)
+					execute_code = executor(recv_buff + split_executor, tmp_recv_len - 1, server, client);
+					if (execute_code == -1)
 				 		return on_error(history, "send()", -2);
+					if (execute_code == -2)
+						return (-1);
 					split_executor = recv_len + 1;
 				}
 				recv_len += 1;
