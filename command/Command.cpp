@@ -44,8 +44,8 @@ int Command::execute(server_t &server, client_t &client)
 	if (client.registered() || registration_request(_id))
 	{
 		reply_code = _effect(server, client);
-		if (reply_code == -2)
-			return -2;
+		if (reply_code == -1)
+			return -1;
 	}
 	else
 		reply_code = ERR_NOTREGISTERED;

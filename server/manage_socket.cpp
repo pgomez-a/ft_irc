@@ -99,9 +99,9 @@ static int	read_socket(client_t &client, server_t server)
 					report_event(event_format(client.addr, client.port, recv_buff + split_executor), history);
 					execute_code = executor(recv_buff + split_executor, tmp_recv_len - 1, server, client);
 					if (execute_code == -1)
-				 		return on_error(history, "send()", -2);
-					if (execute_code == -2)
 						return (-1);
+					if (execute_code == -2)
+				 		return on_error(history, "send()", -2);
 					split_executor = recv_len + 1;
 				}
 				recv_len += 1;

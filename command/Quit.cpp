@@ -18,5 +18,5 @@ int	Quit::_effect(server_t &server, client_t &client)
 		quit_message += ": " +  _rest;
 	report_event(event_format(client.addr, client.port, quit_message), history, BLUE);
 	history.close();
-	return (-2);
+	return -1;
 }
