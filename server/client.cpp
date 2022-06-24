@@ -39,12 +39,12 @@ bool client_t::registered(void) const
 }
 
 void	client_t::set_mode(std::string m) 
-{ 
+{
 	_mode = m;	
 }
 
 std::string	client_t::get_mode(void) const 
-{ 
+{
 	return _mode;
 }
 
@@ -86,9 +86,13 @@ bool client_t::operator==(const client_t &rhs) const
 std::string user_mode_bitmask(int m)
 {
 	std::string	mode;
+	char w = ('w' * (bool)(m & 4));
+	char i = ('i' * (bool)(m & 8));
 
-	mode += ('w' * (bool)(m & 4));
-	mode += ('i' * (bool)(m & 8));
 
+	if (w || i)
+		mode += w + i;
+	else
+		mode = "(empty)";
 	return mode;
 }
