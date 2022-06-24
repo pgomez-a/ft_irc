@@ -198,7 +198,11 @@ int send_to_client(std::string s, client_t &client)
 
 	r = 0;
 	if (s.size())
+	{
 		r = send(client.sock_fd, s.c_str(), s.size(), 0);
+		if (r == -1)
+			return -2;
+	}
 	return r;
 }
 
