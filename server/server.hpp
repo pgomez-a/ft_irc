@@ -9,6 +9,7 @@
 # include <unistd.h>
 # include <fcntl.h>
 # include <poll.h>
+# include <list>
 
 # define MAX_CLIENTS 1024
 
@@ -42,6 +43,9 @@ struct client_t
 
 		void		set_mode(std::string);
 		std::string	get_mode(void) const;
+		void		add_mode_flag(std::string flag);
+		void		rm_mode_flag(std::string flag);
+		bool		mode_flag_is_set(std::string flag);
 		void		set_nick(std::string s);
 		std::string	get_nick(void) const;
 		void		set_user(std::string s);
@@ -78,7 +82,14 @@ struct server_t
 		struct pollfd		clients_fds[MAX_CLIENTS];
 		client_t			clients_info[MAX_CLIENTS];
 
-		client_t	*find(std::string nick);
+		client_t	*find_nick(std::string nick);
+		client_t	*find_user(std::string user);
+
+		bool		valid_oper_host(client_t &client);
+	
+	private:
+
+		std::list<std::string>	no_oper_list;
 };
 
 
@@ -93,6 +104,7 @@ bool client_is_registered(const server_t &server, const client_t &client);
 ** Mode functions
 */
 
+bool		valid_oper_credentials(std::string username, server_t &server, client_t &client);
 std::string user_mode_bitmask(int m);
 
 #endif

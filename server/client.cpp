@@ -48,6 +48,29 @@ std::string	client_t::get_mode(void) const
 	return _mode;
 }
 
+void	client_t::add_mode_flag(std::string flag)
+{
+	if (_mode == "(no flag set)")
+		_mode.clear();
+	if (_mode.find(flag) == std::string::npos)
+		_mode += flag;
+}
+
+void	client_t::rm_mode_flag(std::string flag)
+{
+	size_t pos = _mode.find(flag);
+
+	if (pos != std::string::npos)
+	{
+		_mode.erase(pos, flag.size());
+	}
+}
+
+bool	client_t::mode_flag_is_set(std::string flag)
+{
+	return (_mode.find(flag) != std::string::npos);
+}
+
 void	client_t::set_nick(std::string s) { _nick = s;}
 
 std::string	client_t::get_nick(void) const { return _nick;}
@@ -83,6 +106,12 @@ bool client_t::operator==(const client_t &rhs) const
 ** Mode functions
 */
 
+
+bool	valid_oper_credentials(std::string username, server_t &server, client_t &client)
+{
+	return (client.get_user() == username && server.find_user(username) && server.valid_oper_host(client));
+}
+
 std::string user_mode_bitmask(int m)
 {
 	std::string	mode;
@@ -90,9 +119,11 @@ std::string user_mode_bitmask(int m)
 	char i = ('i' * (bool)(m & 8));
 
 
-	if (w || i)
-		mode += w + i;
+	if (w)
+		mode += "w";
+	if (i)
+		mode += "i";
 	else
-		mode = "(empty)";
+		mode = "(no flag set)";
 	return mode;
 }
