@@ -34,7 +34,7 @@ size_t	Command::id(void) const
 
 static bool	registration_request(int command_id)
 {
-	return (command_id >= 0 && command_id <= 2);
+	return (command_id >= 0 && command_id <= 3);
 }
 
 int Command::execute(server_t &server, client_t &client)

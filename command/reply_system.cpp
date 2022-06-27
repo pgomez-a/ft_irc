@@ -34,7 +34,7 @@ static std::string R_YOUREOPER(client_t &c, server_t &s, Command *n)
 {compiler_treat(c,s,n); return reply_format("381", c.addr, "", "You are now an IRC operator");}
 
 static std::string R_UMODEIS(client_t &c, server_t &s, Command *n)
-{compiler_treat(c,s,n); return reply_format("221", c.get_nick(), "MODE", c.get_mode());}
+{compiler_treat(c,s,n); return reply_format("221", c.get_user(), c.get_nick(), c.get_mode());}
 
 static std::string R_ERR_UNKNOWNCOMMAND(client_t &c, server_t &s, Command *n)
 {compiler_treat(c,s,n); return reply_format("421", c.addr, n->get_name(), "Unknown command");}
