@@ -33,6 +33,9 @@ static std::string R_AWAY(client_t &c, server_t &s, Command *n)
 static std::string R_YOUREOPER(client_t &c, server_t &s, Command *n)
 {compiler_treat(c,s,n); return reply_format("381", c.addr, "", "You are now an IRC operator");}
 
+static std::string R_UMODEIS(client_t &c, server_t &s, Command *n)
+{compiler_treat(c,s,n); return reply_format("221", c.get_user(), c.get_nick(), c.get_mode());}
+
 static std::string R_ERR_UNKNOWNCOMMAND(client_t &c, server_t &s, Command *n)
 {compiler_treat(c,s,n); return reply_format("421", c.addr, n->get_name(), "Unknown command");}
 
@@ -52,7 +55,8 @@ static std::string R_ERR_ERRONEUSNICKNAME(client_t &c, server_t &s, Command *n)
 {compiler_treat(c,s,n); return reply_format("432", c.addr, "", "Erroneous nickname");}
 
 static std::string R_ERR_NICKCOLLISION(client_t &c, server_t &s, Command *n)
-{compiler_treat(c,s,n); return reply_format("436", c.addr, (*n)[0], (std::string)"Nickname collision KILL from " + "user" + "@" + "host");} //replace with proper info
+{compiler_treat(c,s,n); return reply_format("436", c.addr, (*n)[0], (std::string)"Nickname collision KILL from " 
+		+ c.get_user() + "@" + c.addr);} 
 
 static std::string R_ERR_NOOPERHOST(client_t &c, server_t &s, Command *n)
 {compiler_treat(c,s,n); return reply_format("491", c.addr, "", "No O-lines for your host");}
@@ -125,6 +129,7 @@ void	init_reply_matrix(reply *reply_matrix)
 	reply_matrix[RPL_NOTOPIC] = R_NOTOPIC;
 	reply_matrix[RPL_AWAY] = R_AWAY;
 	reply_matrix[RPL_YOUREOPER] = R_YOUREOPER;
+	reply_matrix[RPL_UMODEIS] = R_UMODEIS;
 	reply_matrix[ERR_UNKNOWNCOMMAND] = R_ERR_UNKNOWNCOMMAND;
 	reply_matrix[ERR_NONICKNAMEGIVEN] = R_ERR_NONICKNAMEGIVEN;
 	reply_matrix[ERR_NICKNAMEINUSE] = R_ERR_NICKNAMEINUSE;
@@ -184,7 +189,7 @@ std::string		reply_format(std::string reply, std::string reply_code)
 	return reply_code + " " + reply + "\r\n";
 }
 
-int reply_to_client(int reply_code, client_t &client, server_t &server,Command *command)
+int reply_to_client(int reply_code, client_t &client, server_t &server, Command *command)
 {
 	std::string	reply_message;
 

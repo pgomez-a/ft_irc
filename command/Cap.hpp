@@ -1,15 +1,16 @@
-#ifndef OPER_HPP
-# define OPER_HPP
+#ifndef CAP_HPP
+# define CAP_HPP
 #include "commands.hpp"
 
-class Oper : public Command
+class Cap : public Command
 {
 	public : 
 
-		Oper(void);
-	
+		Cap(void);
+
 	private :
 
 		int	_effect(server_t &server, client_t &client);
+
 };
 #endif

@@ -13,7 +13,7 @@ int	Nick::_effect(server_t &server, client_t &client)
 		return ERR_NONICKNAMEGIVEN;
 	if  (valid_nickname(_argt[0]))
 	{
-		if (server.find(_argt[0]))
+		if (server.find_nick(_argt[0]))
 			return ERR_NICKNAMEINUSE;
 		p = !client.registered();
 		client.register_flag(CLI_NICK);

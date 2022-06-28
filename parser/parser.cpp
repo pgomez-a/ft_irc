@@ -13,7 +13,7 @@ Nick(), User(), Error(), Pass(), Oper(), Quit(), Join(), Part(), Privmsg(), Noti
 static Nick nick_inst; static User user_inst; static Error error_inst; 
 static Pass pass_inst; static Oper oper_inst; static Quit quit_inst; 
 static Join join_inst; static Part part_inst; static Privmsg privmsg_inst;
-static Notice notice_inst; static Ping ping_inst;
+static Notice notice_inst; static Ping ping_inst; static Cap cap_inst;
 
 static	rule	rule_matrix[5][5] = {
 									{
@@ -38,10 +38,11 @@ static	rule	rule_matrix[5][5] = {
 static void	init_command_map(void)
 {
 
+	command_map.insert(std::make_pair("PASS", &pass_inst));
 	command_map.insert(std::make_pair("NICK", &nick_inst));
 	command_map.insert(std::make_pair("USER", &user_inst));
+	command_map.insert(std::make_pair("CAP", &cap_inst));
 	command_map.insert(std::make_pair("ERROR", &error_inst));
-	command_map.insert(std::make_pair("PASS", &pass_inst));
 	command_map.insert(std::make_pair("OPER", &oper_inst));
 	command_map.insert(std::make_pair("QUIT", &quit_inst));
 	command_map.insert(std::make_pair("JOIN", &join_inst));
