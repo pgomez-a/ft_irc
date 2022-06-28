@@ -60,6 +60,11 @@ void	client_t::set_realname(std::string s) { _realname = s;}
 
 std::string	client_t::get_realname(void) const { return _realname;}
 
+std::string	client_t::get_originname(void) const
+{
+	return (":" + _nick + "!" + _user + "@" + addr);
+}
+
 void	client_t::reset(void)
 {
 	_registration_flags = 0;

@@ -48,6 +48,7 @@ struct client_t
 		std::string	get_user(void) const;
 		void		set_realname(std::string s);
 		std::string	get_realname(void) const;
+		std::string	get_originname(void) const;
 
 		void		reset(void);
 
