@@ -9,6 +9,7 @@ class Privmsg : public Command
 		Privmsg(void);
 
 	private :
+
 		int _effect(server_t &server, client_t &client);
 };
 
