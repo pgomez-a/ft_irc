@@ -10,7 +10,7 @@ int	Oper::_effect(server_t &server, client_t &client)
 {
 	if (_argc >= 2)
 	{
-		if (_argt[1] != server.passwd)
+		if (_argt[1] != server.oper_passwd)
 			return ERR_PASSWDMISMATCH;
 		if	(valid_oper_credentials(_argt[0], server, client) && !client.mode_flag_is_set("O"))
 		{

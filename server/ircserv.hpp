@@ -25,7 +25,6 @@ int	bind_socket(int sock_fd, struct addrinfo*& res);
 
 int	listen_socket(int sock_fd, int capacity);
 
-int	init_server(char* port, char* passwd, server_t& server);
 
 /**
  ** manage_socket.cpp

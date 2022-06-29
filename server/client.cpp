@@ -50,7 +50,7 @@ std::string	client_t::get_mode(void) const
 
 void	client_t::add_mode_flag(std::string flag)
 {
-	if (_mode == "(no flag set)")
+	if (_mode == "empty")
 		_mode.clear();
 	if (_mode.find(flag) == std::string::npos)
 		_mode += flag;
@@ -85,7 +85,7 @@ std::string	client_t::get_realname(void) const { return _realname;}
 
 std::string	client_t::get_originname(void) const
 {
-	return (":" + _nick + "!" + _user + "@" + addr);
+	return (_nick + "!" + _user + "@" + addr);
 }
 
 void	client_t::reset(void)
@@ -129,6 +129,6 @@ std::string user_mode_bitmask(int m)
 	if (i)
 		mode += "i";
 	else
-		mode = "(no flag set)";
+		mode = "empty";
 	return mode;
 }

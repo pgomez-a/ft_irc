@@ -74,10 +74,12 @@ struct server_t
 		int					sock_fd;
 		int					timeout;
 		int					clients_nfds;
+		//couldn't all these be private??
 		std::string			name;
 		std::string			addr;
 		std::string			port;
 		std::string			passwd;
+		std::string			oper_passwd;
 		struct addrinfo		hints;
 		struct addrinfo*	res;
 		struct pollfd		clients_fds[MAX_CLIENTS];
@@ -90,9 +92,11 @@ struct server_t
 	
 	private:
 
-		std::list<std::string>	no_oper_list;
+		std::list<std::string>	_no_oper_list;
 };
 
+//couldn't init server just be the constructor???
+int	init_server(char* port, char* passwd, server_t& server);
 
 /*
 ** Interaction

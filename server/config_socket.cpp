@@ -95,22 +95,3 @@ int	listen_socket(int sock_fd, int capacity)
 	std::cout << "\033[0m\n\n";
 	return (0);
 }
-
-/**
- ** Inits server values before manage incoming connections.
- **/
-
-int	init_server(char* port, char* passwd, server_t& server)
-{
-	server.name = "nameless";
-	server.addr = "nameless";
-	server.port = static_cast<std::string>(port);
-	server.passwd = static_cast<std::string>(passwd);
-	server.timeout = 5 * 1000 * 60;
-	std::memset(server.clients_info, 0, sizeof(server.clients_info));
-	std::memset(server.clients_fds, 0, sizeof(server.clients_fds));
-	server.clients_fds[0].fd = server.sock_fd;
-	server.clients_fds[0].events = POLLIN;
-	server.clients_nfds = 1;
-	return (0);
-}

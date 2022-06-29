@@ -20,19 +20,19 @@ int	Privmsg::_effect(server_t &server, client_t &client)
 	{
 		if (_argt[0][comma_pos] == ',')
 		{
-			receiver = server.find(nick);
+			receiver = server.find_nick(nick);
 			if (!receiver)
 				return ERR_NOSUCHNICK;
-			send_to_client(client.get_originname() + " PRIVMSG " + nick + " :" + _rest + "\r\n", *receiver);
+			send_to_client( ":" + client.get_originname() + " PRIVMSG " + nick + " :" + _rest + "\r\n", *receiver);
 			nick.clear();
 		}
 		else
 			nick += _argt[0][comma_pos];	
 		comma_pos += 1;
 	}
-	receiver = server.find(nick);
+	receiver = server.find_nick(nick);
 	if (!receiver)
 		return ERR_NOSUCHNICK;
-	send_to_client(client.get_originname() + " PRIVMSG " + nick + " :" + _rest + "\r\n", *receiver);
+	send_to_client(":" + client.get_originname() + " PRIVMSG " + nick + " :" + _rest + "\r\n", *receiver);
 	return 0;
 }
