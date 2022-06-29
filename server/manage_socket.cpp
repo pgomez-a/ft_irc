@@ -134,6 +134,7 @@ static int	reduce_poll_fds(server_t& server)
 				server.clients_info[iter_x] = server.clients_info[iter_x  + 1];
 				iter_x += 1;
 			}
+			server.clients_info[iter_x].reset();
 			server.clients_nfds -= 1;
 			iter_y -= 1;
 		}
