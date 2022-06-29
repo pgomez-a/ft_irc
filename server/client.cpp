@@ -1,3 +1,4 @@
+#include "client.hpp"
 #include "server.hpp"
 
 bool client_is_in_server(const server_t &server, const client_t &client)
@@ -16,7 +17,6 @@ bool client_is_registered(const server_t &server, const client_t &client)
 {
 	return (client.registered() && client_is_in_server(server, client));
 }
-
 
 /* Default constructor */
 client_t::client_t(void):

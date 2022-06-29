@@ -10,61 +10,10 @@
 # include <fcntl.h>
 # include <poll.h>
 # include <list>
+# include <map>
+# include "client.hpp"
+# include "channel.hpp"
 
-# define MAX_CLIENTS 1024
-
-# define SERV_PASSW 1
-# define CLI_NICK 2
-# define CLI_USER 4
-# define IS_REGISTERED (SERV_PASSW ^ CLI_NICK ^ CLI_USER)
-# define STR(x) #x
-
-struct client_t
-{
-	public:
-
-	/* 	Connection info */
-
-		int					sock_fd;
-		std::string			addr;
-		std::string			port;
-		struct sockaddr_in	info;
-		
-	/*member functions*/
-
-		client_t(void);
-
-		bool	operator==(client_t &rhs) const;
-		bool	operator==(const client_t &rhs) const;
-		
-		void	register_flag(unsigned int flag);
-		bool	flag_is_set(unsigned int flag) const;
-		bool	registered(void) const;
-
-		void		set_mode(std::string);
-		std::string	get_mode(void) const;
-		void		add_mode_flag(std::string flag);
-		void		rm_mode_flag(std::string flag);
-		bool		mode_flag_is_set(std::string flag);
-		void		set_nick(std::string s);
-		std::string	get_nick(void) const;
-		void		set_user(std::string s);
-		std::string	get_user(void) const;
-		void		set_realname(std::string s);
-		std::string	get_realname(void) const;
-		std::string	get_originname(void) const;
-
-		void		reset(void);
-
-	private:
-
-		int			_registration_flags;
-		std::string	_mode;
-		std::string	_nick;
-		std::string	_user;
-		std::string _realname;
-
-};
 
 //needs to be refactored, clients_info should be a map or similar instead of an array, and client_t should have
 //comparison overload among other things
@@ -89,10 +38,11 @@ struct server_t
 		client_t	*find_user(std::string user);
 
 		bool		valid_oper_host(client_t &client);
-	
+		
 	private:
-
-		std::list<std::string>	_no_oper_list;
+	
+		std::map<std::string, Channel>	_channel_list;
+		std::list<std::string>			_no_oper_list;
 };
 
 //couldn't init server just be the constructor???
@@ -105,11 +55,6 @@ int	init_server(char* port, char* passwd, server_t& server);
 bool client_is_in_server(const server_t &server, const client_t &client);
 bool client_is_registered(const server_t &server, const client_t &client);
 
-/*
-** Mode functions
-*/
 
-bool		valid_oper_credentials(std::string username, server_t &server, client_t &client);
-std::string user_mode_bitmask(int m);
 
 #endif
