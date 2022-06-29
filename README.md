@@ -87,3 +87,8 @@ Numeric Replies: **ERR_NORECIPIENT** &emsp; **ERR_CANNOTSENDTOCHAN** &emsp; **ER
 Command: **NOTICE \<nickname\> \<text\>**
 
 ***
+
+
+TEST CASES:
+
+When relaunching weechat after registering once and connecting another client and   then closing original connection and then relaunching

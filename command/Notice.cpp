@@ -11,7 +11,7 @@ int	Notice::_effect(server_t &server, client_t &client)
 
 	if (_argc && _rest.size())
 	{
-		receiver = server.find(_argt[0]);
+		receiver = server.find_nick(_argt[0]);
 		if (receiver)
 			send_to_client(client.get_originname() + " NOTICE " + _argt[0] + " :" + _rest + "\r\n", *receiver);
 	}
