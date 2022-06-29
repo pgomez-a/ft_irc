@@ -13,7 +13,7 @@ int	Notice::_effect(server_t &server, client_t &client)
 	{
 		receiver = server.find_nick(_argt[0]);
 		if (receiver)
-			send_to_client(client.get_originname() + " NOTICE " + _argt[0] + " :" + _rest + "\r\n", *receiver);
+			send_to_client(":" + client.get_originname() + " NOTICE " + _argt[0] + " :" + _rest + "\r\n", *receiver);
 	}
 	return 0;
 }

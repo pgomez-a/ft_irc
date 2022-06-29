@@ -39,9 +39,11 @@ struct server_t
 
 		bool		valid_oper_host(client_t &client);
 		
+		//int			add_channel(
+		
 	private:
 	
-		std::map<std::string, Channel>	_channel_list;
+		//std::map<std::string, Channel>	_channel_list;
 		std::list<std::string>			_no_oper_list;
 };
 
