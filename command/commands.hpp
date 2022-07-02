@@ -17,7 +17,8 @@
 # include "Part.hpp"
 # include "Ping.hpp"
 # include "Cap.hpp"
+# include "List.hpp"
 
-enum	e_COMMANDS{NICK, USER, PASS, CAP, ERROR, OPER, QUIT, JOIN, PART, PRIVMSG, NOTICE, PING, PONG};
+enum	e_COMMANDS{NICK, USER, PASS, CAP, ERROR, OPER, QUIT, JOIN, PART, PRIVMSG, NOTICE, PING, PONG, LIST};
 
 #endif

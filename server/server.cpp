@@ -1,4 +1,5 @@
 #include "server.hpp"
+#include ""
 
 client_t	*server_t::find_nick(std::string nick)
 {
@@ -49,4 +50,34 @@ int	init_server(char* port, char* passwd, server_t& server)
 	server.clients_fds[0].events = POLLIN;
 	server.clients_nfds = 1;
 	return (0);
+}
+
+/**
+ ** Channel interaction
+ **/
+
+int	Channel::add_new_channel(std::string name, std::string mode, std::string topic)
+{
+	Channel	new_channel(name, mode, topic);
+
+	if (valid_channelname(name))
+	{
+		if (valid_rest(topic))
+		{
+			channel_map.insert(std::pair(name, new_channel));
+			return CHANNEL_ADDED; 
+		}
+		return BAD_TOPIC;
+	}
+	return BAD_CHANNEL_NAME;
+}
+
+channel_map::iterator	channel_map_begin(void)
+{
+	return _channel_map.begin();
+}
+
+channel_map::iterator	channel_map_end(void)
+{
+	return _channel_map.begin();
 }

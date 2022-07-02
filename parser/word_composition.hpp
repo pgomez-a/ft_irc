@@ -13,6 +13,7 @@ bool	valid_servername(std::string n);
 bool	valid_user_origin(std::string n);
 bool	valid_rest(std::string n);
 bool	valid_parameter(std::string p);
+bool	valid_channelname(std::string n);
 
 //Word Composition
 
@@ -26,6 +27,7 @@ bool	user(char c);
 bool	host(char c);
 bool	parameter(char c);
 bool	rest(char c);
+bool	chanstring(char c);
 
 
 bool	c(char c, char d);

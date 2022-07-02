@@ -20,6 +20,9 @@
 struct server_t
 {
 	public:
+
+		typedef std::map<std::string, Channel>	channel_map;
+
 		int					sock_fd;
 		int					timeout;
 		int					clients_nfds;
@@ -39,11 +42,13 @@ struct server_t
 
 		bool		valid_oper_host(client_t &client);
 		
-		//int			add_channel(
+		int						add_new_channel(std::sting name, std::string mode, std::string topic);
+		channel_map_t::iterator	channel_map_begin(void) const;
+		channel_map_t::iterator	channel_map_end(void) const;
 		
 	private:
-	
-		//std::map<std::string, Channel>	_channel_list;
+
+		channel_map						_channel_map;
 		std::list<std::string>			_no_oper_list;
 };
 
@@ -56,7 +61,6 @@ int	init_server(char* port, char* passwd, server_t& server);
 
 bool client_is_in_server(const server_t &server, const client_t &client);
 bool client_is_registered(const server_t &server, const client_t &client);
-
 
 
 #endif

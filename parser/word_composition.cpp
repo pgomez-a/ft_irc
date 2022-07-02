@@ -7,6 +7,8 @@ bool	letter(char c){return isalpha(c);}
 
 bool	digit(char c){return isdigit(c);}
 
+bool	alphanumeric(char c) {return (letter(c) || digit(c));}
+
 bool	hyphen(char c){return (c == '-');}
 
 bool	user(char c)
@@ -19,6 +21,7 @@ bool	user(char c)
 	excluded_set[4] = '@';
 	return !is_in_set(c, excluded_set);
 }
+
 
 bool	rest(char c)
 {
@@ -39,6 +42,13 @@ bool	special(char c)
 	static const char	special_set[9] = {'[',']','\\','`','-','^','{','|','}'};
 
 	return is_in_set(c, special_set, 9);
+}
+
+bool	chanstring(char c)
+{
+	static const char excluded_set[7] = {0, 7, 13, 10, ' ', ',', ':'};
+
+	return !is_in_set(c, excluded_set, 7);
 }
 
 bool	c(char c, char d){return (c == d);}
@@ -125,6 +135,30 @@ bool	valid_nickname(std::string s)
 	return (p && s.length() <= 9);
 }
 
+bool	valid_channelname(std::string n)
+{
+	size_t		delimiter;
+	std::string	m;
+	bool		p;
+
+	m = n;
+	p = false;
+	if (n.size() && (is_in_set("#+@") || (n[0] == '!' && alphanumeric(n[1]))))
+	{
+		delimiter = n.find(':');
+		n = n.subtr(0, delimiter - 1);
+		std::cout << "SUBSTR n " << n << std::endl;
+		p = check_str(n, chanstring);
+		if (delimiter != std::string::npos)
+		{
+			m = m.substr(delimiter + 1, delimiter + 1 - m.size());
+			std::cout << "SUBSTR m " << m << std::endl;
+			p = check_str(m, chanstring);
+		}
+	}
+	return p;
+}
+
 bool valid_user(std::string s)
 {
 	return (s.length() && check_str(s, user));
@@ -178,8 +212,7 @@ bool	valid_servername(std::string n)
 			++i;
 		}
 		else
-		{
-			s = n.substr(j, l - j);
+		e			s = n.substr(j, l - j);
 		}
 		if (!valid_shortname(s))
 			return false;
