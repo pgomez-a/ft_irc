@@ -1,5 +1,5 @@
 #include "server.hpp"
-#include ""
+#include "word_composition.hpp"
 
 client_t	*server_t::find_nick(std::string nick)
 {
@@ -56,15 +56,18 @@ int	init_server(char* port, char* passwd, server_t& server)
  ** Channel interaction
  **/
 
-int	Channel::add_new_channel(std::string name, std::string mode, std::string topic)
+int	server_t::add_new_channel(std::string name, std::string mode, std::string topic)
 {
 	Channel	new_channel(name, mode, topic);
 
+	std::cout << "is channel created : " << new_channel.get_name() << std::endl;
 	if (valid_channelname(name))
 	{
+		std::cout << "valid channelname()" << std::endl;
 		if (valid_rest(topic))
 		{
-			channel_map.insert(std::pair(name, new_channel));
+			std::cout << "valid rest()" << std::endl;
+			_channel_map.insert(std::make_pair(name, new_channel));
 			return CHANNEL_ADDED; 
 		}
 		return BAD_TOPIC;
@@ -72,12 +75,17 @@ int	Channel::add_new_channel(std::string name, std::string mode, std::string top
 	return BAD_CHANNEL_NAME;
 }
 
-channel_map::iterator	channel_map_begin(void)
+server_t::channel_map::iterator	server_t::channel_map_begin(void) 
 {
 	return _channel_map.begin();
 }
 
-channel_map::iterator	channel_map_end(void)
+server_t::channel_map::iterator	server_t::channel_map_end(void) 
 {
-	return _channel_map.begin();
+	return _channel_map.end();
+}
+
+size_t	server_t::channel_count(void)
+{
+	return _channel_map.size();
 }

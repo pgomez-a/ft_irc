@@ -5,17 +5,20 @@ List::List(void) {
 	_id = LIST;
 };
 
-std::string	_channel_list_string(server_t &server)
+std::string	List::_channel_list_string(server_t &server)
 {
-	channel_map::iterator i = server.channel_map_begin();
-	channel_map::iterator j = server.channel_map_end();
+	server_t::channel_map::iterator i = server.channel_map_begin();
+	server_t::channel_map::iterator j = server.channel_map_end();
 	std::string s;
 
+	std::cout << "mapsize : " << server.channel_count() << std::endl;
 	while (i != j)
 	{
-		s += reply_format(i->second.get_nick());
+		std::cout << "l: " << server.channel_count() << std::endl;
+		s += reply_format(i->second.get_name());
 		++i;
 	}
+	std::cout << "s.size()? " << s.size() << std::endl;
 	return (s.size()) ? s : "(server has no channels)\r\n";
 }
 

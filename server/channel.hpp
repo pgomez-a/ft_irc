@@ -19,6 +19,7 @@ class Channel
 		int				ban_member(const std::string &nick);
 		void			set_topic(const std::string &topic);
 		std::string		get_topic(void) const;
+		std::string		get_name(void) const;
 
 		Channel(std::string name, std::string mode, std::string topic = "");
 
