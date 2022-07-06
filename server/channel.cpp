@@ -3,6 +3,14 @@
 Channel::Channel(std::string name, std::string mode, std::string topic):
 _member_list(), _member_count(0), _banned_list(), _name(name), _mode(mode), _topic(topic) {}
 
+
+Channel::~Channel(void)
+{
+	//std::cout << "IM CHAN DESTRUCTOR\n";
+	//std::cout << "it's name was : " << _name << std::endl;
+}
+
+
 //void broadcast_message(const std::string &message) const {}
 int				Channel::add_member(client_t *member)
 {

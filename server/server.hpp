@@ -42,7 +42,9 @@ struct server_t
 
 		bool		valid_oper_host(client_t &client);
 		
-		int						add_new_channel(std::string name, std::string mode, std::string topic);
+		int			add_new_channel(std::string name, std::string mode, std::string topic, channel_map::iterator &i);
+
+		channel_map::iterator	find_channel(std::string name);
 		channel_map::iterator	channel_map_begin(void);
 		channel_map::iterator	channel_map_end(void);
 		size_t					channel_count(void);

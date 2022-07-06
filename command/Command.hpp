@@ -19,6 +19,7 @@ class Command
 
 		void		who_am_i(void) const;
 		std::string	get_name(void) const;
+		std::string	get_rest(void) const;
 		size_t		id(void) const;
 		void		set_members(std::string *argt, size_t argc, std::string origin, std::string rest, size_t error);
 		void		set_name(std::string n);

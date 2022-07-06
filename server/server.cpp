@@ -56,23 +56,23 @@ int	init_server(char* port, char* passwd, server_t& server)
  ** Channel interaction
  **/
 
-int	server_t::add_new_channel(std::string name, std::string mode, std::string topic)
+int	server_t::add_new_channel(std::string name, std::string mode, std::string topic, channel_map::iterator &i)
 {
-	Channel	new_channel(name, mode, topic);
-
-	std::cout << "is channel created : " << new_channel.get_name() << std::endl;
 	if (valid_channelname(name))
 	{
-		std::cout << "valid channelname()" << std::endl;
 		if (valid_rest(topic))
 		{
-			std::cout << "valid rest()" << std::endl;
-			_channel_map.insert(std::make_pair(name, new_channel));
+			i = _channel_map.insert(std::make_pair(name, Channel(name, mode, topic))).first;
 			return CHANNEL_ADDED; 
 		}
 		return BAD_TOPIC;
 	}
 	return BAD_CHANNEL_NAME;
+}
+
+server_t::channel_map::iterator	server_t::find_channel(std::string name)
+{
+	return _channel_map.find(name);
 }
 
 server_t::channel_map::iterator	server_t::channel_map_begin(void) 

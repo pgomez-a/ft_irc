@@ -11,15 +11,12 @@ std::string	List::_channel_list_string(server_t &server)
 	server_t::channel_map::iterator j = server.channel_map_end();
 	std::string s;
 
-	std::cout << "mapsize : " << server.channel_count() << std::endl;
 	while (i != j)
 	{
-		std::cout << "l: " << server.channel_count() << std::endl;
 		s += reply_format(i->second.get_name());
 		++i;
 	}
-	std::cout << "s.size()? " << s.size() << std::endl;
-	return (s.size()) ? s : "(server has no channels)\r\n";
+	return (s.size()) ? s : ":nameless 000 (server has no channels)\r\n";
 }
 
 int	List::_effect(server_t &server, client_t &client)

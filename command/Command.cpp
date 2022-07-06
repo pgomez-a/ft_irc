@@ -78,6 +78,11 @@ void	Command::set_name(std::string n)
 	_command_name = n;
 }
 
+std::string	Command::get_rest(void) const
+{
+	return _rest;
+}
+
 std::string	Command::operator[](size_t i) const
 {
 	return _argt[i];

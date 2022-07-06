@@ -22,6 +22,7 @@ class Channel
 		std::string		get_name(void) const;
 
 		Channel(std::string name, std::string mode, std::string topic = "");
+		~Channel(void);
 
 	private :
 

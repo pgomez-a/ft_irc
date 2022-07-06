@@ -22,10 +22,10 @@ static std::string R_MYINFO(client_t &c, server_t &s, Command *n)
 {compiler_treat(c,s,n); return reply_format("004", c.get_nick(), "" , s.name + " " + "0.1" + "<available user modes>" + "\n" + "<available channel modes>");}
 
 static std::string R_NOTOPIC(client_t &c, server_t &s, Command *n)
-{compiler_treat(c,s,n); return reply_format("331", c.get_nick(), "<channel>", "No topic is set");}
+{compiler_treat(c,s,n); return reply_format("331", c.get_nick(), (*n)[0], "No topic is set");}
 
 static std::string R_TOPIC(client_t &c, server_t &s, Command *n)
-{compiler_treat(c,s,n); return reply_format("332", c.get_nick(), "<channel>", "<topic>");}
+{compiler_treat(c,s,n); return reply_format("332", c.get_nick(), (*n)[0], n->get_rest());}
 
 static std::string R_AWAY(client_t &c, server_t &s, Command *n)
 {compiler_treat(c,s,n); return reply_format("301", c.get_nick(), c.get_nick(), "<away message>");}

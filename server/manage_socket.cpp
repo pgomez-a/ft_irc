@@ -13,7 +13,7 @@ static	int	on_error(std::ofstream &history, std::string error, int r)
  **  - inet_ntoa: converts ip_address to char*
  **/
 
-static int	accept_socket(server_t& server)
+static int	accept_socket(server_t &server)
 {
 	int						nfds;
 	int						nsock_fd;
@@ -52,7 +52,7 @@ static int	accept_socket(server_t& server)
  ** Handles a client request and responds with the appropriate reply
  **/
 
-static int	read_socket(client_t &client, server_t server)
+static int	read_socket(client_t &client, server_t &server)
 {
 	int				recv_len;
 	int				tmp_recv_len;
@@ -117,7 +117,7 @@ static int	read_socket(client_t &client, server_t server)
  ** Adjusts clients_fds struct erasing all the clients that have been disconnected.
  **/
 
-static int	reduce_poll_fds(server_t& server)
+static int	reduce_poll_fds(server_t &server)
 {
 	int	iter_y;
 	int	iter_x;
@@ -147,7 +147,7 @@ static int	reduce_poll_fds(server_t& server)
  ** Closes all the client sockets that are still opened just after the server has decided to stop.
  **/
 
-static void	close_poll_fds(server_t& server)
+static void	close_poll_fds(server_t &server)
 {
 	int	iter;
 
@@ -169,7 +169,7 @@ static void	close_poll_fds(server_t& server)
  **          int timeout);
  **/
 
-int		manage_socket(server_t& server)
+int		manage_socket(server_t &server)
 {
 	int	reduced;
 	int	end_server;

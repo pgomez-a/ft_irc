@@ -143,13 +143,10 @@ bool	valid_channelname(std::string n)
 
 	m = n;
 	p = false;
-	std::cout << "bug is below\n";
-	std::cout << "n is : " << n << std::endl;
 	if (n.size() && (is_in_set(n[0] ,"#+@") || (n[0] == '!' && alphanumeric(n[1]))))
 	{
 		delimiter = n.find(':');
 		n = n.substr(0, delimiter - 1);
-		std::cout << "SUBSTR n " << n << std::endl;
 		p = check_str(n, chanstring);
 		if (delimiter != std::string::npos)
 		{
