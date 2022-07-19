@@ -40,6 +40,7 @@ int		Channel::ban_member(const std::string &nick)
 void			Channel::set_topic(const std::string &topic){_topic = topic;}
 std::string		Channel::get_topic(void) const {return _topic;}
 std::string		Channel::get_name(void) const {return _name;}
+size_t			Channel::get_member_count(void) const {return _member_count;}
 
 
 //std::string			Channel::_channel_message_format(std::string message) const{}

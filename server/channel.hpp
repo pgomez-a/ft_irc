@@ -20,6 +20,7 @@ class Channel
 		void			set_topic(const std::string &topic);
 		std::string		get_topic(void) const;
 		std::string		get_name(void) const;
+		size_t			get_member_count(void) const;
 
 		Channel(std::string name, std::string mode, std::string topic = "");
 		~Channel(void);

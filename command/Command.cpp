@@ -55,6 +55,7 @@ int Command::execute(server_t &server, client_t &client)
 int	Command::_effect(server_t &server, client_t &client)
 {
 	(void)server, (void)client;
+	std::cerr << "parent Command _effect() called" << std::endl;
 	return 0;
 }
 
@@ -81,6 +82,12 @@ void	Command::set_name(std::string n)
 std::string	Command::get_rest(void) const
 {
 	return _rest;
+}
+
+Channel	*Command::get_channel(void)
+{
+	std::cerr << "parent Command get_channel() called" << std::endl;
+	return 0;
 }
 
 std::string	Command::operator[](size_t i) const
