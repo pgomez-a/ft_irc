@@ -24,10 +24,13 @@ int	Join::_effect(server_t &server, client_t &client)
 			r = server.add_new_channel( _argt[0], "", "", i);
 		if (r == BAD_CHANNEL_NAME)
 			return ERR_NOSUCHCHANNEL;
-		//add users
+		r = i->second.add_member(&client);
+		if (r == BANNED)
+			return ERR_BANNEDFROMCHAN;
+		if (r == CHANNEL_IS_FULL)
+			return ERR_CHANNELISFULL;
 		_rest = i->second.get_topic();
 		return (_rest.size()) ? RPL_TOPIC: RPL_NOTOPIC;
 	}
-	(void)client;
 	return ERR_NEEDMOREPARAMS;
 }
