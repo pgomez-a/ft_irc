@@ -1,4 +1,5 @@
 #include "Privmsg.hpp"
+#include "word_composition.hpp"
 
 Privmsg::Privmsg(void) {
 	_command_name = "PRIVMSG";
@@ -7,32 +8,23 @@ Privmsg::Privmsg(void) {
 
 int	Privmsg::_effect(server_t &server, client_t &client)
 {
-	int		comma_pos;
-	client_t*	receiver;
-	std::string	nick;
+	client_t*				receiver;
+	std::list<std::string>			token_list;
+	std::list<std::string>::iterator	nick;
 
 	if (!_argc)
 		return ERR_NORECIPIENT;
 	if (_rest.size() == 0)
 		return ERR_NOTEXTTOSEND;
-	comma_pos = 0;
-	while (_argt[0][comma_pos])
+	token_list = split_token(',', _argt[0]);
+	nick = token_list.begin();
+	while (nick != token_list.end())
 	{
-		if (_argt[0][comma_pos] == ',')
-		{
-			receiver = server.find_nick(nick);
-			if (!receiver)
-				return ERR_NOSUCHNICK;
-			send_to_client( ":" + client.get_originname() + " PRIVMSG " + nick + " :" + _rest + "\r\n", *receiver);
-			nick.clear();
-		}
-		else
-			nick += _argt[0][comma_pos];	
-		comma_pos += 1;
+		receiver = server.find_nick(*nick);
+		if (!receiver)
+			return ERR_NOSUCHNICK;
+		send_to_client( ":" + client.get_originname() + " PRIVMSG " + *nick + " :" + _rest + "\r\n", *receiver);
+		++nick;
 	}
-	receiver = server.find_nick(nick);
-	if (!receiver)
-		return ERR_NOSUCHNICK;
-	send_to_client(":" + client.get_originname() + " PRIVMSG " + nick + " :" + _rest + "\r\n", *receiver);
 	return 0;
 }

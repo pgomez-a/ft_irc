@@ -264,4 +264,26 @@ bool valid_parameter(std::string p)
 	return check_str(p, parameter);
 }
 
+std::list<std::string>	split_token(char c, std::string token)
+{
+	int			pos;
+	std::string		tmp_token;
+	std::list<std::string>	token_list;
 
+	pos = 0;
+	while (token[pos])
+	{
+		if (token[pos] == c)
+		{
+			if (tmp_token.size())
+				token_list.push_back(tmp_token);
+			tmp_token.clear();
+		}
+		else
+			tmp_token += token[pos];
+		pos += 1;
+	}
+	if (tmp_token.size())
+		token_list.push_back(tmp_token);
+	return token_list;
+}

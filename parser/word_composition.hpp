@@ -37,4 +37,6 @@ bool	is_in_set(char c, const char *set, size_t len);
 bool	check_str(std::string s, char_filter f);
 bool	check_str(std::string s, std::list<char_filter> l);
 
+std::list<std::string>	split_token(char c, std::string token);
+
 #endif
