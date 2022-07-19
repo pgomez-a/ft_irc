@@ -14,12 +14,15 @@ class Channel
 {
 	public :
 
-		void			broadcast_message(const std::string &message) const; //enviar message con el formato correcto a todos los miembros
+		void			broadcast_message(client_t &sender, const std::string &message) const; //enviar message con el formato correcto a todos los miembros
 		int				add_member(client_t	*member);//cuando un cliente hace un join, puede devolver un msj de bienvenida, o error si el user ya está registrado
 		int				ban_member(const std::string &nick);
 		void			set_topic(const std::string &topic);
 		std::string		get_topic(void) const;
 		std::string		get_name(void) const;
+		size_t			get_member_count(void) const;
+
+		std::string		get_member_list(char separator);
 
 		Channel(std::string name, std::string mode, std::string topic = "");
 		~Channel(void);

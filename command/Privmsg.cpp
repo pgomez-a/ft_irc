@@ -8,8 +8,8 @@ Privmsg::Privmsg(void) {
 
 int	Privmsg::_effect(server_t &server, client_t &client)
 {
-	client_t*				receiver;
-	std::list<std::string>			token_list;
+	client_t*							receiver;
+	std::list<std::string>				token_list;
 	std::list<std::string>::iterator	nick;
 
 	if (!_argc)
@@ -20,10 +20,20 @@ int	Privmsg::_effect(server_t &server, client_t &client)
 	nick = token_list.begin();
 	while (nick != token_list.end())
 	{
-		receiver = server.find_nick(*nick);
-		if (!receiver)
-			return ERR_NOSUCHNICK;
-		send_to_client( ":" + client.get_originname() + " PRIVMSG " + *nick + " :" + _rest + "\r\n", *receiver);
+		if ((*nick)[0] == '#')
+		{
+			_channel_iterator = server.find_channel(*nick);
+			if (_channel_iterator == server.channel_map_end())
+				return ERR_CANNOTSENDTOCHAN;
+			_channel_iterator->second.broadcast_message(client, _rest);
+		}
+		else
+		{
+			receiver = server.find_nick(*nick);
+			if (!receiver)
+				return ERR_NOSUCHNICK;
+			send_to_client( ":" + client.get_originname() + " PRIVMSG " + *nick + " :" + _rest + "\r\n", *receiver);
+		}
 		++nick;
 	}
 	return 0;

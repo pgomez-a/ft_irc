@@ -25,7 +25,7 @@ static std::string R_NOTOPIC(client_t &c, server_t &s, Command *n)
 {compiler_treat(c,s,n); return reply_format("331", c.get_nick(), (*n)[0], "No topic is set");}
 
 static std::string R_TOPIC(client_t &c, server_t &s, Command *n)
-{compiler_treat(c,s,n); return reply_format("332", c.get_nick(), (*n)[0], n->get_rest());}
+{compiler_treat(c,s,n); return reply_format("332", c.get_nick(), (*n)[0], n->get_channel()->get_topic());}
 
 static std::string R_AWAY(client_t &c, server_t &s, Command *n)
 {compiler_treat(c,s,n); return reply_format("301", c.get_nick(), c.get_nick(), "<away message>");}
@@ -35,6 +35,31 @@ static std::string R_YOUREOPER(client_t &c, server_t &s, Command *n)
 
 static std::string R_UMODEIS(client_t &c, server_t &s, Command *n)
 {compiler_treat(c,s,n); return reply_format("221", c.get_nick(), "", c.get_mode());}
+
+
+static std::string R_LIST(client_t &c, server_t &s, Command *n)
+{
+	Channel	*chan = n->get_channel();
+	
+	compiler_treat(c,s,n);
+	return reply_format("322", c.get_nick(), chan->get_name() + " " + std::to_string(chan->get_member_count()), chan->get_topic());
+}
+
+static std::string R_LISTEND(client_t &c, server_t &s, Command *n)
+{compiler_treat(c,s,n); return reply_format("323", c.get_nick(), "", "End of LIST");}
+
+static std::string R_NAMREPLY(client_t &c, server_t &s, Command *n)
+{
+	Channel		*chan = n->get_channel();
+
+	
+	
+	compiler_treat(c,s,n);
+	return reply_format("353", c.get_nick(), "= " + chan->get_name(), chan->get_member_list(' '));
+}
+
+static std::string R_ENDOFNAMES(client_t &c, server_t &s, Command *n)
+{compiler_treat(c,s,n); return reply_format("366", c.get_nick(), n->get_channel()->get_name(), "End of NAMES list");}
 
 static std::string R_ERR_UNKNOWNCOMMAND(client_t &c, server_t &s, Command *n)
 {compiler_treat(c,s,n); return reply_format("421", c.get_nick(), n->get_name(), "Unknown command");}
@@ -132,6 +157,10 @@ void	init_reply_matrix(reply *reply_matrix)
 	reply_matrix[RPL_AWAY] = R_AWAY;
 	reply_matrix[RPL_YOUREOPER] = R_YOUREOPER;
 	reply_matrix[RPL_UMODEIS] = R_UMODEIS;
+	reply_matrix[RPL_LIST] = R_LIST;
+	reply_matrix[RPL_LISTEND] = R_LISTEND;
+	reply_matrix[RPL_NAMREPLY] = R_NAMREPLY;
+	reply_matrix[RPL_ENDOFNAMES] = R_ENDOFNAMES;
 	reply_matrix[ERR_UNKNOWNCOMMAND] = R_ERR_UNKNOWNCOMMAND;
 	reply_matrix[ERR_NONICKNAMEGIVEN] = R_ERR_NONICKNAMEGIVEN;
 	reply_matrix[ERR_NICKNAMEINUSE] = R_ERR_NICKNAMEINUSE;
@@ -159,7 +188,7 @@ void	init_reply_matrix(reply *reply_matrix)
 	reply_matrix[ERR_NOTOPLEVEL] = R_ERR_NOTOPLEVEL;
 	reply_matrix[ERR_TOOMANYTARGETS] = R_ERR_TOOMANYTARGETS;
 	reply_matrix[ERR_NOTREGISTERED] = R_ERR_NOTREGISTRED;
-	}
+}
 
 std::string	get_reply(int reply_code, client_t &client, server_t &server, Command *command)
 {

@@ -1,4 +1,5 @@
 #include "channel.hpp"
+#include "reply_system.hpp"
 
 Channel::Channel(std::string name, std::string mode, std::string topic):
 _member_list(), _member_count(0), _banned_list(), _name(name), _mode(mode), _topic(topic) {}
@@ -11,7 +12,15 @@ Channel::~Channel(void)
 }
 
 
-//void broadcast_message(const std::string &message) const {}
+void Channel::broadcast_message(client_t &sender, const std::string &message) const 
+{
+	for(std::list<client_t *>::const_iterator member = _member_list.begin(); member != _member_list.end(); ++member)
+	{
+		if ((*member)->sock_fd != sender.sock_fd)
+			send_to_client( ":" + sender.get_originname() + " PRIVMSG " + _name + " :" + message + "\r\n", *(*member));
+	}	
+}
+
 int				Channel::add_member(client_t *member)
 {
 	if (_is_banned(member->get_nick()))
@@ -40,7 +49,18 @@ int		Channel::ban_member(const std::string &nick)
 void			Channel::set_topic(const std::string &topic){_topic = topic;}
 std::string		Channel::get_topic(void) const {return _topic;}
 std::string		Channel::get_name(void) const {return _name;}
+size_t			Channel::get_member_count(void) const {return _member_count;}
 
+
+std::string		Channel::get_member_list(char separator)
+{
+	std::string list;
+
+	for (std::list<client_t *>::iterator i = _member_list.begin(); i != _member_list.end(); ++i)
+		list += (*i)->get_nick() + separator;
+	list.pop_back();
+	return list;
+}
 
 //std::string			Channel::_channel_message_format(std::string message) const{}
 
