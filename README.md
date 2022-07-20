@@ -73,7 +73,7 @@ Numeric Replies: **ERR_NEEDMOREPARAMS** &emsp; **ERR_INVITEONLYCHAN** &emsp; **E
 
 - [**PART:**](https://datatracker.ietf.org/doc/html/rfc1459#section-4.2.2) causes the client sending the message to be **removed from the list of active users** for all given channels listed in the parameter string.<br><br>
 Command: **PART \<channel\>{,\<channel\>}**<br>
-Numeric Replies: **ERR_NEEDMOREPARAMS** &emsp; **ERR_NOTONCHANNEL** &emps; **ERR_NOSUCHCHANNEL**
+Numeric Replies: **ERR_NEEDMOREPARAMS** &emsp; **ERR_NOTONCHANNEL** &emsp; **ERR_NOSUCHCHANNEL**
 
 ***
 
