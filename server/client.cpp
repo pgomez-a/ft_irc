@@ -1,6 +1,6 @@
 #include "channel.hpp"
-#include "client.hpp"
 #include "server.hpp"
+#include "client.hpp"
 
 bool client_is_in_server(const server_t &server, const client_t &client)
 {
@@ -95,21 +95,20 @@ void	client_t::reset(void)
 	_mode.clear();
 	_nick.clear();
 	_user.clear();
+	clear_channel_list();
 }
 
-void	client_t::add_channel_to_list(channel *c)
+void	client_t::add_channel_to_list(Channel *c)
 {
 	_channel_list.push_back(c);
 	return ;
 }
 
-bool	client_t::pop_channel_from_list(channel *c)
+bool	client_t::pop_channel_from_list(Channel *c)
 {
-	for (std::list<channel *>::iterator i = _channel_list.begin(); i != _channel_list.end(); ++i)
+	for (std::list<Channel *>::iterator i = _channel_list.begin(); i != _channel_list.end(); ++i)
 	{
-		std::cout << "> " << c->get_name() << std::endl;
 		if ((*i)->get_name() == c->get_name())
-		if (2 == 2)
 		{
 			_channel_list.erase(i);
 			return true;
@@ -118,6 +117,16 @@ bool	client_t::pop_channel_from_list(channel *c)
 	return false;
 }
 
+
+void	client_t::clear_channel_list(void)
+{
+	for (std::list<Channel *>::iterator i = _channel_list.begin(); i != _channel_list.end(); ++i)
+	{
+		(*i)->delete_member(_nick);
+		(*i)->broadcast_message(*this, "PART", (*i)->get_name());	
+	}	
+	_channel_list.clear();
+}
 
 bool client_t::operator==(client_t &rhs) const
 {

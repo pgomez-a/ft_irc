@@ -16,7 +16,7 @@
 # define STR(x) #x
 
 struct server_t; //forward declaration
-class channel; //forward declaration
+class Channel; //forward declaration
 
 struct client_t
 {
@@ -55,8 +55,9 @@ struct client_t
 
 		void		reset(void);
 
-		void		add_channel_to_list(channel *c);
-		bool		pop_channel_from_list(channel *c);
+		void		add_channel_to_list(Channel *c);
+		bool		pop_channel_from_list(Channel *c);
+		void		clear_channel_list(void);
 
 	private:
 
@@ -65,7 +66,7 @@ struct client_t
 		std::string	_nick;
 		std::string	_user;
 		std::string _realname;
-		std::list<channel *>	_channel_list;
+		std::list<Channel *>	_channel_list;
 
 };
 

@@ -30,6 +30,7 @@ int				Channel::add_member(client_t *member)
 		if (_member_count + 1 > MAX_CHANNEL_SIZE)
 			return CHANNEL_IS_FULL;
 		_member_list.push_back(member);
+		member->add_channel_to_list(this);
 		++_member_count;
 		return MEMBER_ADDED;
 	}
@@ -98,6 +99,7 @@ bool			Channel::delete_member(std::string nick)
 		if ((*i)->get_nick() == nick)
 		{	
 			_member_list.erase(i);
+			(*i)->pop_channel_from_list(this);
 			--_member_count;
 			return true;
 		}

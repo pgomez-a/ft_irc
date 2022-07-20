@@ -16,7 +16,7 @@ class Channel
 
 		void			broadcast_message(client_t &sender, std::string command, const std::string &message) const; //enviar message con el formato correcto a todos los miembros
 		int				add_member(client_t	*member);//cuando un cliente hace un join, puede devolver un msj de bienvenida, o error si el user ya está registrado
-		bool				delete_member(std::string nick);
+		bool			delete_member(std::string nick);
 
 		int				ban_member(const std::string &nick);
 		void			set_topic(const std::string &topic);
