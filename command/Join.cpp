@@ -37,6 +37,7 @@ int	Join::_effect(server_t &server, client_t &client)
 			reply_to_client( _rest.size() ? RPL_TOPIC: RPL_NOTOPIC, client, server, this);
 			reply_to_client( RPL_NAMREPLY, client, server, this);
 			reply_to_client( RPL_ENDOFNAMES, client, server, this);
+			_channel_iterator->second.broadcast_message(client, "JOIN", *channel);
 		}
 		return 0;
 	}

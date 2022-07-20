@@ -6,6 +6,7 @@
 # include <sys/types.h>
 # include <arpa/inet.h>
 # include <netdb.h>
+# include <list>
 
 # define MAX_CLIENTS 1024
 # define SERV_PASSW 1
@@ -15,6 +16,7 @@
 # define STR(x) #x
 
 struct server_t; //forward declaration
+class channel; //forward declaration
 
 struct client_t
 {
@@ -53,6 +55,9 @@ struct client_t
 
 		void		reset(void);
 
+		void		add_channel_to_list(channel *c);
+		bool		pop_channel_from_list(channel *c);
+
 	private:
 
 		int			_registration_flags;
@@ -60,6 +65,7 @@ struct client_t
 		std::string	_nick;
 		std::string	_user;
 		std::string _realname;
+		std::list<channel *>	_channel_list;
 
 };
 

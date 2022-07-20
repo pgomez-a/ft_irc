@@ -1,3 +1,4 @@
+#include "channel.hpp"
 #include "client.hpp"
 #include "server.hpp"
 
@@ -21,7 +22,7 @@ bool client_is_registered(const server_t &server, const client_t &client)
 /* Default constructor */
 client_t::client_t(void):
 sock_fd(), addr(), port(), info(), 
-_registration_flags(0), _mode(), _nick(), _user() {}
+_registration_flags(0), _mode(), _nick(), _user(), _realname(), _channel_list() {}
 
 void	client_t::register_flag(unsigned int flag)
 {
@@ -94,6 +95,27 @@ void	client_t::reset(void)
 	_mode.clear();
 	_nick.clear();
 	_user.clear();
+}
+
+void	client_t::add_channel_to_list(channel *c)
+{
+	_channel_list.push_back(c);
+	return ;
+}
+
+bool	client_t::pop_channel_from_list(channel *c)
+{
+	for (std::list<channel *>::iterator i = _channel_list.begin(); i != _channel_list.end(); ++i)
+	{
+		std::cout << "> " << c->get_name() << std::endl;
+		if ((*i)->get_name() == c->get_name())
+		if (2 == 2)
+		{
+			_channel_list.erase(i);
+			return true;
+		}
+	}
+	return false;
 }
 
 

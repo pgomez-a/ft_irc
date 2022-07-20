@@ -14,8 +14,10 @@ class Channel
 {
 	public :
 
-		void			broadcast_message(client_t &sender, const std::string &message) const; //enviar message con el formato correcto a todos los miembros
+		void			broadcast_message(client_t &sender, std::string command, const std::string &message) const; //enviar message con el formato correcto a todos los miembros
 		int				add_member(client_t	*member);//cuando un cliente hace un join, puede devolver un msj de bienvenida, o error si el user ya está registrado
+		bool				delete_member(std::string nick);
+
 		int				ban_member(const std::string &nick);
 		void			set_topic(const std::string &topic);
 		std::string		get_topic(void) const;
@@ -23,6 +25,7 @@ class Channel
 		size_t			get_member_count(void) const;
 
 		std::string		get_member_list(char separator);
+
 
 		Channel(std::string name, std::string mode, std::string topic = "");
 		~Channel(void);
@@ -32,7 +35,6 @@ class Channel
 		std::string			_channel_message_format(std::string message) const;
 		client_t			*_find_member(std::string nick);
 		bool				_is_banned(std::string nick) const;
-		bool				_delete_member(std::string nick);
 
 		std::list<client_t *>	_member_list;
 		size_t					_member_count;

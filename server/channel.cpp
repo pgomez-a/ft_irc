@@ -12,12 +12,12 @@ Channel::~Channel(void)
 }
 
 
-void Channel::broadcast_message(client_t &sender, const std::string &message) const 
+void Channel::broadcast_message(client_t &sender, std::string command, const std::string &message) const 
 {
 	for(std::list<client_t *>::const_iterator member = _member_list.begin(); member != _member_list.end(); ++member)
 	{
 		if ((*member)->sock_fd != sender.sock_fd)
-			send_to_client( ":" + sender.get_originname() + " PRIVMSG " + _name + " :" + message + "\r\n", *(*member));
+			send_to_client( ":" + sender.get_originname() + " " + command + " " +  _name + " :" + message + "\r\n", *(*member));
 	}	
 }
 
@@ -38,7 +38,7 @@ int				Channel::add_member(client_t *member)
 
 int		Channel::ban_member(const std::string &nick)
 {
-	if (_delete_member(nick) == true)
+	if (delete_member(nick) == true)
 	{
 		_banned_list.push_back(nick);
 		return MEMBER_HAS_BEEN_BANNED;
@@ -89,7 +89,7 @@ bool	Channel::_is_banned(std::string nick) const
 
 }
 
-bool			Channel::_delete_member(std::string nick)
+bool			Channel::delete_member(std::string nick)
 {
 	std::list<client_t *>::iterator end = _member_list.end();
 

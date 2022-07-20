@@ -23,7 +23,7 @@ int	Privmsg::_effect(server_t &server, client_t &client)
 			_channel_iterator = server.find_channel(*nick);
 			if (_channel_iterator == server.channel_map_end())
 				return ERR_CANNOTSENDTOCHAN;
-			_channel_iterator->second.broadcast_message(client, _rest);
+			_channel_iterator->second.broadcast_message(client, "PRIVMSG", _rest);
 		}
 		else
 		{
