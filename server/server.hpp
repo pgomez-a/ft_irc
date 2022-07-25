@@ -23,6 +23,8 @@ struct server_t
 
 		typedef std::map<std::string, Channel>	channel_map;
 
+		server_t(void);
+
 		int					sock_fd;
 		int					timeout;
 		int					clients_nfds;

@@ -32,6 +32,7 @@ struct client_t
 	/*member functions*/
 
 		client_t(void);
+		~client_t(void);
 
 		bool	operator==(client_t &rhs) const;
 		bool	operator==(const client_t &rhs) const;
@@ -58,15 +59,16 @@ struct client_t
 		void		add_channel_to_list(Channel *c);
 		bool		pop_channel_from_list(Channel *c);
 		void		clear_channel_list(void);
+		bool		is_in_channel(Channel &c);
 
 	private:
 
-		int			_registration_flags;
-		std::string	_mode;
-		std::string	_nick;
-		std::string	_user;
-		std::string _realname;
+		int						_registration_flags;
 		std::list<Channel *>	_channel_list;
+		std::string				_mode;
+		std::string				_nick;
+		std::string				_user;
+		std::string 			_realname;
 
 };
 

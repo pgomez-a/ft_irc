@@ -98,8 +98,8 @@ bool			Channel::delete_member(std::string nick)
 	{
 		if ((*i)->get_nick() == nick)
 		{	
-			_member_list.erase(i);
 			(*i)->pop_channel_from_list(this);
+			_member_list.erase(i);
 			--_member_count;
 			return true;
 		}

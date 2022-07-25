@@ -22,3 +22,4 @@ typedef std::list<token_type>	token_list;
 token_list  message_lexer(const std::string &input);
 
 #endif
+

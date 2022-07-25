@@ -21,8 +21,11 @@ bool client_is_registered(const server_t &server, const client_t &client)
 
 /* Default constructor */
 client_t::client_t(void):
-sock_fd(), addr(), port(), info(), 
-_registration_flags(0), _mode(), _nick(), _user(), _realname(), _channel_list() {}
+sock_fd(), addr(), port(), info(), _registration_flags(0), _mode(), _nick(), _user(), _realname()
+{}
+
+client_t::~client_t(void)
+{}
 
 void	client_t::register_flag(unsigned int flag)
 {
@@ -101,7 +104,6 @@ void	client_t::reset(void)
 void	client_t::add_channel_to_list(Channel *c)
 {
 	_channel_list.push_back(c);
-	return ;
 }
 
 bool	client_t::pop_channel_from_list(Channel *c)
@@ -117,15 +119,27 @@ bool	client_t::pop_channel_from_list(Channel *c)
 	return false;
 }
 
+bool	client_t::is_in_channel(Channel &c)
+{
+	for (std::list<Channel *>::iterator i = _channel_list.begin(); i != _channel_list.end(); ++i)
+	{
+		if ((*i)->get_name() == c.get_name())
+			return true;
+	}
+	return false;	
+}
+
 
 void	client_t::clear_channel_list(void)
 {
+	if (_channel_list.empty())
+		return ;
 	for (std::list<Channel *>::iterator i = _channel_list.begin(); i != _channel_list.end(); ++i)
 	{
 		(*i)->delete_member(_nick);
 		(*i)->broadcast_message(*this, "PART", (*i)->get_name());	
-	}	
-	_channel_list.clear();
+	}
+	_channel_list.clear();	
 }
 
 bool client_t::operator==(client_t &rhs) const

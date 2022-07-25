@@ -98,7 +98,7 @@ static std::string R_ERR_CHANNELISFULL(client_t &c, server_t &s, Command *n)
 {compiler_treat(c,s,n); return reply_format("471", c.get_nick(), (std::string)"<channel>", "Cannot join channel (+l)");}
 
 static std::string R_ERR_NOSUCHCHANNEL(client_t &c, server_t &s, Command *n)
-{compiler_treat(c,s,n); return reply_format("403", c.get_nick(), (std::string)"<channel>", "No such channel");}
+{compiler_treat(c,s,n); return reply_format("403", c.get_nick(), n->get_rest(), "No such channel");}
 
 static std::string R_ERR_BANNEDFROMCHAN(client_t &c, server_t &s, Command *n)
 {compiler_treat(c,s,n); return reply_format("474", c.get_nick(), (std::string)"<channel>", "Cannot join channel (+b)");}
@@ -119,7 +119,7 @@ static std::string R_ERR_NORECIPIENT(client_t &c, server_t &s, Command *n)
 {compiler_treat(c,s,n); return reply_format("411", c.get_nick(),"", "No recipient given (" + n->get_name() + ")");}
 
 static std::string R_ERR_CANNOTSENDTOCHAN(client_t &c, server_t &s, Command *n)
-{compiler_treat(c,s,n); return reply_format("404", c.get_nick(), (std::string)"<channel>", "Cannot send to channel");}
+{compiler_treat(c,s,n); return reply_format("404", c.get_nick(), n->get_channel()->get_name(), "Cannot send to channel");}
 
 static std::string R_ERR_WILDTOPLEVEL(client_t &c, server_t &s, Command *n)
 {compiler_treat(c,s,n); return reply_format("414", c.get_nick(), (std::string)"<mask>", "Wilcard in top level");}

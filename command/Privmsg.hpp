@@ -7,6 +7,8 @@ class Privmsg : public Command
 	public : 
 
 		Privmsg(void);
+		
+		Channel	*get_channel(void);
 
 	private :
 

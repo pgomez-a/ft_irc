@@ -6,6 +6,11 @@ Privmsg::Privmsg(void) {
 	_id = PRIVMSG;
 };
 
+Channel	*Privmsg::get_channel(void)
+{
+	return &(_channel_iterator->second);
+}
+
 int	Privmsg::_effect(server_t &server, client_t &client)
 {
 	client_t*					receiver;
@@ -22,8 +27,14 @@ int	Privmsg::_effect(server_t &server, client_t &client)
 		{
 			_channel_iterator = server.find_channel(*nick);
 			if (_channel_iterator == server.channel_map_end())
+			{
+				_rest = *nick;
+				return ERR_NOSUCHCHANNEL;	
+			}
+			if (!client.is_in_channel(_channel_iterator->second))
 				return ERR_CANNOTSENDTOCHAN;
 			_channel_iterator->second.broadcast_message(client, "PRIVMSG", _rest);
+	
 		}
 		else
 		{

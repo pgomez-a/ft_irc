@@ -46,3 +46,4 @@ token_list	message_lexer(const std::string &input)
 	}
 	return (list);
 }
+
