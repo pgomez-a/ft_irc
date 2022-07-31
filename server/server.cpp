@@ -36,20 +36,16 @@ bool	server_t::valid_oper_host(client_t &client)
  **/
 
 server_t::server_t(void):
-sock_fd(), timeout(), clients_nfds(), name(), addr(), port(), passwd(), oper_passwd(), hints(), res(), clients_fds(), clients_info(), _channel_map(), _no_oper_list()
+sock_fd(), timeout(), clients_nfds(), name("nameless"), addr("nameless.org"), port(), passwd(), oper_passwd("oper"), hints(), res(), clients_fds(), clients_info(), _channel_map(), _no_oper_list()
 {}
 
 int	init_server(char* port, char* passwd, server_t& server)
 {
-	server.name = "nameless";
-	server.addr = "nameless";
 	server.port = static_cast<std::string>(port);
 	server.passwd = static_cast<std::string>(passwd);
 	server.oper_passwd = "oper"; //harcoded access to Operator flag //harcoded access to Operator flag
 	//server.version = "0.1";
 	server.timeout = 5 * 1000 * 60;
-	//std::memset(server.clients_info, 0, sizeof(server.clients_info)); <----- Memory corruption?
-	//std::memset(server.clients_fds, 0, sizeof(server.clients_fds)) <----- Memory corruption?;
 	server.clients_fds[0].fd = server.sock_fd;
 	server.clients_fds[0].events = POLLIN;
 	server.clients_nfds = 1;

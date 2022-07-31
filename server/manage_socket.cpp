@@ -123,22 +123,33 @@ static int	reduce_poll_fds(server_t &server)
 	int	iter_x;
 
 	iter_y = 0;
+	for (int i = 0; i < server.clients_nfds; ++i)
+	{
+		std::cout  <<"PRE:" << i << ":" << server.clients_info[i].get_nick() << "\n";
+	}	
 	while (iter_y < server.clients_nfds)
 	{
 		if (server.clients_fds[iter_y].fd == -1)
 		{
 			iter_x = iter_y;
+			std::cout << iter_x << ")HARD RESETING FOR : " << server.clients_info[iter_x].get_nick() << std::endl;
+			server.clients_info[iter_x].reset(HARD_RESET); //<--- possible error : double reset
 			while (iter_x < server.clients_nfds - 1)
 			{
 				server.clients_fds[iter_x].fd = server.clients_fds[iter_x + 1].fd;
 				server.clients_info[iter_x] = server.clients_info[iter_x  + 1];
 				iter_x += 1;
 			}
-			server.clients_info[iter_x].reset(); //<--- possible error : double reset
+			std::cout << iter_x << ")SOFT RESETING FOR : " << server.clients_info[iter_x].get_nick() << std::endl;
+			server.clients_info[iter_x].reset(SOFT_RESET); //<--- possible error : double reset
 			server.clients_nfds -= 1;
 			iter_y -= 1;
 		}
 		iter_y += 1;
+	}
+	for (int i = 0; i < server.clients_nfds; ++i)
+	{
+		std::cout  <<"POS:" << i << ":" << server.clients_info[i].get_nick() << "\n";
 	}
 	return (server.clients_nfds);
 }
@@ -220,7 +231,7 @@ int		manage_socket(server_t &server)
 						end_server = 1;
 					close(server.clients_fds[i].fd);
 					server.clients_fds[i].fd = -1;
-					server.clients_info[i].reset();
+				//	server.clients_info[i].reset();
 					reduced = 1;
 				}
 			}

@@ -25,6 +25,7 @@ int	Part::_effect(server_t &server, client_t &client)
 			if (!r)
 				return ERR_NOTONCHANNEL;
 			_channel_iterator->second.broadcast_message(client, "PART", _rest);
+			client.pop_channel_from_list(&(_channel_iterator->second));
 			if (_argc < 2)
 				msg_tail = ":" + _channel_iterator->second.get_name();
 			else

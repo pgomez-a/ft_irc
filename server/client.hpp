@@ -18,6 +18,8 @@
 struct server_t; //forward declaration
 class Channel; //forward declaration
 
+enum e_reset_mode{SOFT_RESET, HARD_RESET};
+
 struct client_t
 {
 	public:
@@ -54,7 +56,7 @@ struct client_t
 		std::string	get_realname(void) const;
 		std::string	get_originname(void) const;
 
-		void		reset(void);
+		void		reset(int reset_mode = SOFT_RESET);
 
 		void		add_channel_to_list(Channel *c);
 		bool		pop_channel_from_list(Channel *c);

@@ -92,13 +92,16 @@ std::string	client_t::get_originname(void) const
 	return (_nick + "!" + _user + "@" + addr);
 }
 
-void	client_t::reset(void)
+
+void	client_t::reset(int reset_mode)
 {
+	std::cout << "RESET() call;\n";
+	if (reset_mode == HARD_RESET)
+		clear_channel_list();
 	_registration_flags = 0;
 	_mode.clear();
 	_nick.clear();
 	_user.clear();
-	clear_channel_list();
 }
 
 void	client_t::add_channel_to_list(Channel *c)
@@ -132,12 +135,16 @@ bool	client_t::is_in_channel(Channel &c)
 
 void	client_t::clear_channel_list(void)
 {
+	std::cout << "clear_channel_list():\n";
+	std::cout << "Client_fd : " << sock_fd << " nick : " << _nick << std::endl;
 	if (_channel_list.empty())
 		return ;
 	for (std::list<Channel *>::iterator i = _channel_list.begin(); i != _channel_list.end(); ++i)
 	{
+		(*i)->broadcast_message(*this, "PART", (*i)->get_name());
+		std::cout << "MEMBER COUNT PRE " << (*i)->get_member_count() << std::endl;
 		(*i)->delete_member(_nick);
-		(*i)->broadcast_message(*this, "PART", (*i)->get_name());	
+		std::cout << "MEMBER COUNT POST " << (*i)->get_member_count() << std::endl;
 	}
 	_channel_list.clear();	
 }
