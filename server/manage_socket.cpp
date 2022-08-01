@@ -114,37 +114,6 @@ static int	read_socket(client_t &client, server_t &server)
 }
 
 /**
- ** Adjusts clients_fds struct erasing all the clients that have been disconnected.
- **/
-
-static int	reduce_poll_fds(server_t &server)
-{
-	int	iter_y;
-	int	iter_x;
-
-	iter_y = 0;
-	while (iter_y < server.clients_nfds)
-	{
-		if (server.clients_fds[iter_y].fd == -1)
-		{
-			iter_x = iter_y;
-			server.clients_info[iter_x].reset(HARD_RESET); //<--- possible error : double reset
-			while (iter_x < server.clients_nfds - 1)
-			{
-				server.clients_fds[iter_x].fd = server.clients_fds[iter_x + 1].fd;
-				server.clients_info[iter_x] = server.clients_info[iter_x  + 1];
-				iter_x += 1;
-			}
-			server.clients_info[iter_x].reset(SOFT_RESET); //<--- possible error : double reset
-			server.clients_nfds -= 1;
-			iter_y -= 1;
-		}
-		iter_y += 1;
-	}
-	return (server.clients_nfds);
-}
-
-/**
  ** Closes all the client sockets that are still opened just after the server has decided to stop.
  **/
 
@@ -172,12 +141,10 @@ static void	close_poll_fds(server_t &server)
 
 int		manage_socket(server_t &server)
 {
-	int	reduced;
 	int	end_server;
 	int	func_return;
 	int	poll_tmp_nfds;
 
-	reduced = 0;
 	end_server = 0;
 	while(!end_server)
 	{
@@ -189,7 +156,7 @@ int		manage_socket(server_t &server)
 		}
 		if (func_return == 0) // extra condition??
 		{
-			put_error("poll()");
+			put_error("timeout()");
 			break ;
 		}
 		poll_tmp_nfds = server.clients_nfds;
@@ -221,15 +188,9 @@ int		manage_socket(server_t &server)
 						end_server = 1;
 					close(server.clients_fds[i].fd);
 					server.clients_fds[i].fd = -1;
-				//	server.clients_info[i].reset();
-					reduced = 1;
+					server.clients_info[i].reset(HARD_RESET);
 				}
 			}
-		}
-		if (reduced)
-		{
-			reduced = 0;
-			server.clients_nfds = reduce_poll_fds(server);
 		}
 	}
 	close_poll_fds(server);
