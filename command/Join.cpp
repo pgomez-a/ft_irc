@@ -23,11 +23,16 @@ int	Join::_effect(server_t &server, client_t &client)
 		for (std::list<std::string>::iterator channel = token_list.begin(); channel != token_list.end(); ++channel)
 		{
 			_channel_iterator = server.find_channel(*channel);
+			for (server_t::channel_map::iterator i = server.channel_map_begin(); i != server.channel_map_end(); ++i)
+			{
+				std::cout << i->second.get_name()  << ":dir:" << (&(i->second))<< "|<<"<< std::endl;
+			}
 			if (_channel_iterator == server.channel_map_end())
 				r = server.add_new_channel(*channel, "", "", _channel_iterator);
 			if (r == BAD_CHANNEL_NAME)
 				return ERR_NOSUCHCHANNEL;
 			r = _channel_iterator->second.add_member(&client);
+			std::cout << "add member_returns " << r << std::endl;
 			if (r == BANNED)
 				return ERR_BANNEDFROMCHAN;
 			if (r == CHANNEL_IS_FULL)

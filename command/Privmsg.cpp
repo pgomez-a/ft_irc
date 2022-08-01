@@ -33,8 +33,8 @@ int	Privmsg::_effect(server_t &server, client_t &client)
 			}
 			if (!client.is_in_channel(_channel_iterator->second))
 				return ERR_CANNOTSENDTOCHAN;
-			_channel_iterator->second.broadcast_message(client, "PRIVMSG", _rest);
-	
+			std::cout << "PRIVMSG : here\n";
+			_channel_iterator->second.broadcast_message(client, "PRIVMSG", _rest);	
 		}
 		else
 		{
