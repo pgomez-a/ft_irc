@@ -17,6 +17,7 @@ static int	accept_socket(server_t &server)
 {
 	int						nfds;
 	int						nsock_fd;
+	int						i;
 	socklen_t				client_len;
 	struct sockaddr_storage	client_addr;
 	std::ofstream			history(".nameless_history", std::fstream::app);
@@ -34,15 +35,25 @@ static int	accept_socket(server_t &server)
 				return on_error(history, "accept()", -1);
 			break ;
 		}
-		server.clients_info[nfds].info = *((struct sockaddr_in*)&client_addr);
-		server.clients_info[nfds].sock_fd = nsock_fd;
-		server.clients_info[nfds].addr = inet_ntoa(server.clients_info[nfds].info.sin_addr);
-		server.clients_info[nfds].port = std::to_string(server.clients_info[nfds].info.sin_port);
-		server.clients_fds[nfds].fd = nsock_fd;
-		server.clients_fds[nfds].events = POLLIN;
-		event = event_format(server.clients_info[nfds].addr, server.clients_info[nfds].port,"Connection Accepted");
+		i = nfds;
+		while (i > 0)
+		{
+			if (server.clients_fds[i].fd == -1)
+				break ;
+			i--;
+		}
+		if (i == 0)
+			i = nfds;
+		server.clients_info[i].info = *((struct sockaddr_in*)&client_addr);
+		server.clients_info[i].sock_fd = nsock_fd;
+		server.clients_info[i].addr = inet_ntoa(server.clients_info[i].info.sin_addr);
+		server.clients_info[i].port = std::to_string(server.clients_info[i].info.sin_port);
+		server.clients_fds[i].fd = nsock_fd;
+		server.clients_fds[i].events = POLLIN;
+		event = event_format(server.clients_info[i].addr, server.clients_info[i].port,"Connection Accepted");
 		report_event(event, history, YELLOW);
-		nfds += 1;
+		if (i == nfds)
+			nfds += 1;
 	}
 	history.close();
 	return (nfds);
