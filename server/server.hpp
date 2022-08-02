@@ -67,5 +67,4 @@ int	init_server(char* port, char* passwd, server_t& server);
 bool client_is_in_server(const server_t &server, const client_t &client);
 bool client_is_registered(const server_t &server, const client_t &client);
 
-
 #endif
