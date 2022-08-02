@@ -1,6 +1,7 @@
 #include "channel.hpp"
 #include "server.hpp"
 #include "client.hpp"
+#include "reply_system.hpp"
 
 bool client_is_in_server(const server_t &server, const client_t &client)
 {
@@ -139,6 +140,7 @@ void	client_t::clear_channel_list(void)
 	for (std::list<Channel *>::iterator i = _channel_list.begin(); i != _channel_list.end(); ++i)
 	{
 		(*i)->broadcast_message(*this, "PART", (*i)->get_name());
+		send_to_client( ":" + get_originname() + " PART " +  ":" + (*i)->get_name() + "\r\n", *this);
 		(*i)->delete_member(_nick);
 	}
 	_channel_list.clear();	

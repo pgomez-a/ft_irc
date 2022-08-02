@@ -184,11 +184,6 @@ int		manage_socket(server_t &server)
 			if (server.clients_fds[i].fd == server.sock_fd)
 			{
 				server.clients_nfds = accept_socket(server);
-				if (server.clients_nfds == -1)
-				{
-					end_server = 1;
-					break ;
-				}
 			}
 			else
 			{

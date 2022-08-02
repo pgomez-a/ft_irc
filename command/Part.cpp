@@ -5,6 +5,7 @@ Part::Part(void) {
 	_id = PART;
 };
 
+
 int	Part::_effect(server_t &server, client_t &client)
 {
 	std::list<std::string>	token_list;

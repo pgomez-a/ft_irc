@@ -34,7 +34,6 @@ int				Channel::add_member(client_t *member)
 		_member_list.push_back(member);
 		member->add_channel_to_list(this);
 		++_member_count;
-		std::cout  << "MEMBER:" << member->get_nick() << ":ADDR:" << &(*(--_member_list.end())) << std::endl;
 		return MEMBER_ADDED;
 	}
 	return MEMBER_DUPLICATE;
@@ -74,14 +73,8 @@ client_t			*Channel::_find_member(std::string nick)
 
 	for (std::list<client_t *>::iterator i = _member_list.begin(); i != end; ++i)
 	{
-		std::cout << "find_member(): member_list : " << (*i)->get_nick()  << std::endl;
-	}
-
-	for (std::list<client_t *>::iterator i = _member_list.begin(); i != end; ++i)
-	{
 		if ((*i)->get_nick() == nick)
 		{
-			std::cout << "FOUND:" << nick << ":ADDR:" << &(*i) << std::endl;	
 			return *i;
 		}
 	}
@@ -104,31 +97,18 @@ bool	Channel::_is_banned(std::string nick) const
 bool			Channel::delete_member(std::string nick)
 {
 	std::list<client_t *>::iterator end = _member_list.end();
-	for (std::list<client_t *>::iterator i = _member_list.begin(); i != end; ++i)
-	{
-		std::cout << "@delete_member(): member_list : " << (*i)->get_nick()  << std::endl;
-	}
+
 	for (std::list<client_t *>::iterator i = _member_list.begin(); i != end; ++i)
 	{
 		if ((*i)->get_nick() == nick)
 		{	
 			//(*i)->pop_channel_from_list(this);
-			std::cout <<"CHANNEL to DELETE:"<< (*i)->get_nick() << std::endl;
 			_member_list.erase(i);
 			--_member_count;
-	
-			for (std::list<client_t *>::iterator i = _member_list.begin(); i != end; ++i)
-			{
-				std::cout << "/$delete_member(): member_list : " << (*i)->get_nick()  << std::endl;
-			}
 			return true;
 		}
+	}
 
-	}
-	for (std::list<client_t *>::iterator i = _member_list.begin(); i != end; ++i)
-	{
-		std::cout << "/%delete_member(): member_list : " << (*i)->get_nick()  << std::endl;
-	}
 	return false;
 }
 
