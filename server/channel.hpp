@@ -23,6 +23,7 @@ class Channel
 		int		add_member(client_t	*member);
 		bool	delete_member(std::string nick);
 		int		ban_member(const std::string &nick);
+		bool	is_member_on_channel(std::string nick);
 
 		/** Getters & Setters **/
 		void		set_topic(const std::string &topic);

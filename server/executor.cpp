@@ -13,7 +13,12 @@ static Command	*process_message(char *buf, size_t buf_len)
 
 	l = message_lexer(message);
 	p = message_parser(l);
+//	if ((--l.end())->type == REST)
+//	{
+//		p.rest_sent = true;
+//	}
 	p.produce_command();
+
 	return p.command;
 }
 

@@ -14,7 +14,7 @@ static Nick nick_inst; static User user_inst; static Error error_inst;
 static Pass pass_inst; static Oper oper_inst; static Quit quit_inst; 
 static Join join_inst; static Part part_inst; static Privmsg privmsg_inst;
 static Notice notice_inst; static Ping ping_inst; static Cap cap_inst;
-static List list_inst;
+static List list_inst; static Mode mode_inst; static Topic topic_inst;
 
 static	rule	rule_matrix[5][5] = {
 									{
@@ -52,6 +52,8 @@ static void	init_command_map(void)
 	command_map.insert(std::make_pair("NOTICE", &notice_inst));
 	command_map.insert(std::make_pair("PING", &ping_inst));
 	command_map.insert(std::make_pair("LIST", &list_inst));
+	command_map.insert(std::make_pair("MODE", &mode_inst));
+	command_map.insert(std::make_pair("TOPIC", &topic_inst));
 
 }
 
@@ -154,6 +156,7 @@ void	rule5_parameters_expansion(symbol_stack &s, parser_product &p, token_type &
 void	rule6_rest_prefix(symbol_stack &s, parser_product &p, token_type &t)
 {
 	t.type = REST;
+	p.rest_sent = true;
 	s.push(REST);
 
 	(void)p;
@@ -177,9 +180,40 @@ void	rule8_rest_expansion(symbol_stack &s, parser_product &p, token_type &t)
 }
 /////////////////////////////////////////
 
+parser_product::parser_product(void) :
+command(), argt(), argc(), origin(), rest_sent(false), rest(), error()
+{
+	argt = new std::string [14];
+}
+
+parser_product::~parser_product(void)
+{
+	delete [] argt;
+}
+
+parser_product::parser_product(parser_product const &p)
+{
+	argt = new std::string [14];
+	*this = p;
+}
+
+void	parser_product::operator=(parser_product const &p)
+{
+	command = p.command;
+	for (size_t i = 0; i < 14; ++i)
+	{
+		argt[i] = p.argt[i];
+	}
+	argc = p.argc;
+	origin = p.origin;
+	rest_sent = p.rest_sent;
+	rest = p.rest;
+	error = p.error;
+}
+
 Command	*parser_product::produce_command(void)
 {
-	command->set_members(argt, argc, origin, rest, error);
+	command->set_members(argt, argc, origin, rest_sent, rest, error);
 
 	return command;
 }
@@ -196,7 +230,7 @@ static parser_product	parsing_loop(token_list &l, symbol_stack &s)
 {
 	token_list::iterator	t = l.begin();
 	token_list::iterator	u = l.end();
-	parser_product			p = {};
+	parser_product			p;
 	size_t					c = 0; // current symbol 
 	rule					r = 0;
 

@@ -96,7 +96,7 @@ static int	read_socket(client_t &client, server_t &server)
 }
 
 /**
- ** Closes all the client sockets that are still opened just after the server has decided to stop.
+ ** Closes all the client sockets that are still open just after the server has decided to stop.
  **/
 
 static void	close_poll_fds(server_t &server)

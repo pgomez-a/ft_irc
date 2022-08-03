@@ -24,10 +24,12 @@ class Command
 		virtual	Channel	*get_channel(void);
 
 		size_t		id(void) const;
-		void		set_members(std::string *argt, size_t argc, std::string origin, std::string rest, size_t error);
+		void		set_members(std::string *argt, size_t argc, std::string origin, bool rest_s, std::string rest, size_t error);
 		void		set_name(std::string n);
 
 		std::string	operator[](size_t i) const;
+
+		bool		rest_sent;
 		
 	protected :
 

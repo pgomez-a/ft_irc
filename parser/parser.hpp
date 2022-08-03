@@ -30,17 +30,26 @@ enum	e_PARSER_ERRORS
 	NO_TOKENS = 10000001
 };
 
-typedef	struct	s_parser_product 
+struct	parser_product 
 {
+	parser_product(void);
+	parser_product(parser_product const  &p);
+
+	~parser_product(void);
+
 	Command		*command;
-	std::string	argt[14];
+	std::string	*argt;
 	size_t		argc;
 	std::string	origin;
+	bool		rest_sent;
 	std::string	rest;
 	size_t		error;
 
 	Command		*produce_command(void);
-}				parser_product;
+
+	void		operator=(parser_product const &p);
+};
+
 void	set_err_product(parser_product &p);
 
 typedef std::stack<size_t>		symbol_stack; //containing parser and lexer symbols.

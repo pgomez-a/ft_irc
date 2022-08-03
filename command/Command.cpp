@@ -1,7 +1,7 @@
 #include "Command.hpp"
 #include "reply_system.hpp"
 
-Command::Command(void) : _command_name("DEFAULT"), _id(0), _argc(0) {};
+Command::Command(void) : rest_sent(false), _command_name("DEFAULT"), _id(0), _argc(0) {};
 
 Command::~Command(void) 
 {
@@ -59,7 +59,7 @@ int	Command::_effect(server_t &server, client_t &client)
 	return 0;
 }
 
-void	Command::set_members(std::string *argt, size_t argc, std::string origin, std::string rest, size_t error)
+void	Command::set_members(std::string *argt, size_t argc, std::string origin, bool rest_s, std::string rest, size_t error)
 {
 	_clear_argt();
 	if (argc)
@@ -70,6 +70,7 @@ void	Command::set_members(std::string *argt, size_t argc, std::string origin, st
 	}
 	_argc = argc;
 	_origin = origin;
+	rest_sent = rest_s;
 	_rest = rest;
 	_error = error;
 }

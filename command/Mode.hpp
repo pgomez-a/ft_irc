@@ -1,14 +1,14 @@
-#ifndef PASS_HPP
-# define PASS_HPP
+#ifndef MODE_HPP
+# define MODE_HPP
 #include "commands.hpp"
 
-class Pass : public Command
+class Mode	: public Command
 {
 	public : 
 
-		Pass(void);
-	
-	private :
+		Mode(void);
+
+	private:
 
 		int	_effect(server_t &server, client_t &client);
 };

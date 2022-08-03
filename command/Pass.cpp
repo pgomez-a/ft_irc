@@ -11,6 +11,7 @@ int	Pass::_effect(server_t &server, client_t &client)
 		return ERR_NEEDMOREPARAMS;
 	if (client.registered())
 		return ERR_ALREADYREGISTRED;
+	//std::cout << "argt in PASS " << _argt << std::endl;
 	if (_argt[0] == server.passwd)
 	{
 		client.register_flag(SERV_PASSW);

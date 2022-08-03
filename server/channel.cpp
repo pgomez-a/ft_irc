@@ -63,6 +63,11 @@ int		Channel::ban_member(const std::string &nick)
 	return MEMBER_NOT_IN_CHANNEL;
 }
 
+bool	Channel::is_member_on_channel(std::string nick)
+{
+	return (_find_member(nick) != NULL);
+}
+
 /** Getters & Setters **/
 void		Channel::set_topic(const std::string &topic){_topic = topic;}
 
