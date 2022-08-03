@@ -14,17 +14,13 @@
 # include "client.hpp"
 # include "channel.hpp"
 
-
-//needs to be refactored, clients_info should be a map or similar instead of an array, and client_t should have
-//comparison overload among other things
 struct server_t
 {
 	public:
-
+		/** Member Type **/
 		typedef std::map<std::string, Channel>	channel_map;
 
-		server_t(void);
-
+		/** Public Member Attributes **/
 		int					sock_fd;
 		int					timeout;
 		int					clients_nfds;
@@ -39,32 +35,29 @@ struct server_t
 		struct pollfd		clients_fds[MAX_CLIENTS];
 		client_t			clients_info[MAX_CLIENTS];
 
+		/** Constructor & Destructor **/
+		server_t(void);
+		~server_t(void);
+
+		/** Member Methods **/
 		client_t	*find_nick(std::string nick);
 		client_t	*find_user(std::string user);
-
 		bool		valid_oper_host(client_t &client);
-		
 		int			add_new_channel(std::string name, std::string mode, std::string topic, channel_map::iterator &i);
 
+		/** Channel Methods **/
 		channel_map::iterator	find_channel(std::string name);
 		channel_map::iterator	channel_map_begin(void);
 		channel_map::iterator	channel_map_end(void);
 		size_t					channel_count(void);
 		
 	private:
-
-		channel_map						_channel_map;
-		std::list<std::string>			_no_oper_list;
+		/** Private Member Attributes **/
+		channel_map				_channel_map;
+		std::list<std::string>  _no_oper_list;
 };
 
-//couldn't init server just be the constructor???
-int	init_server(char* port, char* passwd, server_t& server);
-
-/*
-** Interaction
-*/
-
-bool client_is_in_server(const server_t &server, const client_t &client);
-bool client_is_registered(const server_t &server, const client_t &client);
+/** Configuration **/
+int	config_server(char* port, char* passwd, server_t& server);
 
 #endif

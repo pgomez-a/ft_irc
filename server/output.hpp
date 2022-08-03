@@ -12,10 +12,7 @@
 # define YELLOW 		"\033[93m"
 # define BLUE 			"\033[94m"
 
-/**
- ** output.cpp
- **/
-
+/** output.cpp **/
 void		put_error(std::string s);
 
 void		put_event(std::string message, std::string color = RESET_COLOR);

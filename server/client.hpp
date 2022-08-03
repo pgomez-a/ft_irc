@@ -15,39 +15,45 @@
 # define IS_REGISTERED (SERV_PASSW ^ CLI_NICK ^ CLI_USER)
 # define STR(x) #x
 
-struct server_t; //forward declaration
-class Channel; //forward declaration
+/** Forward Declarations **/
+struct server_t;
+class Channel;
 
 enum e_reset_mode{SOFT_RESET, HARD_RESET};
 
 struct client_t
 {
 	public:
-
-	/* 	Connection info */
-
+		/** Public Member Attributes **/
 		int					sock_fd;
 		std::string			addr;
 		std::string			port;
 		struct sockaddr_in	info;
 		
-	/*member functions*/
-
+		/** Constructor & Destructor **/
 		client_t(void);
 		~client_t(void);
 
+		/** Operator Overloads **/
 		bool	operator==(client_t &rhs) const;
 		bool	operator==(const client_t &rhs) const;
 		
+		/** Member Methods **/
 		void	register_flag(unsigned int flag);
 		bool	flag_is_set(unsigned int flag) const;
 		bool	registered(void) const;
+		void	add_mode_flag(std::string flag);
+		void	rm_mode_flag(std::string flag);
+		bool	mode_flag_is_set(std::string flag);
+		void	reset(int reset_mode = SOFT_RESET);
+		void	add_channel_to_list(Channel *c);
+		bool	pop_channel_from_list(Channel *c);
+		void	clear_channel_list(void);
+		bool	is_in_channel(Channel &c);
 
+		/** Getters & Setters **/
 		void		set_mode(std::string);
 		std::string	get_mode(void) const;
-		void		add_mode_flag(std::string flag);
-		void		rm_mode_flag(std::string flag);
-		bool		mode_flag_is_set(std::string flag);
 		void		set_nick(std::string s);
 		std::string	get_nick(void) const;
 		void		set_user(std::string s);
@@ -56,29 +62,22 @@ struct client_t
 		std::string	get_realname(void) const;
 		std::string	get_originname(void) const;
 
-		void		reset(int reset_mode = SOFT_RESET);
-
-		void		add_channel_to_list(Channel *c);
-		bool		pop_channel_from_list(Channel *c);
-		void		clear_channel_list(void);
-		bool		is_in_channel(Channel &c);
-
 	private:
-
+		/** Private Member Attributes **/
 		int						_registration_flags;
 		std::list<Channel *>	_channel_list;
 		std::string				_mode;
 		std::string				_nick;
 		std::string				_user;
 		std::string 			_realname;
-
 };
 
-/*
-** Mode functions
-*/
-
+/** Mode functions **/
 bool		valid_oper_credentials(std::string username, server_t &server, client_t &client);
 std::string user_mode_bitmask(int m);
+
+/** Interaction **/
+bool	client_is_in_server(const server_t &server, const client_t &client);
+bool	client_is_registered(const server_t &server, const client_t &client);
 
 #endif

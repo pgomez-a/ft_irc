@@ -7,6 +7,7 @@
 void	put_error(std::string s)
 {
 	std::cerr << RED << "Error: " << s << RESET_COLOR << std::endl;
+	return ;
 }
 
 /**
@@ -16,6 +17,7 @@ void	put_error(std::string s)
 void	put_event(std::string message, std::string color)
 {
 	std::cout << color << message << RESET_COLOR << std::endl;
+	return ;
 }
 
 /**
@@ -25,6 +27,7 @@ void	put_event(std::string message, std::string color)
 void	log_event(std::string message, std::ofstream &history, std::string color, std::string dir)
 {
 	history << color << dir << " " << message << RESET_COLOR << std::endl;
+	return ;
 }
 
 /**
@@ -35,6 +38,7 @@ void	report_event(std::string message, std::ofstream &history, std::string color
 {
 	put_event(message, color);
 	log_event(message, history, color, dir);
+	return ;
 }
 
 /**

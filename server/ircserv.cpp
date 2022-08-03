@@ -5,7 +5,7 @@
  ** Creates the file that stores the connection history.
  **/
 
-static int	init_server_configuration(int argc, char *argv[], server_t &server)
+static int	init_server(int argc, char *argv[], server_t &server)
 {
 	std::ofstream	history;
 
@@ -42,11 +42,11 @@ int	main(int argc, char* argv[])
 {
 	server_t	server;
 
-	if (init_server_configuration(argc, argv, server) == -1)
+	if (init_server(argc, argv, server) == -1)
 		return 1;
-	init_server(argv[1], argv[2], server);
+	config_server(argv[1], argv[2], server);
 	manage_socket(server);
 	freeaddrinfo(server.res);
 	close(server.sock_fd);
-	return (0);
+	return 0;
 }
