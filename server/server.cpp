@@ -74,17 +74,3 @@ size_t							server_t::channel_count(void)
 {
 	return _channel_map.size();
 }
-
-/** Configuration **/
-int	config_server(char* port, char* passwd, server_t& server)
-{
-	server.port = static_cast<std::string>(port);
-	server.passwd = static_cast<std::string>(passwd);
-	server.oper_passwd = "oper"; //harcoded access to Operator flag //harcoded access to Operator flag
-	//server.version = "0.1";
-	server.timeout = 5 * 1000 * 60;
-	server.clients_fds[0].fd = server.sock_fd;
-	server.clients_fds[0].events = POLLIN;
-	server.clients_nfds = 1;
-	return (0);
-}

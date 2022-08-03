@@ -57,7 +57,4 @@ struct server_t
 		std::list<std::string>  _no_oper_list;
 };
 
-/** Configuration **/
-int	config_server(char* port, char* passwd, server_t& server);
-
 #endif
