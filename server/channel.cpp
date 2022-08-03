@@ -107,5 +107,4 @@ bool		Channel::_is_banned(std::string nick) const
 			return true;
 	}
 	return false;
-
 }

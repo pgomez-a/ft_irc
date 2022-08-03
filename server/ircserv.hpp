@@ -28,6 +28,6 @@ int	manage_socket(server_t& server);
 
 
 /** executor.cpp **/
-int executor(char *buf, size_t buf_len, server_t &server, client_t &client);
+int execute_client_request(char *buf, size_t buf_len, server_t &server, client_t &client);
 
 #endif

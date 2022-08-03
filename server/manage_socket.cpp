@@ -1,27 +1,49 @@
 #include "ircserv.hpp"
 
-
-static	int	on_error(std::ofstream &history, std::string error, int r)
-{
-	put_error(error);
-	history.close();
-	return r;
-}
-
 /**
  ** Accepts all incoming client connections that are in the backlog.
  **  - inet_ntoa: converts ip_address to char*
  **/
 
+static int	find_new_client_pos(int nfds, server_t &server)
+{
+	int	pos;
+
+	pos = nfds;
+	while (pos > 0)
+	{
+		if (server.clients_fds[pos].fd == -1)
+			break ;
+		--pos;
+	}
+	return pos == 0 ? nfds : pos;
+}
+
+static int	register_new_client(int nfds, int nsock_fd, struct sockaddr_storage client_addr, server_t &server)
+{
+	int			pos;
+	std::string	event;
+
+	pos = find_new_client_pos(nfds, server);
+	server.clients_info[pos].info = *((struct sockaddr_in*)&client_addr);
+	server.clients_info[pos].sock_fd = nsock_fd;
+	server.clients_info[pos].addr = inet_ntoa(server.clients_info[pos].info.sin_addr);
+	server.clients_info[pos].port = std::to_string(server.clients_info[pos].info.sin_port);
+	server.clients_fds[pos].fd = nsock_fd;
+	server.clients_fds[pos].events = POLLIN;
+	event = event_format(server.clients_info[pos].addr, server.clients_info[pos].port,"Connection Accepted");
+	report_event(event, YELLOW);
+	if (pos == nfds)
+		nfds += 1;
+	return nfds;
+}
+
 static int	accept_socket(server_t &server)
 {
 	int						nfds;
 	int						nsock_fd;
-	int						i;
 	socklen_t				client_len;
 	struct sockaddr_storage	client_addr;
-	std::ofstream			history(".nameless_history", std::fstream::app);
-	std::string				event;
 
 	nfds = server.clients_nfds;
 	client_len = sizeof(client_addr);
@@ -29,34 +51,13 @@ static int	accept_socket(server_t &server)
 	{
 		std::memset(&client_addr, 0, client_len);
 		nsock_fd = accept(server.sock_fd, (struct sockaddr*)&client_addr, &client_len);
-		if (nsock_fd == -1)
-		{
-			if (errno != EWOULDBLOCK)
-				return on_error(history, "accept()", -1);
+		if (nsock_fd == -1 && errno == EWOULDBLOCK)
 			break ;
-		}
-		i = nfds;
-		while (i > 0)
-		{
-			if (server.clients_fds[i].fd == -1)
-				break ;
-			i--;
-		}
-		if (i == 0)
-			i = nfds;
-		server.clients_info[i].info = *((struct sockaddr_in*)&client_addr);
-		server.clients_info[i].sock_fd = nsock_fd;
-		server.clients_info[i].addr = inet_ntoa(server.clients_info[i].info.sin_addr);
-		server.clients_info[i].port = std::to_string(server.clients_info[i].info.sin_port);
-		server.clients_fds[i].fd = nsock_fd;
-		server.clients_fds[i].events = POLLIN;
-		event = event_format(server.clients_info[i].addr, server.clients_info[i].port,"Connection Accepted");
-		report_event(event, history, YELLOW);
-		if (i == nfds)
-			nfds += 1;
+		else if (nsock_fd == -1)
+			return on_error("accept()", -1);
+		nfds = register_new_client(nfds, nsock_fd, client_addr, server);
 	}
-	history.close();
-	return (nfds);
+	return nfds;
 }
 
 /**
@@ -67,14 +68,9 @@ static int	read_socket(client_t &client, server_t &server)
 {
 	int				recv_len;
 	int				tmp_recv_len;
-	int				split_executor;
-	int				execute_code;
 	char			recv_buff[212];
-	std::string		send_buff;
 	std::string		quit_message;
-	std::ofstream	history(".nameless_history", std::fstream::app);
 
-	recv_len = 0;
 	tmp_recv_len = 0;
 	std::memset(recv_buff, 0, 212);
 	recv_buff[210] = '\r';
@@ -82,46 +78,21 @@ static int	read_socket(client_t &client, server_t &server)
 	while (1)
 	{
 		recv_len = recv(client.sock_fd, recv_buff + tmp_recv_len, 210 - tmp_recv_len, 0);
-		if (recv_len < 0)
-		{
-			if (errno != EWOULDBLOCK)
-				return on_error(history, "recv()", -2);
+		if (recv_len < 0 && errno != EWOULDBLOCK)
+			return on_error("recv()", -2);
+		else if (recv_len < 0)
 			continue ;
-		}
 		if (recv_len == 0)
 		{
-			quit_message = "Connection Closed";
-			if (!client.get_nick().empty())
-				quit_message += ": " + client.get_nick() + " disconnected";
-			report_event(event_format(client.addr, client.port, quit_message), history, BLUE);
-			history.close();
-			return (-1);
+			quit_message = client.get_nick().empty() ? "Connection Closed": "Connection Closed: " + client.get_nick() + " disconnected";
+			report_event(event_format(client.addr, client.port, quit_message), BLUE);
+			return -1;
 		}
 		tmp_recv_len += recv_len;
 		if ((recv_buff[tmp_recv_len - 2] == '\r' && recv_buff[tmp_recv_len - 1] == '\n' )|| tmp_recv_len == 210)
-		{
-			recv_len = 0;
-			split_executor = 0;
-			while (recv_buff[recv_len])
-			{
-				if (recv_len > 0 && recv_buff[recv_len] == '\n' && recv_buff[recv_len - 1] == '\r')
-				{
-					recv_buff[recv_len - 1] = '\0';
-					report_event(event_format(client.addr, client.port, recv_buff + split_executor), history);
-					execute_code = executor(recv_buff + split_executor, tmp_recv_len - 1, server, client);
-					if (execute_code == -1)
-						return (-1);
-					if (execute_code == -2)
-				 		return on_error(history, "send()", -2);
-					split_executor = recv_len + 1;
-				}
-				recv_len += 1;
-			}
-			break ;
-		}
+			return execute_client_request(recv_buff, tmp_recv_len, server, client);
 	}
-	history.close();
-	return (0);
+	return 0;
 }
 
 /**
@@ -130,14 +101,10 @@ static int	read_socket(client_t &client, server_t &server)
 
 static void	close_poll_fds(server_t &server)
 {
-	int	iter;
-
-	iter = 0;
-	while (iter < server.clients_nfds)
+	for (int iter = 0; iter < server.clients_nfds; ++iter)
 	{
 		if (server.clients_fds[iter].fd >= 0)
 			close(server.clients_fds[iter].fd);
-		iter += 1;
 	}
 	return ;
 }
@@ -150,11 +117,46 @@ static void	close_poll_fds(server_t &server)
  **          int timeout);
  **/
 
-int		manage_socket(server_t &server)
+static int	manage_request(server_t &server)
 {
 	int	end_server;
 	int	func_return;
 	int	poll_tmp_nfds;
+
+	end_server = 0;
+	poll_tmp_nfds = server.clients_nfds;
+	for (int i = 0; i < poll_tmp_nfds; i++)
+	{
+		if (server.clients_fds[i].revents == 0)
+			continue ;
+		if (!(server.clients_fds[i].revents & POLLIN))
+		{
+			put_error("revents");
+			end_server = 1;
+			break ;
+		}
+		if (server.clients_fds[i].fd == server.sock_fd)
+			server.clients_nfds = accept_socket(server);
+		else
+		{
+			func_return = read_socket(server.clients_info[i], server);
+			if (func_return < 0)
+			{
+				if (func_return == -2)
+					end_server = 1;
+				close(server.clients_fds[i].fd);
+				server.clients_fds[i].fd = -1;
+				server.clients_info[i].reset(HARD_RESET);
+			}
+		}
+	}
+	return end_server;
+}
+
+int			manage_socket(server_t &server)
+{
+	int	end_server;
+	int	func_return;
 
 	end_server = 0;
 	while(!end_server)
@@ -165,41 +167,14 @@ int		manage_socket(server_t &server)
 			put_error("poll()");
 			break ;
 		}
-		if (func_return == 0) // extra condition??
+		if (func_return == 0)
 		{
 			put_error("timeout()");
 			break ;
 		}
-		poll_tmp_nfds = server.clients_nfds;
-		for (int i = 0; i < poll_tmp_nfds; i++)
-		{
-			if (server.clients_fds[i].revents == 0)
-				continue ;
-			if (!(server.clients_fds[i].revents & POLLIN))
-			{
-				put_error("revents");
-				end_server = 1;
-				break ;
-			}
-			if (server.clients_fds[i].fd == server.sock_fd)
-			{
-				server.clients_nfds = accept_socket(server);
-			}
-			else
-			{
-				func_return = read_socket(server.clients_info[i], server);
-				if (func_return < 0)
-				{
-					if (func_return == -2)
-						end_server = 1;
-					close(server.clients_fds[i].fd);
-					server.clients_fds[i].fd = -1;
-					server.clients_info[i].reset(HARD_RESET);
-				}
-			}
-		}
+		end_server = manage_request(server);
 	}
 	close_poll_fds(server);
 	put_event("Server disconnected...\nContact the authors at https://github.com/pgomez-a/ft_irc\n");
-	return (0);
+	return 0;
 }

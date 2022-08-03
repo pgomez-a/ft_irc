@@ -15,13 +15,15 @@
 /** output.cpp **/
 void		put_error(std::string s);
 
+int			on_error(std::string s, int r);
+
 void		put_event(std::string message, std::string color = RESET_COLOR);
 
-void		log_event(std::string message, std::ofstream &history, std::string color = RESET_COLOR, std::string dir = "<-");
+void		log_event(std::string message, std::string color = RESET_COLOR, std::string dir = "<-");
 
-void		report_event(std::string message, std::ofstream &history, std::string color = RESET_COLOR, std::string dir = "<-");
+void		report_event(std::string message, std::string color = RESET_COLOR, std::string dir = "<-");
 
-std::string	report_event_str(std::string message, std::ofstream &history, std::string color = RESET_COLOR, std::string dir = "<-");
+std::string	report_event_str(std::string message, std::string color = RESET_COLOR, std::string dir = "<-");
 
 std::string	event_format(std::string addr, std::string p, std::string msg);
 
