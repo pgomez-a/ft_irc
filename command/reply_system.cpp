@@ -238,6 +238,8 @@ int send_to_client(std::string s, client_t &client)
 		r = send(client.sock_fd, s.c_str(), s.size(), 0);
 		if (r == -1)
 			return -2;
+		s.pop_back();
+		log_event(event_format(client.addr, client.port, s), RESET_COLOR, "\033[35m->\033[0m");
 	}
 	return r;
 }
