@@ -7,6 +7,11 @@ Mode::Mode(void) {
 
 int	Mode::_effect(server_t &server, client_t &client)
 {
-	(void)server,(void)client;
+	//hardcoded
+	if (_argc == 1)
+	{
+		;
+	}
+	(void)server, (void)client;
 	return 0;
 }

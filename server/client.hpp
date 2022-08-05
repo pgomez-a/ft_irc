@@ -21,6 +21,14 @@ class Channel;
 
 enum e_reset_mode{SOFT_RESET, HARD_RESET};
 
+struct	joined_channel
+{
+	joined_channel(Channel *channel, std::string mode);
+
+	Channel 	*c;
+	std::string	m;
+};
+
 struct client_t
 {
 	public:
@@ -46,7 +54,7 @@ struct client_t
 		void	rm_mode_flag(std::string flag);
 		bool	mode_flag_is_set(std::string flag);
 		void	reset(int reset_mode = SOFT_RESET);
-		void	add_channel_to_list(Channel *c);
+		void	add_channel_to_list(Channel *c, std::string m = "empty");
 		bool	pop_channel_from_list(Channel *c);
 		void	clear_channel_list(void);
 		bool	is_in_channel(Channel &c);
@@ -64,12 +72,12 @@ struct client_t
 
 	private:
 		/** Private Member Attributes **/
-		int						_registration_flags;
-		std::list<Channel *>	_channel_list;
-		std::string				_mode;
-		std::string				_nick;
-		std::string				_user;
-		std::string 			_realname;
+		int							_registration_flags;
+		std::list<joined_channel>	_channel_list;
+		std::string					_mode;
+		std::string					_nick;
+		std::string					_user;
+		std::string 				_realname;
 };
 
 /** Mode functions **/

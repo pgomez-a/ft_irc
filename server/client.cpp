@@ -11,6 +11,14 @@ sock_fd(), addr(), port(), info(), _registration_flags(0), _mode(), _nick(), _us
 client_t::~client_t(void)
 {}
 
+/** Auxiliary struct Construct **/
+
+joined_channel::joined_channel(Channel *channel, std::string mode)
+{
+	c = channel;
+	m = mode;	
+}
+
 /** Operator Overloads **/
 bool	client_t::operator==(client_t &rhs) const
 {
@@ -74,17 +82,17 @@ void	client_t::reset(int reset_mode)
 	return ;
 }
 
-void	client_t::add_channel_to_list(Channel *c)
+void	client_t::add_channel_to_list(Channel *c, std::string m)
 {
-	_channel_list.push_back(c);
+	_channel_list.push_back(joined_channel(c, m));
 	return ;
 }
 
 bool	client_t::pop_channel_from_list(Channel *c)
 {
-	for (std::list<Channel *>::iterator i = _channel_list.begin(); i != _channel_list.end(); ++i)
+	for (std::list<joined_channel>::iterator i = _channel_list.begin(); i != _channel_list.end(); ++i)
 	{
-		if ((*i)->get_name() == c->get_name())
+		if (i->c->get_name() == c->get_name())
 		{
 			_channel_list.erase(i);
 			return true;
@@ -97,11 +105,11 @@ void	client_t::clear_channel_list(void)
 {
 	if (_channel_list.empty())
 		return ;
-	for (std::list<Channel *>::iterator i = _channel_list.begin(); i != _channel_list.end(); ++i)
+	for (std::list<joined_channel>::iterator i = _channel_list.begin(); i != _channel_list.end(); ++i)
 	{
-		(*i)->broadcast_message(*this, "PART", (*i)->get_name());
-		send_to_client( ":" + get_originname() + " PART " +  ":" + (*i)->get_name() + "\r\n", *this);
-		(*i)->delete_member(_nick);
+		i->c->broadcast_message(*this, "PART", i->c->get_name());
+		send_to_client( ":" + get_originname() + " PART " +  ":" + i->c->get_name() + "\r\n", *this);
+		i->c->delete_member(_nick);
 	}
 	_channel_list.clear();	
 	return ;
@@ -109,9 +117,9 @@ void	client_t::clear_channel_list(void)
 
 bool	client_t::is_in_channel(Channel &c)
 {
-	for (std::list<Channel *>::iterator i = _channel_list.begin(); i != _channel_list.end(); ++i)
+	for (std::list<joined_channel>::iterator i = _channel_list.begin(); i != _channel_list.end(); ++i)
 	{
-		if ((*i)->get_name() == c.get_name())
+		if (i->c->get_name() == c.get_name())
 			return true;
 	}
 	return false;	

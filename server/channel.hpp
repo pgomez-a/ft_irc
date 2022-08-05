@@ -31,6 +31,7 @@ class Channel
 		std::string	get_name(void) const;
 		size_t		get_member_count(void) const;
 		std::string	get_member_list(char separator);
+		std::string	get_mode(void);
 
 	private :
 		/** Private Member Attributes **/

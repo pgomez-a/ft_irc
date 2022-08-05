@@ -2,7 +2,7 @@
 #include "reply_system.hpp"
 
 /** Constructor & Destructor **/
-Channel::Channel(std::string name, std::string mode, std::string topic):
+Channel::Channel(std::string name, std::string mode = "nt", std::string topic):
 _member_list(), _member_count(0), _banned_list(), _name(name), _mode(mode), _topic(topic)
 {}
 
@@ -85,6 +85,13 @@ std::string	Channel::get_member_list(char separator)
 		list += (*i)->get_nick() + separator;
 	list.pop_back();
 	return list;
+}
+
+std::string	Channel::get_mode()
+{
+	if (_mode.size())
+		return "+" + _mode;
+	return "empty";
 }
 
 /** Private Methods **/

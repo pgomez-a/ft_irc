@@ -20,7 +20,7 @@ int	Join::_join_loop(server_t &server, client_t &client, std::list<std::string> 
 		{
 			_channel_iterator = server.find_channel(*channel);
 			if (_channel_iterator == server.channel_map_end())
-				r = server.add_new_channel(*channel, "", "", _channel_iterator);
+				r = server.add_new_channel(*channel, "nt", "", _channel_iterator);
 			if (r == BAD_CHANNEL_NAME)
 				return ERR_NOSUCHCHANNEL;
 			r = _channel_iterator->second.add_member(&client);

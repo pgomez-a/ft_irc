@@ -42,7 +42,7 @@ static std::string R_LIST(client_t &c, server_t &s, Command *n)
 	Channel	*chan = n->get_channel();
 	
 	compiler_treat(c,s,n);
-	return reply_format("322", c.get_nick(), chan->get_name() + " " + std::to_string(chan->get_member_count()), chan->get_topic());
+	return reply_format("322", c.get_nick(), chan->get_name() + " " + std::to_string(chan->get_member_count()) + " " + chan->get_topic(), "[" + chan->get_mode() + "]");
 }
 
 static std::string R_LISTEND(client_t &c, server_t &s, Command *n)
