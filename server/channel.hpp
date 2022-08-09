@@ -20,6 +20,7 @@ class Channel
 
 		/** Member Methods **/
 		void	broadcast_message(client_t &sender, std::string command, const std::string &message) const;
+		void	broadcast_message(client_t &sender, std::string command, const std::string &message, bool send_to_self) const;
 		int		add_member(client_t	*member);
 		bool	delete_member(std::string nick);
 		int		ban_member(const std::string &nick);

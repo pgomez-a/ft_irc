@@ -61,6 +61,9 @@ static std::string R_NAMREPLY(client_t &c, server_t &s, Command *n)
 static std::string R_ENDOFNAMES(client_t &c, server_t &s, Command *n)
 {compiler_treat(c,s,n); return reply_format("366", c.get_nick(), n->get_channel()->get_name(), "End of NAMES list");}
 
+static std::string R_CHANNELMODEIS(client_t &c, server_t &s, Command *n)
+{compiler_treat(c,s,n); return reply_format("324", c.get_nick(), n->get_channel()->get_name(), n->get_channel()->get_mode());}
+
 static std::string R_ERR_UNKNOWNCOMMAND(client_t &c, server_t &s, Command *n)
 {compiler_treat(c,s,n); return reply_format("421", c.get_nick(), n->get_name(), "Unknown command");}
 
@@ -161,6 +164,7 @@ void	init_reply_matrix(reply *reply_matrix)
 	reply_matrix[RPL_LISTEND] = R_LISTEND;
 	reply_matrix[RPL_NAMREPLY] = R_NAMREPLY;
 	reply_matrix[RPL_ENDOFNAMES] = R_ENDOFNAMES;
+	reply_matrix[RPL_CHANNELMODEIS] = R_CHANNELMODEIS;
 	reply_matrix[ERR_UNKNOWNCOMMAND] = R_ERR_UNKNOWNCOMMAND;
 	reply_matrix[ERR_NONICKNAMEGIVEN] = R_ERR_NONICKNAMEGIVEN;
 	reply_matrix[ERR_NICKNAMEINUSE] = R_ERR_NICKNAMEINUSE;

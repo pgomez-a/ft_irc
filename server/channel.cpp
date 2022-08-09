@@ -20,6 +20,17 @@ void	Channel::broadcast_message(client_t &sender, std::string command, const std
 	return ;
 }
 
+void	Channel::broadcast_message(client_t &sender, std::string command, const std::string &message, bool send_to_self) const 
+{
+	send_to_self ^= send_to_self;
+
+	for (std::list<client_t *>::const_iterator member = _member_list.begin(); member != _member_list.end(); ++member)
+	{
+		send_to_client( ":" + sender.get_originname() + " " + command + " " +  _name + " :" + message + "\r\n", *(*member));
+	}	
+	return ;
+}
+
 int		Channel::add_member(client_t *member)
 {
 	if (_is_banned(member->get_nick()))

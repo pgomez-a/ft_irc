@@ -27,8 +27,10 @@ int	Topic::_effect(server_t &server, client_t &client)
 		if (rest_sent || _rest.size())
 		{
 			channel->set_topic(_rest);
+			channel->broadcast_message(client, "TOPIC", channel->get_topic(), true);
+			return 0;
 		}
-		return (_rest.empty())? RPL_NOTOPIC : RPL_TOPIC;
+		return (channel->get_topic().empty())? RPL_NOTOPIC : RPL_TOPIC;
 	}
 	return ERR_NEEDMOREPARAMS;
 }
