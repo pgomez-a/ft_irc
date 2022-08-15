@@ -148,6 +148,13 @@ static std::string R_ERR_NOORIGIN(client_t &c, server_t &s, Command *n)
 static std::string R_ERR_NOTREGISTRED(client_t &c, server_t &s, Command *n)
 {compiler_treat(c,s,n); return reply_format("451", c.get_nick(), "", "You have not registered.");}
 
+static std::string R_ERR_UMODEUNKNOWNFLAG(client_t &c, server_t &s, Command *n)
+{compiler_treat(c,s,n); return reply_format("501", c.get_nick(), "", "Unknown MODE flag");}
+
+
+static std::string R_ERR_USERSDONTMATCH(client_t &c, server_t &s, Command *n)
+{compiler_treat(c,s,n); return reply_format("502", c.get_nick(), "", "Can't view modes for other users");}
+
 void	init_reply_matrix(reply *reply_matrix)
 {
 	reply_matrix[0] = R_DUMMY;
@@ -192,6 +199,8 @@ void	init_reply_matrix(reply *reply_matrix)
 	reply_matrix[ERR_NOTOPLEVEL] = R_ERR_NOTOPLEVEL;
 	reply_matrix[ERR_TOOMANYTARGETS] = R_ERR_TOOMANYTARGETS;
 	reply_matrix[ERR_NOTREGISTERED] = R_ERR_NOTREGISTRED;
+	reply_matrix[ERR_UMODEUNKNOWNFLAG] = R_ERR_UMODEUNKNOWNFLAG;
+	reply_matrix[ERR_USERSDONTMATCH ] = R_ERR_USERSDONTMATCH;
 }
 
 std::string	get_reply(int reply_code, client_t &client, server_t &server, Command *command)

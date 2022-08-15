@@ -5,7 +5,7 @@
 # include "sys/socket.h"
 # include "Command.hpp"
 
-# define REPLY_NUMBER 500
+# define REPLY_NUMBER 600
 
 enum	e_REPLIES{	
 					RPL_WELCOME = 1,
@@ -48,7 +48,9 @@ enum	e_REPLIES{
 					ERR_TOOMANYTARGETS = 407,
 					ERR_NOORIGIN = 409,
 					ERR_NOSUCHSERVER = 402,
-					ERR_NOTREGISTERED = 451
+					ERR_NOTREGISTERED = 451,
+					ERR_UMODEUNKNOWNFLAG = 501,
+					ERR_USERSDONTMATCH = 502,
 				};
 
 typedef			std::string (*reply)(client_t&, server_t&, Command *);

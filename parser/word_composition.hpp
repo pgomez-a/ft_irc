@@ -28,7 +28,8 @@ bool	host(char c);
 bool	parameter(char c);
 bool	rest(char c);
 bool	chanstring(char c);
-
+bool	user_mode_flag(char c);
+bool	channel_mode_flag(char c);
 
 bool	c(char c, char d);
 bool	is_in_set(char c, std::string set);

@@ -37,6 +37,20 @@ bool	parameter(char c)
 	return !is_in_set(c, excluded_set, 5);
 }
 
+bool	user_mode_flag(char c)
+{
+	static const char	user_flag_set[3] = {'i','w','O'};
+
+	return is_in_set(c, user_flag_set, 3);
+}
+
+bool	channel_mode_flag(char c)
+{
+	static const char	channel_flag_set[5] = {'n','t','b', 'O', 'o'};
+
+	return is_in_set(c, channel_flag_set, 5);
+}
+
 bool	special(char c)
 {
 	static const char	special_set[9] = {'[',']','\\','`','-','^','{','|','}'};

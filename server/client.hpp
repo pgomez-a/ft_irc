@@ -50,8 +50,8 @@ struct client_t
 		void	register_flag(unsigned int flag);
 		bool	flag_is_set(unsigned int flag) const;
 		bool	registered(void) const;
-		void	add_mode_flag(std::string flag);
-		void	rm_mode_flag(std::string flag);
+		int		add_mode_flag(std::string flag);
+		int		rm_mode_flag(std::string flag);
 		bool	mode_flag_is_set(std::string flag);
 		void	reset(int reset_mode = SOFT_RESET);
 		void	add_channel_to_list(Channel *c, std::string m = "empty");

@@ -2,6 +2,7 @@
 #include "server.hpp"
 #include "client.hpp"
 #include "reply_system.hpp"
+#include "parser.hpp"
 
 /** Constructor & Destructor **/
 client_t::client_t(void):
@@ -47,23 +48,25 @@ bool	client_t::registered(void) const
 	return _registration_flags == IS_REGISTERED;
 }
 
-void	client_t::add_mode_flag(std::string flag)
+int	client_t::add_mode_flag(std::string flag)
 {
 	if (_mode == "empty")
 		_mode.clear();
+	if (!user_mode_flag(flag.front()))
+		return ERR_UMODEUNKNOWNFLAG;
 	if (_mode.find(flag) == std::string::npos)
 		_mode += flag;
-	return ;
+	return 0;
 }
 
-void	client_t::rm_mode_flag(std::string flag)
+int	client_t::rm_mode_flag(std::string flag)
 {
 	size_t pos;
 
 	pos = _mode.find(flag);
 	if (pos != std::string::npos)
 		_mode.erase(pos, flag.size());
-	return ;
+	return 0;
 }
 
 bool	client_t::mode_flag_is_set(std::string flag)
