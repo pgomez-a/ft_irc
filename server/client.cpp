@@ -66,6 +66,8 @@ int	client_t::rm_mode_flag(std::string flag)
 	pos = _mode.find(flag);
 	if (pos != std::string::npos)
 		_mode.erase(pos, flag.size());
+	if (_mode.empty())
+		_mode = "empty";
 	return 0;
 }
 

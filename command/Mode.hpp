@@ -4,7 +4,9 @@
 
 # define	NO_OF_POSSIBLE_FLAGS 128
 # define	FIRST_POS_FLAG 65
-enum	e_flag_change_type{DO_NOTHING = 0, ADD_FLAG = '+', DROP_FLAG  = '-'};
+
+enum	e_flag_change_type{ DO_NOTHING = -1, DROP_FLAG  = 0, ADD_FLAG = 1 };
+enum	e_user_mode_parser{INVALID_UMODE, VALID_UMODE};
 
 struct	mode_change
 {
@@ -12,7 +14,7 @@ struct	mode_change
 	std::list<std::string>	arg_list;
 };
 
-typedef std::list<mode_change> mode_parse_product;
+typedef std::string parsed_instructions;
 
 class Mode	: public Command
 {
@@ -20,20 +22,24 @@ class Mode	: public Command
 
 		Mode(void);
 
-		Channel	*get_channel(void);
+		Channel		*get_channel(void);
+		std::string	get_last_mode_request(void);
 
 	private:
 
 		int					_effect(server_t &server, client_t &client);
 		int 				_channel_mode(server_t &server, client_t &client);
 		int 				_user_mode(client_t &client);
-		mode_parse_product	_channel_mode_parser(std::string input);	
-		mode_parse_product	_user_mode_parser(std::string input);
+		int					_channel_mode_parser(std::string *input, parsed_instructions &p);	
+		void				_extract_cmode_arg(int &i, int j, std::string *input);
+		int					_apply_channel_modes(server_t &server, client_t &client, parsed_instructions p);
 		void				_reset_flag_table(void);
-		int					_change_user_modes(client_t &client);
-		
+		int					_user_mode_parser(std::string input, parsed_instructions &p);
+		int					_apply_user_modes(client_t &client, parsed_instructions &p);
+
 		server_t::channel_map::iterator	_channel_iterator;
-		mode_change						_flag_change_table[NO_OF_POSSIBLE_FLAGS];
+		std::string						_last_mode_request;
+		mode_change						_flag_table[NO_OF_POSSIBLE_FLAGS];
 
 };
 #endif

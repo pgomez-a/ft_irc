@@ -1,5 +1,6 @@
 #include "reply_system.hpp"
 #include "Command.hpp"
+#include "commands.hpp"
 
 class Command;
 
@@ -103,6 +104,15 @@ static std::string R_ERR_CHANNELISFULL(client_t &c, server_t &s, Command *n)
 static std::string R_ERR_NOSUCHCHANNEL(client_t &c, server_t &s, Command *n)
 {compiler_treat(c,s,n); return reply_format("403", c.get_nick(), n->get_rest(), "No such channel");}
 
+static std::string R_ERR_UNKNOWNMODE(client_t &c, server_t &s, Command *n)
+{
+	Channel		*chan = n->get_channel();
+
+
+	compiler_treat(c,s,n);
+	return reply_format("472", c.get_nick(), reinterpret_cast<Mode*>(n)->get_last_mode_request(), "is unknwon mode char to me for " + chan->get_name());
+}
+
 static std::string R_ERR_BANNEDFROMCHAN(client_t &c, server_t &s, Command *n)
 {compiler_treat(c,s,n); return reply_format("474", c.get_nick(), (std::string)"<channel>", "Cannot join channel (+b)");}
 
@@ -200,7 +210,9 @@ void	init_reply_matrix(reply *reply_matrix)
 	reply_matrix[ERR_TOOMANYTARGETS] = R_ERR_TOOMANYTARGETS;
 	reply_matrix[ERR_NOTREGISTERED] = R_ERR_NOTREGISTRED;
 	reply_matrix[ERR_UMODEUNKNOWNFLAG] = R_ERR_UMODEUNKNOWNFLAG;
-	reply_matrix[ERR_USERSDONTMATCH ] = R_ERR_USERSDONTMATCH;
+	reply_matrix[ERR_USERSDONTMATCH] = R_ERR_USERSDONTMATCH;
+	reply_matrix[ERR_UNKNOWNMODE ] = R_ERR_UNKNOWNMODE;
+	
 }
 
 std::string	get_reply(int reply_code, client_t &client, server_t &server, Command *command)
