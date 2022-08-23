@@ -17,7 +17,7 @@ static std::string R_YOURHOST(client_t &c, server_t &s, Command *n)
 {compiler_treat(c,s,n); return reply_format("002", c.get_nick(), "", "Your host is " + s.name + ", running version " + "0.1");}
 
 static std::string R_CREATED(client_t &c, server_t &s, Command *n)
-{compiler_treat(c,s,n); return reply_format("003", c.get_nick(), "", (std::string)"This server was created  " + "<date>");}
+{compiler_treat(c,s,n); return reply_format("003", c.get_nick(), "", (std::string)"This server was created  " + "in 1995");}
 
 static std::string R_MYINFO(client_t &c, server_t &s, Command *n)
 {compiler_treat(c,s,n); return reply_format("004", c.get_nick(), "" , s.name + " " + "0.1" + "<available user modes>" + "\n" + "<available channel modes>");}
@@ -108,9 +108,8 @@ static std::string R_ERR_UNKNOWNMODE(client_t &c, server_t &s, Command *n)
 {
 	Channel		*chan = n->get_channel();
 
-
 	compiler_treat(c,s,n);
-	return reply_format("472", c.get_nick(), reinterpret_cast<Mode*>(n)->get_last_mode_request(), "is unknwon mode char to me for " + chan->get_name());
+	return reply_format("472", c.get_nick(), reinterpret_cast<Mode*>(n)->get_last_mode_request(), "is unknown mode char to me for " + chan->get_name());
 }
 
 static std::string R_ERR_BANNEDFROMCHAN(client_t &c, server_t &s, Command *n)

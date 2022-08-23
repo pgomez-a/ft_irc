@@ -8,9 +8,16 @@
 enum	e_flag_change_type{ DO_NOTHING = -1, DROP_FLAG  = 0, ADD_FLAG = 1 };
 enum	e_user_mode_parser{INVALID_UMODE, VALID_UMODE};
 
+typedef	int	(*change)(server_t &s, client_t &c, std::list<std::string> arg);
+
+
+int	_mode_ban_flag(server_t &s, client_t &c, std::list<std::string> argl);
+
 struct	mode_change
 {
 	int						change_type;
+	int						change_count;
+	change					apply;
 	std::list<std::string>	arg_list;
 };
 
@@ -33,7 +40,7 @@ class Mode	: public Command
 		int					_channel_mode_parser(std::string *input, parsed_instructions &p);	
 		void				_extract_cmode_arg(int &i, int j, std::string *input);
 		int					_apply_channel_modes(server_t &server, client_t &client, parsed_instructions p);
-		void				_reset_flag_table(void);
+		void				_reset_flag_table(std::string change);
 		int					_user_mode_parser(std::string input, parsed_instructions &p);
 		int					_apply_user_modes(client_t &client, parsed_instructions &p);
 

@@ -1,10 +1,21 @@
 #include "Mode.hpp"
 
+
+int	_mode_ban_flag(server_t &s, client_t &c, std::list<std::string> argl)
+{
+	std::cout << "WILL BAN U DAS RITE\n";
+	(void)s,(void)c,(void)argl;
+	return 0;
+}
+
+
 Mode::Mode(void) :
 _flag_table()
 {
 	_command_name = "MODE";
 	_id = MODE;
+	//assign the apply method for each flag
+	_flag_table[(int)'b'].apply = _mode_ban_flag;
 };
 
 Channel	*Mode::get_channel(void)
@@ -16,15 +27,6 @@ Channel	*Mode::get_channel(void)
 std::string	Mode::get_last_mode_request(void)
 {
 	return _last_mode_request;
-}
-
-void	Mode::_reset_flag_table(void)
-{
-	for (int i = 0; i < NO_OF_POSSIBLE_FLAGS; ++i)
-	{
-		_flag_table[i].change_type = DO_NOTHING;
-		_flag_table[i].arg_list.clear();
-	}
 }
 
 void	Mode::_extract_cmode_arg(int &i, int j, std::string *input)
@@ -61,11 +63,9 @@ int	Mode::_channel_mode_parser(std::string *input, parsed_instructions &p)
 				p += input[i][j];
 				++j;
 			}
-			_last_mode_request = input[i][j - 1];
+			_last_mode_request = input[i];
 			if (input[i][j] == '\0')
-			{
 				_extract_cmode_arg(i, j, input);
-			}
 			else
 				return ERR_UNKNOWNMODE;
 		}
@@ -77,17 +77,30 @@ int	Mode::_channel_mode_parser(std::string *input, parsed_instructions &p)
 	return 0;
 }
 
+void	Mode::_reset_flag_table(std::string change)
+{
+	for (int i = 0; change[i]; ++i)
+	{
+		_flag_table[(int)change[i]].change_type = DO_NOTHING;
+		_flag_table[(int)change[i]].change_count = 0;
+		_flag_table[(int)change[i]].arg_list.clear();
+	}
+}
+
 int	Mode::_apply_channel_modes(server_t &server, client_t &client, parsed_instructions p)
 {
-	for (parsed_instructions::iterator i = p.begin(); i != p.end(); ++i)
+	std::list<std::string> *arg_list;
+
+	for (int i = 0; p[i]; ++i)
 	{
-		std::cout << "flag " << *i << " with change type " << _flag_table[(int)*i].change_type << std::endl;
-		std::cout << "args:\n";
-		for (std::list<std::string>::iterator j = _flag_table[(int)*i].arg_list.begin(); j != _flag_table[(int)*i].arg_list.end(); ++j)
+		if (_flag_table[(int)p[i]].change_count < 3)
 		{
-			std::cout << "-" <<  *j << std::endl;
+			arg_list = &_flag_table[(int)p[i]].arg_list;
+			_flag_table[(int)p[i]].apply(server, client,*arg_list);
+			_flag_table[(int)p[i]].change_count++;
 		}
 	}
+	_reset_flag_table(p);
 	return 0;
 	(void)server,(void)client,(void)p;
 }
@@ -181,7 +194,6 @@ int	Mode::_effect(server_t &server, client_t &client)
 	//hardcoded
 	if (_argc)
 	{
-		_reset_flag_table();
 		if (_argt[0][0] == '#')
 		{
 			return _channel_mode(server, client);
