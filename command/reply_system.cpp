@@ -17,10 +17,10 @@ static std::string R_YOURHOST(client_t &c, server_t &s, Command *n)
 {compiler_treat(c,s,n); return reply_format("002", c.get_nick(), "", "Your host is " + s.name + ", running version " + "0.1");}
 
 static std::string R_CREATED(client_t &c, server_t &s, Command *n)
-{compiler_treat(c,s,n); return reply_format("003", c.get_nick(), "", (std::string)"This server was created  " + "in 1995");}
+{compiler_treat(c,s,n); return reply_format("003", c.get_nick(), "", (std::string)"This server was created " + "in 1995");}
 
 static std::string R_MYINFO(client_t &c, server_t &s, Command *n)
-{compiler_treat(c,s,n); return reply_format("004", c.get_nick(), "" , s.name + " " + "0.1" + "<available user modes>" + "\n" + "<available channel modes>");}
+{compiler_treat(c,s,n); return reply_format("004", c.get_nick(), "" , s.name + " " + "0.1" + "iwO" + "\n" + "ntbOo");}
 
 static std::string R_NOTOPIC(client_t &c, server_t &s, Command *n)
 {compiler_treat(c,s,n); return reply_format("331", c.get_nick(), (*n)[0], "No topic is set");}
@@ -37,7 +37,6 @@ static std::string R_YOUREOPER(client_t &c, server_t &s, Command *n)
 static std::string R_UMODEIS(client_t &c, server_t &s, Command *n)
 {compiler_treat(c,s,n); return reply_format("221", c.get_nick(), "", c.get_mode());}
 
-
 static std::string R_LIST(client_t &c, server_t &s, Command *n)
 {
 	Channel	*chan = n->get_channel();
@@ -53,8 +52,6 @@ static std::string R_NAMREPLY(client_t &c, server_t &s, Command *n)
 {
 	Channel		*chan = n->get_channel();
 
-	
-	
 	compiler_treat(c,s,n);
 	return reply_format("353", c.get_nick(), "= " + chan->get_name(), chan->get_member_list(' '));
 }
@@ -65,6 +62,20 @@ static std::string R_ENDOFNAMES(client_t &c, server_t &s, Command *n)
 static std::string R_CHANNELMODEIS(client_t &c, server_t &s, Command *n)
 {compiler_treat(c,s,n); return reply_format("324", c.get_nick(), n->get_channel()->get_name(), n->get_channel()->get_mode());}
 
+static std::string	R_BANLIST(client_t &c, server_t &s, Command *n)
+{
+	Channel *chan = n->get_channel();
+	compiler_treat(c,s,n);
+	return reply_format("367",  c.get_nick(), chan->get_name() + " " + n->get_aux_msg(), "");
+}
+
+static std::string R_ENDOFBANLIST(client_t &c, server_t &s, Command *n)
+{
+	Channel		*chan = n->get_channel();
+
+	compiler_treat(c,s,n);
+	return reply_format("368", c.get_nick(), chan->get_name(), "End of channel ban list");
+}
 static std::string R_ERR_UNKNOWNCOMMAND(client_t &c, server_t &s, Command *n)
 {compiler_treat(c,s,n); return reply_format("421", c.get_nick(), n->get_name(), "Unknown command");}
 
@@ -86,6 +97,9 @@ static std::string R_ERR_ERRONEUSNICKNAME(client_t &c, server_t &s, Command *n)
 static std::string R_ERR_NICKCOLLISION(client_t &c, server_t &s, Command *n)
 {compiler_treat(c,s,n); return reply_format("436", c.get_nick(), (*n)[0], (std::string)"Nickname collision KILL from " 
 		+ c.get_user() + "@" + c.get_nick());} 
+
+static std::string R_ERR_USERNOTINCHANNEL(client_t &c, server_t &s, Command *n)
+{compiler_treat(c,s,n); return reply_format("441", c.get_nick(), reinterpret_cast<Mode*>(n)->mode_aux_str, "They aren't on that channel");}
 
 static std::string R_ERR_NOOPERHOST(client_t &c, server_t &s, Command *n)
 {compiler_treat(c,s,n); return reply_format("491", c.get_nick(), "", "No O-lines for your host");}
@@ -112,20 +126,53 @@ static std::string R_ERR_UNKNOWNMODE(client_t &c, server_t &s, Command *n)
 	return reply_format("472", c.get_nick(), reinterpret_cast<Mode*>(n)->get_last_mode_request(), "is unknown mode char to me for " + chan->get_name());
 }
 
+static std::string R_ERR_CHANOPRIVSNEEDED(client_t &c, server_t &s, Command *n)
+{
+	Channel		*chan = n->get_channel();
+
+	compiler_treat(c,s,n);
+	return reply_format("482", c.get_nick(), chan->get_name(), "You're not a channel operator");
+}	
+
 static std::string R_ERR_BANNEDFROMCHAN(client_t &c, server_t &s, Command *n)
-{compiler_treat(c,s,n); return reply_format("474", c.get_nick(), (std::string)"<channel>", "Cannot join channel (+b)");}
+{
+	Channel		*chan = n->get_channel();
+
+	compiler_treat(c,s,n); 
+	return reply_format("474", c.get_nick(), chan->get_name(), "Cannot join channel (+b)");
+}
 
 static std::string R_ERR_BADCHANNELKEY(client_t &c, server_t &s, Command *n)
-{compiler_treat(c,s,n); return reply_format("475", c.get_nick(),(std::string)"<channel>", "Cannot join channel (+k)");}
+{
+	Channel		*chan = n->get_channel();
+
+	compiler_treat(c,s,n); 
+	return reply_format("475", c.get_nick(), chan->get_name(), "Cannot join channel (+k)");
+}
 
 static std::string R_ERR_BADCHANMASK(client_t &c, server_t &s, Command *n)
-{compiler_treat(c,s,n); return reply_format("476", c.get_nick(), (std::string)"<channel>", "Bad Channel Mask");}
+{
+	Channel		*chan = n->get_channel();
+
+	compiler_treat(c,s,n); 
+	return reply_format("476", c.get_nick(), chan->get_name(), "Bad Channel Mask");
+}
 
 static std::string R_ERR_TOOMANYCHANNELS(client_t &c, server_t &s, Command *n)
-{compiler_treat(c,s,n); return reply_format("405", c.get_nick(), (std::string)"<channel>", "You have joined too many channels");}
+{
+	Channel		*chan = n->get_channel();
+
+	compiler_treat(c,s,n); 
+	return reply_format("405", c.get_nick(), chan->get_name(), "You have joined too many channels");
+}
 
 static std::string R_ERR_NOTONCHANNEL(client_t &c, server_t &s, Command *n)
-{compiler_treat(c,s,n); return reply_format("442", c.get_nick(), (std::string)"<channel>", "You're not on that channel");}
+{
+	Channel		*chan = n->get_channel();
+
+	compiler_treat(c,s,n); 
+	return reply_format("442", c.get_nick(), chan->get_name(), "You're not on that channel");
+}
 
 static std::string R_ERR_NORECIPIENT(client_t &c, server_t &s, Command *n)
 {compiler_treat(c,s,n); return reply_format("411", c.get_nick(),"", "No recipient given (" + n->get_name() + ")");}
@@ -180,6 +227,8 @@ void	init_reply_matrix(reply *reply_matrix)
 	reply_matrix[RPL_LISTEND] = R_LISTEND;
 	reply_matrix[RPL_NAMREPLY] = R_NAMREPLY;
 	reply_matrix[RPL_ENDOFNAMES] = R_ENDOFNAMES;
+	reply_matrix[RPL_BANLIST] = R_BANLIST;
+	reply_matrix[RPL_ENDOFBANLIST] = R_ENDOFBANLIST;
 	reply_matrix[RPL_CHANNELMODEIS] = R_CHANNELMODEIS;
 	reply_matrix[ERR_UNKNOWNCOMMAND] = R_ERR_UNKNOWNCOMMAND;
 	reply_matrix[ERR_NONICKNAMEGIVEN] = R_ERR_NONICKNAMEGIVEN;
@@ -210,8 +259,9 @@ void	init_reply_matrix(reply *reply_matrix)
 	reply_matrix[ERR_NOTREGISTERED] = R_ERR_NOTREGISTRED;
 	reply_matrix[ERR_UMODEUNKNOWNFLAG] = R_ERR_UMODEUNKNOWNFLAG;
 	reply_matrix[ERR_USERSDONTMATCH] = R_ERR_USERSDONTMATCH;
-	reply_matrix[ERR_UNKNOWNMODE ] = R_ERR_UNKNOWNMODE;
-	
+	reply_matrix[ERR_UNKNOWNMODE] = R_ERR_UNKNOWNMODE;
+	reply_matrix[ERR_USERNOTINCHANNEL] = R_ERR_USERNOTINCHANNEL;
+	reply_matrix[ERR_CHANOPRIVSNEEDED] = R_ERR_CHANOPRIVSNEEDED;
 }
 
 std::string	get_reply(int reply_code, client_t &client, server_t &server, Command *command)

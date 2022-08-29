@@ -1,21 +1,69 @@
 #include "Mode.hpp"
+#include "client.hpp"
 
-
-int	_mode_ban_flag(server_t &s, client_t &c, std::list<std::string> argl)
+int	_mode_ban_flag(server_t &s, client_t &c, std::string channel_name, std::list<std::string> argl, int change, Command *n)
 {
-	std::cout << "WILL BAN U DAS RITE\n";
-	(void)s,(void)c,(void)argl;
-	return 0;
+
+	//this adds ban flag if type is +, should implement if -
+	joined_channel			*chan = c.get_joined_channel(channel_name);
+	std::list<ban_t>		ban_list = chan->chan->get_banned_list();
+
+	if (!chan)
+		return ERR_NOTONCHANNEL;;
+	if (argl.empty())
+	{
+		for (std::list<ban_t>::iterator i = ban_list.begin(); i != ban_list.end(); ++i)
+		{
+			n->set_aux_msg(i->ban_mask + " :" + i->origin);
+		   reply_to_client(RPL_BANLIST, c, s, n);	   
+		}
+		return RPL_ENDOFBANLIST;
+	}
+	if (is_operator(chan->mode) || c.mode_flag_is_set("O"))
+	{
+		if (change == ADD_FLAG)
+		{	
+			for (std::list<std::string>::iterator i = argl.begin(); i != argl.end(); ++i)
+			{
+				if (!chan->chan->is_banned(*i))
+				{
+					chan->chan->ban(*i, c.get_nick());
+					chan->chan->broadcast_message(c, "MODE", chan->chan->get_name() + " +b :" + *i, 1);
+				}
+			}
+		}
+		else 
+		{
+			for (std::list<std::string>::iterator i = argl.begin(); i != argl.end(); ++i)
+			{
+				if (chan->chan->is_banned(*i))
+				{
+					chan->chan->unban(*i);
+					chan->chan->broadcast_message(c, "MODE", chan->chan->get_name() + " -b :" + *i, 1);
+				}
+			}
+		}
+		return 0;
+	}
+	return ERR_CHANOPRIVSNEEDED;
+	(void)s, (void)change;
 }
 
+int	_mode_restrict_topic(server_t &s, client_t &c, std::string channel_name, std::list<std::string> argl, int change, Command *n)
+{
+	Channel	*chan = &s.find_channel(channel_name)->second;
+
+	(void)s, (void)c, (void)chan, (void)channel_name, (void)argl, (void)change, (void)n;
+	return ERR_CHANOPRIVSNEEDED;
+}
 
 Mode::Mode(void) :
 _flag_table()
 {
 	_command_name = "MODE";
 	_id = MODE;
-	//assign the apply method for each flag
 	_flag_table[(int)'b'].apply = _mode_ban_flag;
+	_flag_table[(int)'t'].apply = _mode_restrict_topic;
 };
 
 Channel	*Mode::get_channel(void)
@@ -27,6 +75,16 @@ Channel	*Mode::get_channel(void)
 std::string	Mode::get_last_mode_request(void)
 {
 	return _last_mode_request;
+}
+
+std::string Mode::get_aux_msg(void) const
+{
+	return _ban_mask_msg;
+}
+
+void	Mode::set_aux_msg(std::string m)
+{
+	_ban_mask_msg = m;
 }
 
 void	Mode::_extract_cmode_arg(int &i, int j, std::string *input)
@@ -89,15 +147,19 @@ void	Mode::_reset_flag_table(std::string change)
 
 int	Mode::_apply_channel_modes(server_t &server, client_t &client, parsed_instructions p)
 {
-	std::list<std::string> *arg_list;
+	std::list<std::string>	*arg_list;
+	mode_change				*m;
+	int						r;
 
 	for (int i = 0; p[i]; ++i)
 	{
-		if (_flag_table[(int)p[i]].change_count < 3)
+		m = &_flag_table[(int)p[i]];
+		if (m->change_count < 3)
 		{
-			arg_list = &_flag_table[(int)p[i]].arg_list;
-			_flag_table[(int)p[i]].apply(server, client,*arg_list);
-			_flag_table[(int)p[i]].change_count++;
+			arg_list = &m->arg_list;
+			r = m->apply(server, client, _argt[0], *arg_list, m->change_type, this);
+			reply_to_client(r, client, server, this);
+			m->change_count++;
 		}
 	}
 	_reset_flag_table(p);
@@ -191,7 +253,6 @@ int Mode::_user_mode(client_t &client)
 
 int	Mode::_effect(server_t &server, client_t &client)
 {
-	//hardcoded
 	if (_argc)
 	{
 		if (_argt[0][0] == '#')

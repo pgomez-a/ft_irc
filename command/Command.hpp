@@ -16,6 +16,8 @@ class Command
 		~Command(void);
 	
 		virtual int	execute(server_t &server, client_t &client);
+		virtual	std::string	get_aux_msg(void) const;
+		virtual	void		set_aux_msg(std::string m);
 
 		void		who_am_i(void) const;
 		std::string	get_name(void) const;

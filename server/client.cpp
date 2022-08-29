@@ -16,8 +16,8 @@ client_t::~client_t(void)
 
 joined_channel::joined_channel(Channel *channel, std::string mode)
 {
-	c = channel;
-	m = mode;	
+	this->chan = channel;
+	this->mode = mode;	
 }
 
 /** Operator Overloads **/
@@ -97,7 +97,7 @@ bool	client_t::pop_channel_from_list(Channel *c)
 {
 	for (std::list<joined_channel>::iterator i = _channel_list.begin(); i != _channel_list.end(); ++i)
 	{
-		if (i->c->get_name() == c->get_name())
+		if (i->chan->get_name() == c->get_name())
 		{
 			_channel_list.erase(i);
 			return true;
@@ -112,11 +112,11 @@ void	client_t::clear_channel_list(void)
 		return ;
 	for (std::list<joined_channel>::iterator i = _channel_list.begin(); i != _channel_list.end(); ++i)
 	{
-		i->c->broadcast_message(*this, "PART", i->c->get_name());
-		send_to_client( ":" + get_originname() + " PART " +  ":" + i->c->get_name() + "\r\n", *this);
-		i->c->delete_member(_nick);
+		i->chan->broadcast_message(*this, "PART", i->chan->get_name());
+		send_to_client( ":" + get_originname() + " PART " +  ":" + i->chan->get_name() + "\r\n", *this);
+		i->chan->delete_member(_nick);
 	}
-	_channel_list.clear();	
+	_channel_list.clear();
 	return ;
 }
 
@@ -124,10 +124,22 @@ bool	client_t::is_in_channel(Channel &c)
 {
 	for (std::list<joined_channel>::iterator i = _channel_list.begin(); i != _channel_list.end(); ++i)
 	{
-		if (i->c->get_name() == c.get_name())
+		if (i->chan->get_name() == c.get_name())
 			return true;
 	}
 	return false;	
+}
+
+joined_channel	*client_t::get_joined_channel(std::string channel_name)
+{
+	joined_channel	*j = NULL;
+
+	for (std::list<joined_channel>::iterator i = _channel_list.begin(); i != _channel_list.end(); ++i)
+	{
+		if (i->chan->get_name() == channel_name)
+			j = &*i;
+	}
+	return j;
 }
 
 /** Getters & Setters **/

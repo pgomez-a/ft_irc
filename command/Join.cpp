@@ -15,15 +15,21 @@ Channel	*Join::get_channel(void)
 int	Join::_join_loop(server_t &server, client_t &client, std::list<std::string> token_list)
 {
 	int			r = 0;
+	bool		o = false;
 
 	for (std::list<std::string>::iterator channel = token_list.begin(); channel != token_list.end(); ++channel)
 		{
 			_channel_iterator = server.find_channel(*channel);
 			if (_channel_iterator == server.channel_map_end())
+			{
 				r = server.add_new_channel(*channel, "nt", "", _channel_iterator);
+				o = true;
+			}
 			if (r == BAD_CHANNEL_NAME)
 				return ERR_NOSUCHCHANNEL;
 			r = _channel_iterator->second.add_member(&client);
+			if (o)
+				add_flag(client.get_joined_channel(*channel)->mode, 'O');
 			if (r == MEMBER_DUPLICATE)
 				continue ;
 			if (r == BANNED)

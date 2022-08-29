@@ -8,10 +8,8 @@
 enum	e_flag_change_type{ DO_NOTHING = -1, DROP_FLAG  = 0, ADD_FLAG = 1 };
 enum	e_user_mode_parser{INVALID_UMODE, VALID_UMODE};
 
-typedef	int	(*change)(server_t &s, client_t &c, std::list<std::string> arg);
-
-
-int	_mode_ban_flag(server_t &s, client_t &c, std::list<std::string> argl);
+typedef	int	(*change)
+(server_t &s, client_t &c, std::string target,  std::list<std::string> arg, int change, Command *n);
 
 struct	mode_change
 {
@@ -20,6 +18,13 @@ struct	mode_change
 	change					apply;
 	std::list<std::string>	arg_list;
 };
+
+int	_mode_ban_flag
+(server_t &s, client_t &c, std::string chan_name, std::list<std::string> argl, int change, Command *n);
+		
+int	_mode_restrict_topic
+(server_t &s, client_t &c, std::string chan_name, std::list<std::string> argl, int change, Command *n);
+
 
 typedef std::string parsed_instructions;
 
@@ -31,6 +36,9 @@ class Mode	: public Command
 
 		Channel		*get_channel(void);
 		std::string	get_last_mode_request(void);
+		std::string	get_aux_msg(void) const;
+		void		set_aux_msg(std::string m);
+		std::string mode_aux_str;
 
 	private:
 
@@ -46,6 +54,7 @@ class Mode	: public Command
 
 		server_t::channel_map::iterator	_channel_iterator;
 		std::string						_last_mode_request;
+		std::string						_ban_mask_msg;
 		mode_change						_flag_table[NO_OF_POSSIBLE_FLAGS];
 
 };

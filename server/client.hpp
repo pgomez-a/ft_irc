@@ -9,6 +9,7 @@
 # include <list>
 
 # define MAX_CLIENTS 1024
+# define MAX_JOINED_CHANNELS 8
 # define SERV_PASSW 1
 # define CLI_NICK 2
 # define CLI_USER 4
@@ -25,8 +26,8 @@ struct	joined_channel
 {
 	joined_channel(Channel *channel, std::string mode);
 
-	Channel 	*c;
-	std::string	m;
+	Channel 	*chan;
+	std::string	mode;
 };
 
 struct client_t
@@ -54,10 +55,11 @@ struct client_t
 		int		rm_mode_flag(std::string flag);
 		bool	mode_flag_is_set(std::string flag);
 		void	reset(int reset_mode = SOFT_RESET);
-		void	add_channel_to_list(Channel *c, std::string m = "empty");
-		bool	pop_channel_from_list(Channel *c);
-		void	clear_channel_list(void);
-		bool	is_in_channel(Channel &c);
+		void			add_channel_to_list(Channel *c, std::string m = "empty");
+		bool			pop_channel_from_list(Channel *c);
+		void			clear_channel_list(void);
+		bool			is_in_channel(Channel &c);
+		joined_channel	*get_joined_channel(std::string channel_name);
 
 		/** Getters & Setters **/
 		void		set_mode(std::string);

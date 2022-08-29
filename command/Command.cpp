@@ -52,6 +52,16 @@ int Command::execute(server_t &server, client_t &client)
 	return reply_to_client(reply_code, client, server, this);
 }
 
+
+std::string Command::get_aux_msg(void) const
+{
+	return "something went wrong...";
+}
+void		Command::set_aux_msg(std::string m)
+{
+	(void)m;
+}
+
 int	Command::_effect(server_t &server, client_t &client)
 {
 	(void)server, (void)client;

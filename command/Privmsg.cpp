@@ -31,8 +31,11 @@ int	Privmsg::_effect(server_t &server, client_t &client)
 				_rest = *nick;
 				return ERR_NOSUCHCHANNEL;	
 			}
-			if (!client.is_in_channel(_channel_iterator->second))
+			if ((_channel_iterator->second.mode_flag_is_set("n") && !client.is_in_channel(_channel_iterator->second))
+				|| _channel_iterator->second.is_banned(client.get_originname()))
+			{
 				return ERR_CANNOTSENDTOCHAN;
+			}
 			_channel_iterator->second.broadcast_message(client, "PRIVMSG", _rest);	
 		}
 		else
