@@ -1,10 +1,36 @@
 #include "Mode.hpp"
 #include "client.hpp"
 
-int	_mode_ban_flag(server_t &s, client_t &c, std::string channel_name, std::list<std::string> argl, int change, Command *n)
-{
 
-	//this adds ban flag if type is +, should implement if -
+
+/** b MODE flag **/
+
+static void add_ban_flag(client_t &c, joined_channel *chan, std::list<std::string> argl)
+{
+	for (std::list<std::string>::iterator i = argl.begin(); i != argl.end(); ++i)
+	{
+		if (!chan->chan->is_banned(*i))
+		{
+			chan->chan->ban(*i, c.get_nick());
+			chan->chan->broadcast_message(c, "MODE", "+b :" + *i, 1);
+		}
+	}
+}
+
+static void drop_ban_flag(client_t &c, joined_channel *chan, std::list<std::string> argl)
+{
+	for (std::list<std::string>::iterator i = argl.begin(); i != argl.end(); ++i)
+	{
+		if (chan->chan->is_banned(*i))
+		{
+			chan->chan->unban(*i);
+			chan->chan->broadcast_message(c, "MODE", "-b :" + *i, 1);
+		}
+	}
+}
+
+int	mode_ban_flag(server_t &s, client_t &c, std::string channel_name, std::list<std::string> argl, int change, Command *n)
+{
 	joined_channel			*chan = c.get_joined_channel(channel_name);
 	std::list<ban_t>		ban_list = chan->chan->get_banned_list();
 
@@ -18,38 +44,22 @@ int	_mode_ban_flag(server_t &s, client_t &c, std::string channel_name, std::list
 		   reply_to_client(RPL_BANLIST, c, s, n);	   
 		}
 		return RPL_ENDOFBANLIST;
-	}
+	}	
 	if (is_operator(chan->mode) || c.mode_flag_is_set("O"))
 	{
 		if (change == ADD_FLAG)
-		{	
-			for (std::list<std::string>::iterator i = argl.begin(); i != argl.end(); ++i)
-			{
-				if (!chan->chan->is_banned(*i))
-				{
-					chan->chan->ban(*i, c.get_nick());
-					chan->chan->broadcast_message(c, "MODE", chan->chan->get_name() + " +b :" + *i, 1);
-				}
-			}
-		}
+			add_ban_flag(c, chan, argl);
 		else 
-		{
-			for (std::list<std::string>::iterator i = argl.begin(); i != argl.end(); ++i)
-			{
-				if (chan->chan->is_banned(*i))
-				{
-					chan->chan->unban(*i);
-					chan->chan->broadcast_message(c, "MODE", chan->chan->get_name() + " -b :" + *i, 1);
-				}
-			}
-		}
+			drop_ban_flag(c, chan, argl);
 		return 0;
 	}
 	return ERR_CHANOPRIVSNEEDED;
-	(void)s, (void)change;
+	(void)s;
 }
+/*****************/
 
-int	_mode_restrict_topic(server_t &s, client_t &c, std::string channel_name, std::list<std::string> argl, int change, Command *n)
+/** t MODE flag **/
+int	mode_restrict_topic(server_t &s, client_t &c, std::string channel_name, std::list<std::string> argl, int change, Command *n)
 {
 	Channel	*chan = &s.find_channel(channel_name)->second;
 
@@ -62,9 +72,9 @@ _flag_table()
 {
 	_command_name = "MODE";
 	_id = MODE;
-	_flag_table[(int)'b'].apply = _mode_ban_flag;
-	_flag_table[(int)'t'].apply = _mode_restrict_topic;
-};
+	_flag_table[(int)'b'].apply = mode_ban_flag;
+	_flag_table[(int)'t'].apply = mode_restrict_topic;
+}
 
 Channel	*Mode::get_channel(void)
 {

@@ -19,10 +19,10 @@ struct	mode_change
 	std::list<std::string>	arg_list;
 };
 
-int	_mode_ban_flag
+int	mode_ban_flag
 (server_t &s, client_t &c, std::string chan_name, std::list<std::string> argl, int change, Command *n);
 		
-int	_mode_restrict_topic
+int	mode_restrict_topic
 (server_t &s, client_t &c, std::string chan_name, std::list<std::string> argl, int change, Command *n);
 
 
