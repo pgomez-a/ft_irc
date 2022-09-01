@@ -27,8 +27,8 @@ class Channel
 		~Channel(void);
 
 		/** Member Methods **/
-		void	broadcast_message(client_t &sender, std::string command, const std::string &message) const;
-		void	broadcast_message(client_t &sender, std::string command, const std::string &message, bool send_to_self) const;
+		void	broadcast_message(client_t &sender, std::string command, const std::string &message, std::string optional = "") const;
+		void	broadcast_message(client_t &sender, std::string command, const std::string &message, bool send_to_self, std::string optional = "") const;
 		int		add_member(client_t	*member);
 		bool	delete_member(std::string nick);
 		int		ban(const std::string originname, std::string ban_origin);
@@ -45,6 +45,7 @@ class Channel
 		std::string				get_topic(void) const;
 		std::string				get_name(void) const;
 		size_t					get_member_count(void) const;
+		client_t				*get_member(std::string nick);
 		std::list<client_t *>	get_member_list(void);
 		std::string				get_member_list(char separator);
 		std::string				get_mode(void);

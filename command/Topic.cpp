@@ -23,7 +23,8 @@ int	Topic::_effect(server_t &server, client_t &client)
 		channel = &_channel_iterator->second;
 		if (!channel->is_member_on_channel(client.get_nick()))
 				return ERR_NOTONCHANNEL;
-		//guard checking channel  required permits
+		if (channel->mode_flag_is_set("t") && !(is_operator(client.get_joined_channel(channel->get_name())->mode) || is_operator(client.get_mode())))
+			return ERR_CHANOPRIVSNEEDED;
 		if (rest_sent || _rest.size())
 		{
 			channel->set_topic(_rest);

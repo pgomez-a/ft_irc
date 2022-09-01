@@ -3,7 +3,7 @@
 
 
 
-/** b MODE flag **/
+/** b chan MODE flag **/
 
 static void add_ban_flag(client_t &c, joined_channel *chan, std::list<std::string> argl)
 {
@@ -35,7 +35,7 @@ int	mode_ban_flag(server_t &s, client_t &c, std::string channel_name, std::list<
 	std::list<ban_t>		ban_list = chan->chan->get_banned_list();
 
 	if (!chan)
-		return ERR_NOTONCHANNEL;;
+		return ERR_NOTONCHANNEL;
 	if (argl.empty())
 	{
 		for (std::list<ban_t>::iterator i = ban_list.begin(); i != ban_list.end(); ++i)
@@ -54,33 +54,135 @@ int	mode_ban_flag(server_t &s, client_t &c, std::string channel_name, std::list<
 		return 0;
 	}
 	return ERR_CHANOPRIVSNEEDED;
-	(void)s;
 }
 /*****************/
 
-/** t MODE flag **/
+/** t chan MODE flag **/
 int	mode_restrict_topic(server_t &s, client_t &c, std::string channel_name, std::list<std::string> argl, int change, Command *n)
 {
-	Channel	*chan = &s.find_channel(channel_name)->second;
+	joined_channel		*j = c.get_joined_channel(channel_name);
+	bool				restricted_topic = false;
 
-	(void)s, (void)c, (void)chan, (void)channel_name, (void)argl, (void)change, (void)n;
+	restricted_topic = j->chan->mode_flag_is_set("t");	
+	if (!j)
+		return ERR_NOTONCHANNEL;
+	if (is_operator(j->mode) || c.mode_flag_is_set("O"))
+	{	
+		if (!restricted_topic && change == ADD_FLAG)
+		{
+			j->chan->add_mode_flag("t");
+			j->chan->broadcast_message(c, "MODE", "+t", 1);
+		}
+		if (restricted_topic && change == DROP_FLAG)
+		{
+			j->chan->rm_mode_flag("t");
+			j->chan->broadcast_message(c, "MODE", "-t", 1);
+		}
+		return 0;
+	}
+	(void)s, (void)argl, (void)n;
 	return ERR_CHANOPRIVSNEEDED;
 }
 
+/*****************/
+
+/** n chan MODE flag **/
+
+
+int	mode_restrict_message (server_t &s, client_t &c, std::string channel_name, std::list<std::string> argl, int change, Command *n)
+{
+	joined_channel		*j = c.get_joined_channel(channel_name);
+	bool				restricted_msg = false;
+
+	restricted_msg = j->chan->mode_flag_is_set("n");	
+	if (!j)
+		return ERR_NOTONCHANNEL;
+	if (is_operator(j->mode) || c.mode_flag_is_set("O"))
+	{	
+		if (!restricted_msg && change == ADD_FLAG)
+		{
+			j->chan->add_mode_flag("n");
+			j->chan->broadcast_message(c, "MODE", "+n", 1);
+		}
+		if (restricted_msg && change == DROP_FLAG)
+		{
+			j->chan->rm_mode_flag("n");
+			j->chan->broadcast_message(c, "MODE", "-n", 1);
+		}
+		return 0;
+	}
+	(void)s, (void)argl, (void)n;
+	return ERR_CHANOPRIVSNEEDED;
+}
+
+/*****************/
+/*****************/
+
+/** o chan MODE flag **/
+
+int	chan_oper_flag(server_t &s, client_t &c, std::string channel_name, std::list<std::string> argl, int change, Command *n)
+{
+	joined_channel		*j = c.get_joined_channel(channel_name);
+	joined_channel		*k;
+	client_t			*t;
+	bool				 is_chan_oper = false;
+
+	if (argl.empty())
+		return ERR_NEEDMOREPARAMS;
+	if (!j)
+		return ERR_NOTONCHANNEL;
+	if (!(is_operator(j->mode) || c.mode_flag_is_set("O")))
+		return ERR_CHANOPRIVSNEEDED;
+	for (std::list<std::string>::iterator i = argl.begin(); i != argl.end() ; ++i)
+	{
+		t = j->chan->get_member(*i);
+		if (!t)
+		{
+			reinterpret_cast<Mode*>(n)->mode_aux_str = *i;
+		   	reply_to_client(ERR_USERNOTINCHANNEL, c, s, n);
+		}
+		else
+		{	
+			k = t->get_joined_channel(channel_name);
+			is_chan_oper = flag_is_set(k->mode, 'o');
+			if (!is_chan_oper && change == ADD_FLAG)
+			{
+				add_flag(k->mode, 'o');
+				j->chan->broadcast_message(c, "MODE", *i, 1, " +o");
+			}
+			if (is_chan_oper && change == DROP_FLAG)
+			{
+				rm_flag(k->mode, 'o');
+				j->chan->broadcast_message(c, "MODE", *i, 1, " -o");
+			}
+		}
+	}
+	return 0;
+	(void)s, (void)argl, (void)n;
+}
+
+/*****************/
+
 Mode::Mode(void) :
-_flag_table()
+_chan_flag_table(), _user_flag_table()
 {
 	_command_name = "MODE";
 	_id = MODE;
-	_flag_table[(int)'b'].apply = mode_ban_flag;
-	_flag_table[(int)'t'].apply = mode_restrict_topic;
+	//channel mode flags//
+	_chan_flag_table[(int)'b'].apply = mode_ban_flag;
+	_chan_flag_table[(int)'t'].apply = mode_restrict_topic;
+	_chan_flag_table[(int)'n'].apply = mode_restrict_message;
+	_chan_flag_table[(int)'o'].apply = chan_oper_flag;
+	/////////////////////
+	//user modes//
+//	_user_flag_table[(int)'O'].apply = local_oper_flag;
+	/////////////
 }
 
 Channel	*Mode::get_channel(void)
 {
 	return &(_channel_iterator->second);
 }
-
 
 std::string	Mode::get_last_mode_request(void)
 {
@@ -105,7 +207,7 @@ void	Mode::_extract_cmode_arg(int &i, int j, std::string *input)
 	{
 		if (input [i + k][0] == '+' || input[i + k][0] == '-')
 			break ;
-		_flag_table[(int)input[i][j - 1]].arg_list.push_back(input[i + k]);
+		_chan_flag_table[(int)input[i][j - 1]].arg_list.push_back(input[i + k]);
 		++k;
 	}
 	i += k;
@@ -127,7 +229,7 @@ int	Mode::_channel_mode_parser(std::string *input, parsed_instructions &p)
 			while (input[i][j] && channel_mode_flag(input[i][j])) //implement chan_mode_flag
 			{
 		
-				_flag_table[(int)input[i][j]].change_type = change_type;
+				_chan_flag_table[(int)input[i][j]].change_type = change_type;
 				p += input[i][j];
 				++j;
 			}
@@ -145,13 +247,13 @@ int	Mode::_channel_mode_parser(std::string *input, parsed_instructions &p)
 	return 0;
 }
 
-void	Mode::_reset_flag_table(std::string change)
+void	Mode::_reset_flag_table(std::string change, mode_change *flag_table)
 {
 	for (int i = 0; change[i]; ++i)
 	{
-		_flag_table[(int)change[i]].change_type = DO_NOTHING;
-		_flag_table[(int)change[i]].change_count = 0;
-		_flag_table[(int)change[i]].arg_list.clear();
+		flag_table[(int)change[i]].change_type = DO_NOTHING;
+		flag_table[(int)change[i]].change_count = 0;
+		flag_table[(int)change[i]].arg_list.clear();
 	}
 }
 
@@ -163,7 +265,7 @@ int	Mode::_apply_channel_modes(server_t &server, client_t &client, parsed_instru
 
 	for (int i = 0; p[i]; ++i)
 	{
-		m = &_flag_table[(int)p[i]];
+		m = &_chan_flag_table[(int)p[i]];
 		if (m->change_count < 3)
 		{
 			arg_list = &m->arg_list;
@@ -172,7 +274,7 @@ int	Mode::_apply_channel_modes(server_t &server, client_t &client, parsed_instru
 			m->change_count++;
 		}
 	}
-	_reset_flag_table(p);
+	_reset_flag_table(p, _chan_flag_table);
 	return 0;
 	(void)server,(void)client,(void)p;
 }
@@ -208,8 +310,7 @@ int	 Mode::_user_mode_parser(std::string input, parsed_instructions &p)
 			i++;
 			while (user_mode_flag(input[i]))
 			{
-
-				_flag_table[(int)input[i]].change_type = change_type;
+				_user_flag_table[(int)input[i]].change_type = change_type;
 				p += input[i];
 				i++;
 			}
@@ -222,27 +323,22 @@ int	 Mode::_user_mode_parser(std::string input, parsed_instructions &p)
 	return VALID_UMODE;
 }
 
-int	Mode::_apply_user_modes(client_t &client, parsed_instructions &p)
+int	Mode::_apply_user_modes(server_t &server, client_t &client, parsed_instructions &p)
 {
+	mode_change *m;
 	int	r = 0;
 
 	for (int i = 0; p[i]; ++i)
 	{
-		if (_flag_table[(int)p[i]].change_type == ADD_FLAG)
-		{
-			client.add_mode_flag(std::string(1, p[i]));
-		}
-		else
-		{
-			client.rm_mode_flag(std::string(1, p[i]));
-		}
-		if (r)
-			return r;
+		m = &_user_flag_table[(int)p[i]];
+		r = m->apply(server, client, _argt[0], std::list<std::string>(), m->change_type, this);
+		reply_to_client(r, client, server, this);
 	}
+	_reset_flag_table(p, _user_flag_table);
 	return RPL_UMODEIS;
 }
 
-int Mode::_user_mode(client_t &client)
+int Mode::_user_mode(server_t &server, client_t &client)
 {
 	parsed_instructions	p;
 	bool				correct_nick;
@@ -255,9 +351,8 @@ int Mode::_user_mode(client_t &client)
 	if (!correct_nick)
 		return ERR_USERSDONTMATCH;
 	r = _user_mode_parser(_argt[1], p);
-	std::cout << "out with " << r << std::endl;
 	if (r == VALID_UMODE)
-		return _apply_user_modes(client, p);
+		return _apply_user_modes(server, client, p);
 	return ERR_UMODEUNKNOWNFLAG;
 }
 
@@ -269,7 +364,7 @@ int	Mode::_effect(server_t &server, client_t &client)
 		{
 			return _channel_mode(server, client);
 		}
-		return _user_mode(client);
+		return _user_mode(server, client);
 	}
 	return ERR_NEEDMOREPARAMS;
 }

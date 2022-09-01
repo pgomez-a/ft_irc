@@ -24,6 +24,7 @@
 enum	e_COMMANDS{NICK, USER, PASS, CAP, ERROR, OPER, QUIT, JOIN, PART, PRIVMSG, NOTICE, PING, PONG, LIST, TOPIC, MODE};
 
 void	add_flag(std::string &modes, char flag);
+void	rm_flag(std::string &modes, char flag);
 bool	flag_is_set(std::string modes, char flag);
 bool	is_operator(std::string modes);
 

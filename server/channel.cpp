@@ -11,23 +11,23 @@ Channel::~Channel(void)
 {}
 
 /** Member Methods **/
-void	Channel::broadcast_message(client_t &sender, std::string command, const std::string &message) const 
+void	Channel::broadcast_message(client_t &sender, std::string command, const std::string &message, std::string optional) const 
 {
 	for (std::list<client_t *>::const_iterator member = _member_list.begin(); member != _member_list.end(); ++member)
 	{
 		if ((*member)->sock_fd != sender.sock_fd)
-			send_to_client( ":" + sender.get_originname() + " " + command + " " +  _name + " :" + message + "\r\n", *(*member));
+			send_to_client( ":" + sender.get_originname() + " " + command + " " +  _name + optional + " :" + message + "\r\n", *(*member));
 	}	
 	return ;
 }
 
-void	Channel::broadcast_message(client_t &sender, std::string command, const std::string &message, bool send_to_self) const 
+void	Channel::broadcast_message(client_t &sender, std::string command, const std::string &message, bool send_to_self, std::string optional) const 
 {
 	send_to_self ^= send_to_self;
 
 	for (std::list<client_t *>::const_iterator member = _member_list.begin(); member != _member_list.end(); ++member)
 	{
-		send_to_client( ":" + sender.get_originname() + " " + command + " " +  _name + " :" + message + "\r\n", *(*member));
+		send_to_client( ":" + sender.get_originname() + " " + command + " " +  _name + optional + " :" + message + "\r\n", *(*member));
 	}	
 	return ;
 }
@@ -143,6 +143,26 @@ bool	Channel::is_banned(std::string oname) const
 	return false;
 }
 
+
+int		Channel::add_mode_flag(std::string flag)
+{
+	if (!channel_mode_flag(flag.front()))
+		return ERR_UNKNOWNMODE;
+	if (_mode.find(flag) == std::string::npos)
+		_mode += flag;
+	return 0;
+}
+
+int		Channel::rm_mode_flag(std::string flag)
+{
+	size_t pos;
+
+	pos = _mode.find(flag);
+	if (pos != std::string::npos)
+		_mode.erase(pos, flag.size());
+	return 0;
+}
+
 bool	Channel::mode_flag_is_set(std::string flag)
 {
 	return _mode.find(flag) != std::string::npos;
@@ -160,6 +180,16 @@ std::string	Channel::get_name(void) const { return _name;}
 
 size_t		Channel::get_member_count(void) const { return _member_count;}
 
+client_t	*Channel::get_member(std::string nick)
+{
+	for (std::list<client_t *>::iterator i = _member_list.begin(); i != _member_list.end(); ++i)
+	{
+		if ((*i)->get_nick() == nick)
+			return (*i);
+	}
+	return NULL;
+}
+
 std::list<client_t *> Channel::get_member_list(void)
 {
 	return _member_list;
@@ -171,7 +201,6 @@ std::string	Channel::get_member_list(char separator)
 
 	for (std::list<client_t *>::iterator i = _member_list.begin(); i != _member_list.end(); ++i)
 	{
-		std::cout << "for " << (*i)->get_nick() << "flag_is_set:" << (*i)->flag_is_set('O') << "<<is_operator:" << is_operator((*i)->get_joined_channel(_name)->mode) << std::endl;
 		if ( (*i)->mode_flag_is_set("O") || is_operator((*i)->get_joined_channel(_name)->mode))
 			list += "@";
 		list += (*i)->get_nick() + separator;
