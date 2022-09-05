@@ -32,7 +32,14 @@ int	chan_oper_flag
 (server_t &s, client_t &c, std::string chan_name, std::list<std::string> argl, int change, Command *n);
 
 int	local_oper_flag
-(server_t &s, client_t &c, std::string chan_name, std::list<std::string> argl, int change, Command *n);
+(server_t &s, client_t &c, std::string user_name, std::list<std::string> argl, int change, Command *n);
+
+int	invisible_flag
+(server_t &s, client_t &c, std::string user_name, std::list<std::string> argl, int change, Command *n);
+
+int	wall_flag
+(server_t &s, client_t &c, std::string user_name, std::list<std::string> argl, int change, Command *n);
+
 
 typedef std::string parsed_instructions;
 

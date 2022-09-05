@@ -55,11 +55,10 @@ struct client_t
 		int		rm_mode_flag(std::string flag);
 		bool	mode_flag_is_set(std::string flag);
 		void	reset(int reset_mode = SOFT_RESET);
-		void			add_channel_to_list(Channel *c, std::string m = "empty");
+		void			add_channel_to_list(Channel *c, std::string m = "+");
 		bool			pop_channel_from_list(Channel *c);
 		void			clear_channel_list(void);
 		bool			is_in_channel(Channel &c);
-		joined_channel	*get_joined_channel(std::string channel_name);
 
 		/** Getters & Setters **/
 		void		set_mode(std::string);
@@ -71,6 +70,8 @@ struct client_t
 		void		set_realname(std::string s);
 		std::string	get_realname(void) const;
 		std::string	get_originname(void) const;
+		joined_channel				*get_joined_channel(std::string channel_name);
+		std::list<joined_channel>	get_joined_channel_list(void);
 
 	private:
 		/** Private Member Attributes **/

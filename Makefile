@@ -1,6 +1,6 @@
 .PHONY:	all test clean fclean re parser
 
-NAME		= 	nameless_server
+NAME		= 	ircserv
 
 CXX			= 	clang++
 

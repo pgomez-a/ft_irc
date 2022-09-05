@@ -70,23 +70,23 @@ ban_t::ban_t(std::string b, std::string o):
 ban_mask(b), origin(o)
 {}
 
+static bool	valid_ban_mask(std::string m)
+{
+	size_t	exclamation = m.find('!');
+	size_t	alt = m.find('@');
+
+	return (m.size() && exclamation != std::string::npos && alt != std::string::npos && 
+			exclamation < alt && ((alt - exclamation) > 0 && (m.size() - alt) > 0)); 
+}
+
 int		Channel::ban(const std::string ban_mask, std::string ban_origin)
 {
-//	std::list<client_t*>	member_list;
-	//joined_channel			*c;
-
-//	member_list = get_member_list_by_origin_name(originname);
-	/*for (std::list<client_t*>::iterator i = member_list.begin(); i != member_list.end(); ++i)
+	if (valid_ban_mask(ban_mask))
 	{
-		c = (*i)->get_joined_channel(_name);
-		if (!(*i)->mode_flag_is_set("O") && !is_operator(c->mode))
-		{
-			delete_member((*i)->get_nick());
-			(*i)->pop_channel_from_list(this);
-		}
-	}*/
-	_banned_list.push_back(ban_t(ban_mask, ban_origin));
-	return MEMBER_HAS_BEEN_BANNED;
+		_banned_list.push_back(ban_t(ban_mask, ban_origin));
+		return MEMBER_HAS_BEEN_BANNED;
+	}	
+	return 0;
 }
 
 void	Channel::unban(const std::string ban_mask)
@@ -128,6 +128,9 @@ bool	Channel::is_banned(std::string oname) const
 	std::string		cur_ban_mask;
 	std::string		client_oname;
 
+
+	if (!valid_ban_mask(oname))
+		return false;
 	for (std::list<ban_t>::const_iterator i = _banned_list.begin(); i != _banned_list.end(); ++i)
 	{
 		client_oname = oname;
@@ -213,7 +216,7 @@ std::string	Channel::get_mode()
 {
 	if (_mode.size())
 		return "+" + _mode;
-	return "empty";
+	return "";
 }
 
 std::list<client_t *>	Channel::get_member_list_by_origin_name(std::string originname)

@@ -11,8 +11,8 @@ static void add_ban_flag(client_t &c, joined_channel *chan, std::list<std::strin
 	{
 		if (!chan->chan->is_banned(*i))
 		{
-			chan->chan->ban(*i, c.get_nick());
-			chan->chan->broadcast_message(c, "MODE", "+b :" + *i, 1);
+			if (chan->chan->ban(*i, c.get_nick()))
+				chan->chan->broadcast_message(c, "MODE", "+b :" + *i, 1);
 		}
 	}
 }
@@ -153,7 +153,8 @@ int	chan_oper_flag(server_t &s, client_t &c, std::string channel_name, std::list
 			if (is_chan_oper && change == DROP_FLAG)
 			{
 				rm_flag(k->mode, 'o');
-				j->chan->broadcast_message(c, "MODE", *i, 1, " -o");
+				if (!is_operator(t->get_mode()))
+					j->chan->broadcast_message(c, "MODE", *i, 1, " -o");
 			}
 		}
 	}
@@ -162,7 +163,63 @@ int	chan_oper_flag(server_t &s, client_t &c, std::string channel_name, std::list
 }
 
 /*****************/
+/** O user MODE flag **/
 
+int	local_oper_flag(server_t &s, client_t &c, std::string user_name, std::list<std::string> argl, int change, Command *n)
+{
+	std::list<joined_channel> channel_list;
+
+	if (change == DROP_FLAG)
+	{
+		if (flag_is_set((c.get_mode()), 'O'))
+		{	
+			c.rm_mode_flag("O");
+			channel_list = c.get_joined_channel_list();
+			for (std::list<joined_channel>::iterator i = channel_list.begin(); i != channel_list.end(); ++i)
+			{
+				if (!is_operator(i->mode))
+				{
+					i->chan->broadcast_message(c, "MODE", c.get_nick(), 1, " -o");
+				}
+			}
+		}
+	}
+	return 0;
+	(void)s, (void)user_name, (void)argl, (void)n;
+}
+
+/*****************/
+
+
+/*****************/
+/** i user MODE flag **/
+
+int	invisible_flag(server_t &s, client_t &c, std::string user_name, std::list<std::string> argl, int change, Command *n)
+{
+	if (change == DROP_FLAG && flag_is_set((c.get_mode()), 'i'))
+		c.rm_mode_flag("i");
+	else
+		c.add_mode_flag("i");
+	return 0;
+	(void)s, (void)user_name, (void)argl, (void)n;
+}
+
+/*****************/
+
+/*****************/
+/** w user MODE flag **/
+
+int	wall_flag(server_t &s, client_t &c, std::string user_name, std::list<std::string> argl, int change, Command *n)
+{
+	if (change == DROP_FLAG && flag_is_set((c.get_mode()), 'w'))
+		c.rm_mode_flag("w");
+	else
+		c.add_mode_flag("w");
+	return 0;
+	(void)s, (void)user_name, (void)argl, (void)n;
+}
+
+/*****************/
 Mode::Mode(void) :
 _chan_flag_table(), _user_flag_table()
 {
@@ -175,7 +232,9 @@ _chan_flag_table(), _user_flag_table()
 	_chan_flag_table[(int)'o'].apply = chan_oper_flag;
 	/////////////////////
 	//user modes//
-//	_user_flag_table[(int)'O'].apply = local_oper_flag;
+	_user_flag_table[(int)'O'].apply = local_oper_flag;
+	_user_flag_table[(int)'i'].apply = invisible_flag;
+	_user_flag_table[(int)'w'].apply = wall_flag;
 	/////////////
 }
 
@@ -226,9 +285,8 @@ int	Mode::_channel_mode_parser(std::string *input, parsed_instructions &p)
 		{
 			change_type = (input[i][j] == '+');
 			j++;
-			while (input[i][j] && channel_mode_flag(input[i][j])) //implement chan_mode_flag
+			while (input[i][j] && channel_mode_flag(input[i][j]))
 			{
-		
 				_chan_flag_table[(int)input[i][j]].change_type = change_type;
 				p += input[i][j];
 				++j;
@@ -287,9 +345,10 @@ int Mode::_channel_mode(server_t &server, client_t &client)
 	parsed_instructions		p;
 
 
+	if (_channel_iterator == server.channel_map_end())
+		return 0;
 	if (_argc == 1)
 		return RPL_CHANNELMODEIS;
-	//validate string <channel> *( ( "-" / "+" ) *<modes> *<modeparams> )
 	err = _channel_mode_parser(_argt + 1, p);
 	if (!err)
 		return _apply_channel_modes(server, client, p);

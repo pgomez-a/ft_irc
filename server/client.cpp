@@ -50,8 +50,6 @@ bool	client_t::registered(void) const
 
 int	client_t::add_mode_flag(std::string flag)
 {
-	if (_mode == "empty")
-		_mode.clear();
 	if (!user_mode_flag(flag.front()))
 		return ERR_UMODEUNKNOWNFLAG;
 	if (_mode.find(flag) == std::string::npos)
@@ -66,8 +64,6 @@ int	client_t::rm_mode_flag(std::string flag)
 	pos = _mode.find(flag);
 	if (pos != std::string::npos)
 		_mode.erase(pos, flag.size());
-	if (_mode.empty())
-		_mode = "empty";
 	return 0;
 }
 
@@ -130,17 +126,6 @@ bool	client_t::is_in_channel(Channel &c)
 	return false;	
 }
 
-joined_channel	*client_t::get_joined_channel(std::string channel_name)
-{
-	joined_channel	*j = NULL;
-
-	for (std::list<joined_channel>::iterator i = _channel_list.begin(); i != _channel_list.end(); ++i)
-	{
-		if (i->chan->get_name() == channel_name)
-			j = &*i;
-	}
-	return j;
-}
 
 /** Getters & Setters **/
 void		client_t::set_mode(std::string m) { _mode = m;}
@@ -161,11 +146,28 @@ std::string	client_t::get_realname(void) const { return _realname;}
 
 std::string	client_t::get_originname(void) const { return _nick + "!" + _user + "@" + addr;}
 
+joined_channel	*client_t::get_joined_channel(std::string channel_name)
+{
+	joined_channel	*j = NULL;
+
+	for (std::list<joined_channel>::iterator i = _channel_list.begin(); i != _channel_list.end(); ++i)
+	{
+		if (i->chan->get_name() == channel_name)
+			j = &*i;
+	}
+	return j;
+}
+
+std::list<joined_channel>	client_t::get_joined_channel_list(void)
+{
+	return _channel_list;
+}
+
 /** Mode functions **/
 
 bool		valid_oper_credentials(std::string username, server_t &server, client_t &client)
 {
-	return client.get_user() == username && server.find_user(username) && server.valid_oper_host(client);
+	return client.get_originname() == username && server.find_user(client.get_user()) && server.valid_oper_host(client);
 }
 
 std::string user_mode_bitmask(int m)
@@ -181,7 +183,7 @@ std::string user_mode_bitmask(int m)
 	if (i)
 		mode += "i";
 	else
-		mode = "empty";
+		mode = "+";
 	return mode;
 }
 
