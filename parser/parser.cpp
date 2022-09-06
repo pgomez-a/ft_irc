@@ -64,6 +64,8 @@ Command	*valid_command(token_type &t)
 
 	if (check_str(t.content, letter) || (t.content.size() == 3 && check_str(t.content, digit)))
 		s = t.content;
+	for (size_t i = 0; i != s.size(); ++i)
+		s[i] = toupper(s[i]);
 	c = command_map.find(s);
 	if (c  == command_map.end())
 		c = command_map.find("ERROR");

@@ -31,7 +31,9 @@ int	Part::_effect(server_t &server, client_t &client)
 				msg_tail = ":" + _channel_iterator->second.get_name();
 			else
 				msg_tail = _channel_iterator->second.get_name() + " :" + _rest;
-			send_to_client( ":" + client.get_originname() + " PART " + msg_tail + "\r\n", client);
+			send_to_client( ":" + client.get_originname() + " PART " + msg_tail + "\r\n", client);	
+			if (!_channel_iterator->second.get_member_count())
+				server.del_channel(_channel_iterator);
 		}
 		return 0;
 	}

@@ -21,7 +21,7 @@ int	Oper::_effect(server_t &server, client_t &client)
 			channel_list = client.get_joined_channel_list();
 			for (std::list<joined_channel>::iterator i = channel_list.begin(); i != channel_list.end(); ++i)
 			{
-				i->chan->broadcast_message(client, "MODE", client.get_nick(), 1, " +o");
+				i->chan->broadcast_message(client, "NICK", client.get_nick(), 1, " " + client.get_nick());
 			}	
 			reply_to_client(RPL_YOUREOPER, client, server, this);
 			return RPL_UMODEIS;

@@ -44,6 +44,7 @@ struct server_t
 		client_t	*find_user(std::string user);
 		bool		valid_oper_host(client_t &client);
 		int			add_new_channel(std::string name, std::string mode, std::string topic, channel_map::iterator &i);
+		void		del_channel(channel_map::iterator i);
 
 		/** Channel Methods **/
 		channel_map::iterator	find_channel(std::string name);

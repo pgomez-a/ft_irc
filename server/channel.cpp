@@ -32,6 +32,15 @@ void	Channel::broadcast_message(client_t &sender, std::string command, const std
 	return ;
 }
 
+void	Channel::broadcast_message(client_t &sender, std::string message, bool send_to_self)
+{
+	for (std::list<client_t *>::const_iterator member = _member_list.begin(); member != _member_list.end(); ++member)
+	{
+		if (send_to_self || (*member)->sock_fd != sender.sock_fd)
+			send_to_client( ":" + message + "\r\n", *(*member));
+	}	
+}
+
 int		Channel::add_member(client_t *member)
 {
 	if (is_banned(member))

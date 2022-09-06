@@ -54,6 +54,11 @@ int			server_t::add_new_channel(std::string name, std::string mode, std::string 
 	return BAD_CHANNEL_NAME;
 }
 
+void	server_t::del_channel(channel_map::iterator i)
+{
+	_channel_map.erase(i);	
+}
+
 /** Channel Methods **/
 server_t::channel_map::iterator	server_t::find_channel(std::string name)
 {

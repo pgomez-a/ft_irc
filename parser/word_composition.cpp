@@ -165,9 +165,9 @@ bool	valid_channelname(std::string n)
 		if (delimiter != std::string::npos)
 		{
 			m = m.substr(delimiter + 1, delimiter + 1 - m.size());
-			std::cout << "SUBSTR m " << m << std::endl;
 			p = check_str(m, chanstring);
 		}
+		p = (m.size() < 50 && n.size() < 50);
 	}
 	return p;
 }

@@ -8,6 +8,7 @@ Nick::Nick(void) {
 int	Nick::_effect(server_t &server, client_t &client)
 {	
 	std::string old_originname = client.get_originname();
+	std::list<joined_channel> channel_list;
 	bool		p;
 
 	if (!_argc)
@@ -21,7 +22,12 @@ int	Nick::_effect(server_t &server, client_t &client)
 		client.set_nick(_argt[0]);
 		if (!p)
 		{
-			send_to_client(":" + old_originname +" NICK :" + _argt[0] + "\r\n", client);
+			send_to_client(":" + old_originname +" NICK :" + _argt[0] + "\r\n", client);			
+			channel_list = client.get_joined_channel_list();
+			for (std::list<joined_channel>::iterator i = channel_list.begin(); i != channel_list.end(); ++i)
+			{
+				i->chan->broadcast_message(client, old_originname + " NICK"  + " :" + client.get_nick(), 0);
+			}	
 		}
 		return (p && client.registered()) ? welcome_new_registration(client, server, this) : 0;
 	}
