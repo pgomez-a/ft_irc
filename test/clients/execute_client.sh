@@ -1,7 +1,7 @@
 #!/bin/bash
 
-for i in {1..1023}
+for i in {1..100}
 do
 	bash "client$i.sh" | nc -c localhost 6667&
-	sleep 0.1
+	sleep 0.01
 done
