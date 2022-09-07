@@ -215,7 +215,7 @@ std::string	Channel::get_member_list(char separator)
 	{
 		if ( (*i)->mode_flag_is_set("O") || is_operator((*i)->get_joined_channel(_name)->mode))
 			list += "@";
-		list += (*i)->get_nick() + separator;
+		list += ( (*i)->mode_flag_is_set("i")) ? "" : (*i)->get_nick() + separator;
 	}
 	list.pop_back();
 	return list;

@@ -15,6 +15,7 @@ static Pass pass_inst; static Oper oper_inst; static Quit quit_inst;
 static Join join_inst; static Part part_inst; static Privmsg privmsg_inst;
 static Notice notice_inst; static Ping ping_inst; static Cap cap_inst;
 static List list_inst; static Mode mode_inst; static Topic topic_inst;
+static Names names_inst;
 
 static	rule	rule_matrix[5][5] = {
 									{
@@ -54,6 +55,7 @@ static void	init_command_map(void)
 	command_map.insert(std::make_pair("LIST", &list_inst));
 	command_map.insert(std::make_pair("MODE", &mode_inst));
 	command_map.insert(std::make_pair("TOPIC", &topic_inst));
+	command_map.insert(std::make_pair("NAMES", &names_inst));
 
 }
 

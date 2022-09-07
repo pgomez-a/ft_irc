@@ -20,8 +20,9 @@
 # include "List.hpp"
 # include "Topic.hpp"
 # include "Mode.hpp"
+# include "Names.hpp"
 
-enum	e_COMMANDS{NICK, USER, PASS, CAP, ERROR, OPER, QUIT, JOIN, PART, PRIVMSG, NOTICE, PING, PONG, LIST, TOPIC, MODE};
+enum	e_COMMANDS{NICK, USER, PASS, CAP, ERROR, OPER, QUIT, JOIN, PART, PRIVMSG, NOTICE, PING, PONG, LIST, TOPIC, MODE, NAMES};
 
 void	add_flag(std::string &modes, char flag);
 void	rm_flag(std::string &modes, char flag);
