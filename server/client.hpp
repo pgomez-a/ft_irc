@@ -8,7 +8,7 @@
 # include <netdb.h>
 # include <list>
 
-# define MAX_CLIENTS 1024
+# define MAX_CLIENTS 129
 # define MAX_JOINED_CHANNELS 8
 # define SERV_PASSW 1
 # define CLI_NICK 2

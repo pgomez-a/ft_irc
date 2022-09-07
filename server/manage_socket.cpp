@@ -25,16 +25,19 @@ static int	register_new_client(int nfds, int nsock_fd, struct sockaddr_storage c
 	std::string	event;
 
 	pos = find_new_client_pos(nfds, server);
-	server.clients_info[pos].info = *((struct sockaddr_in*)&client_addr);
-	server.clients_info[pos].sock_fd = nsock_fd;
-	server.clients_info[pos].addr = inet_ntoa(server.clients_info[pos].info.sin_addr);
-	server.clients_info[pos].port = std::to_string(server.clients_info[pos].info.sin_port);
-	server.clients_fds[pos].fd = nsock_fd;
-	server.clients_fds[pos].events = POLLIN;
-	event = event_format(server.clients_info[pos].addr, server.clients_info[pos].port,"Connection Accepted");
-	report_event(event, YELLOW);
-	if (pos == nfds)
-		nfds += 1;
+	if (pos < MAX_CLIENTS)
+	{
+		server.clients_info[pos].info = *((struct sockaddr_in*)&client_addr);
+		server.clients_info[pos].sock_fd = nsock_fd;
+		server.clients_info[pos].addr = inet_ntoa(server.clients_info[pos].info.sin_addr);
+		server.clients_info[pos].port = std::to_string(server.clients_info[pos].info.sin_port);
+		server.clients_fds[pos].fd = nsock_fd;
+		server.clients_fds[pos].events = POLLIN;
+		event = event_format(server.clients_info[pos].addr, server.clients_info[pos].port,"Connection Accepted");
+		report_event(event, YELLOW);
+		if (pos == nfds)
+			nfds += 1;
+	}
 	return nfds;
 }
 
