@@ -90,7 +90,9 @@ static int	read_socket(client_t &client, server_t &server)
 		}
 		tmp_recv_len += recv_len;
 		if ((recv_buff[tmp_recv_len - 2] == '\r' && recv_buff[tmp_recv_len - 1] == '\n' )|| tmp_recv_len == 210)
+		{
 			return execute_client_request(recv_buff, tmp_recv_len, server, client);
+		}
 	}
 	return 0;
 }
