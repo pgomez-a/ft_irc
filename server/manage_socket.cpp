@@ -89,10 +89,8 @@ static int	read_socket(client_t &client, server_t &server)
 			return -1;
 		}
 		tmp_recv_len += recv_len;
-		if ((recv_buff[tmp_recv_len - 2] == '\r' && recv_buff[tmp_recv_len - 1] == '\n' )|| tmp_recv_len == 210)
-		{
+		if (tmp_recv_len > 1 && ((recv_buff[tmp_recv_len - 2] == '\r' && recv_buff[tmp_recv_len - 1] == '\n' ) || tmp_recv_len == 210))
 			return execute_client_request(recv_buff, tmp_recv_len, server, client);
-		}
 	}
 	return 0;
 }
@@ -170,10 +168,7 @@ int			manage_socket(server_t &server)
 			break ;
 		}
 		if (func_return == 0)
-		{
-			put_error("timeout()");
-			break ;
-		}
+			continue ;
 		end_server = manage_request(server);
 	}
 	close_poll_fds(server);

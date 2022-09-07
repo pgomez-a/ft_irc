@@ -48,7 +48,7 @@ int				execute_client_request(char *buf, size_t buf_len, server_t &server, clien
 
 	request_len = 0;
 	request_split = 0;
-	while (buf[request_len])
+	while (request_len < 212 && buf[request_len])
 	{
 		if (request_len > 0 && buf[request_len] == '\n' && buf[request_len - 1] == '\r')
 		{
@@ -59,9 +59,7 @@ int				execute_client_request(char *buf, size_t buf_len, server_t &server, clien
 				return -1;
 			if (execute_code == -2)
 		 		return on_error("send()", -2);
-			std::cout << "EEEEEEEEEE\n";
 			request_split = request_len + 1;
-			std::cout << "OOOOOOO\n";
 		}
 		++request_len;
 	}
