@@ -220,6 +220,8 @@ int	wall_flag(server_t &s, client_t &c, std::string user_name, std::list<std::st
 }
 
 /*****************/
+mode_change::mode_change(char f, int c) :flag(f), change_type(c) {}
+
 Mode::Mode(void) :
 _chan_flag_table(), _user_flag_table()
 {
@@ -258,7 +260,7 @@ void	Mode::set_aux_msg(std::string m)
 	_ban_mask_msg = m;
 }
 
-void	Mode::_extract_cmode_arg(int &i, int j, std::string *input)
+void	Mode::_extract_cmode_arg(int &i, std::string *input, std::list<std::string> &arg_list)
 {
 	int k = 1;
 
@@ -266,7 +268,7 @@ void	Mode::_extract_cmode_arg(int &i, int j, std::string *input)
 	{
 		if (input [i + k][0] == '+' || input[i + k][0] == '-')
 			break ;
-		_chan_flag_table[(int)input[i][j - 1]].arg_list.push_back(input[i + k]);
+		arg_list.push_back(input[i + k]);
 		++k;
 	}
 	i += k;
@@ -287,13 +289,12 @@ int	Mode::_channel_mode_parser(std::string *input, parsed_instructions &p)
 			j++;
 			while (input[i][j] && channel_mode_flag(input[i][j]))
 			{
-				_chan_flag_table[(int)input[i][j]].change_type = change_type;
-				p += input[i][j];
+				p.push_back(mode_change(input[i][j], change_type));
 				++j;
 			}
 			_last_mode_request = input[i];
 			if (input[i][j] == '\0')
-				_extract_cmode_arg(i, j, input);
+				_extract_cmode_arg(i, input, p.back().arg_list);
 			else
 				return ERR_UNKNOWNMODE;
 		}
@@ -305,29 +306,27 @@ int	Mode::_channel_mode_parser(std::string *input, parsed_instructions &p)
 	return 0;
 }
 
-void	Mode::_reset_flag_table(std::string change, mode_change *flag_table)
+void	Mode::_reset_flag_table(parsed_instructions p, mode_flag *flag_table)
 {
-	for (int i = 0; change[i]; ++i)
+	for (parsed_instructions::iterator i = p.begin(); i != p.end(); ++i)
 	{
-		flag_table[(int)change[i]].change_type = DO_NOTHING;
-		flag_table[(int)change[i]].change_count = 0;
-		flag_table[(int)change[i]].arg_list.clear();
+		flag_table[(int)i->flag].change_count = 0;
 	}
 }
 
 int	Mode::_apply_channel_modes(server_t &server, client_t &client, parsed_instructions p)
 {
 	std::list<std::string>	*arg_list;
-	mode_change				*m;
+	mode_flag				*m;
 	int						r;
 
-	for (int i = 0; p[i]; ++i)
+	for (parsed_instructions::iterator i = p.begin(); i != p.end(); ++i)
 	{
-		m = &_chan_flag_table[(int)p[i]];
+		m = &_chan_flag_table[(int)i->flag];
 		if (m->change_count < 3)
 		{
-			arg_list = &m->arg_list;
-			r = m->apply(server, client, _argt[0], *arg_list, m->change_type, this);
+			arg_list = &i->arg_list;
+			r = m->apply(server, client, _argt[0], *arg_list, i->change_type, this);
 			reply_to_client(r, client, server, this);
 			m->change_count++;
 		}
@@ -369,8 +368,7 @@ int	 Mode::_user_mode_parser(std::string input, parsed_instructions &p)
 			i++;
 			while (user_mode_flag(input[i]))
 			{
-				_user_flag_table[(int)input[i]].change_type = change_type;
-				p += input[i];
+				p.push_back(mode_change(input[i], change_type));
 				i++;
 			}
 		}
@@ -384,13 +382,13 @@ int	 Mode::_user_mode_parser(std::string input, parsed_instructions &p)
 
 int	Mode::_apply_user_modes(server_t &server, client_t &client, parsed_instructions &p)
 {
-	mode_change *m;
+	mode_flag *m;
 	int	r = 0;
 
-	for (int i = 0; p[i]; ++i)
+	for (parsed_instructions::iterator i = p.begin(); i != p.end(); ++i)
 	{
-		m = &_user_flag_table[(int)p[i]];
-		r = m->apply(server, client, _argt[0], std::list<std::string>(), m->change_type, this);
+		m = &_user_flag_table[(int)i->flag];
+		r = m->apply(server, client, _argt[0], std::list<std::string>(), i->change_type, this);
 		reply_to_client(r, client, server, this);
 	}
 	_reset_flag_table(p, _user_flag_table);
