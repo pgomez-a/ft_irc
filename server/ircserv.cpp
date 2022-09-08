@@ -9,9 +9,9 @@ static int	init_server(int argc, char *argv[], server_t &server)
 {
 	std::ofstream	history;
 
-	if (argc != 3)
+	if (!(argc == 3 || argc == 4))
 	{
-		put_error("./ircserv <port> <passwd>");
+		put_error("./ircserv [host:port_network:password_network] <port> <passwd>");
 		return -1;
 	}
 	if (init_addrinfo(argv[1], server.hints, server.res) == -1)
@@ -51,6 +51,7 @@ static int	config_server(char* port, char* passwd, server_t& server)
 	return (0);
 }
 
+
 /**
  ** Main entry to the server.
  **/
@@ -58,10 +59,12 @@ static int	config_server(char* port, char* passwd, server_t& server)
 int			main(int argc, char* argv[])
 {
 	server_t	server;
+	int			extra_arg;
 
-	if (init_server(argc, argv, server) == -1)
+	extra_arg = (argc == 4);
+	if (init_server(argc, argv + extra_arg, server) == -1)
 		return 1;
-	config_server(argv[1], argv[2], server);
+	config_server(argv[1 + extra_arg], argv[2 + extra_arg], server);
 	manage_socket(server);
 	freeaddrinfo(server.res);
 	close(server.sock_fd);
